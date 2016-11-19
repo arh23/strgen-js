@@ -1,0 +1,150 @@
+/* colour palette: http://paletton.com/#uid=62x1m0kd5emh-qXgokNcf9acf5r */
+:root {
+	--body-background-colour: #364229;
+	--backlayer-background-colour: #719649;
+	--warning-colour: #f2f735;
+}
+
+body {
+	/*background-color: lightblue;*/
+	background-color: var(--body-background-colour);
+	text-align: center;
+	font-family: verdana;
+	font-size: 16px;
+}
+
+.backlayer {
+	position: fixed;
+	z-index: -100;
+	background-color: var(--backlayer-background-colour);
+	min-height: 100vh;
+	width: 1152px;
+	margin: 0 auto;
+
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+}
+
+.inputwrap input, textarea {
+	text-align: center;
+	font-family: verdana;
+	font-size: 16px;
+}
+
+.inputwrap #templatebox {
+	width: 1000px;
+}
+
+.inputwrap #warning {
+	color: var(--warning-colour);
+	word-wrap: break-word;
+	margin: 0 auto;
+	width: 60em;
+}
+
+.main_area {
+	padding-bottom: 10px;
+}
+
+.history {
+	width: 1152px;
+	margin: 0 auto;
+	border-top: thin solid #000000;
+  height: auto;
+}
+
+.history .history_header {
+	display: inline-block;
+	width: inherit;
+}
+
+.history .history_list {
+	border-top: thin dotted #000000;
+	display: none;
+	word-wrap: break-word;
+	min-height: 20px;
+  overflow: hidden;
+	padding-bottom: 18px;
+}
+
+.history_list .history_record {
+	float: left;
+	padding-left: 84.5px;
+	width: 272px;
+	text-overflow: ellipsis;
+}
+
+.history_record p {
+	border: thin dotted #000000;
+  	padding: 5px;
+ 	max-height: 70px;
+}
+
+.history_list:empty:before {
+  content: "Nothing here...";
+  text-align: center;
+}
+/* ------------------------------------- */
+/* main doc page css */
+.content_backlayer {
+	border-right: thin solid #000000;
+	border-left: thin solid #000000;
+	position: fixed;
+	z-index: -99;
+	min-height: 80%;
+	width: 976px;
+	
+	margin: 0 auto; /*center*/
+	left: 0;
+	right: 0;
+	bottom: 0;
+	
+}
+.doc {
+	/*width: 44.68%%;*/
+	border-top: thin solid #000000;
+	font-family: verdana;
+}
+
+.content .accordion_icon {
+	text-align: center;
+	float: right;
+	display: inline;
+	width: 30px;
+}
+
+.content h4 {
+	text-align: center !important;
+	display: inline;
+	padding-left: 30px
+}
+
+.doc div *{
+	text-align: justify;
+	margin: 0 auto;
+	width: 60em; 
+	/*padding-left: 800px;*/
+	/*padding-right: 800px;*/ /*this solution doesn't scale very well*/
+}
+
+.content, .doc .intro  {
+	padding: 8px;
+
+	border-right: thin solid #000000;
+	border-left: thin solid #000000;
+	border-bottom: thin solid #000000;
+
+	text-align: center;
+	margin: 0 auto;
+	width: 60em;
+}
+
+.content .content_body {
+	display: none;
+	position: relative;
+	z-index: 100;
+}

@@ -1,0 +1,74 @@
+<html>
+
+<head>
+
+<title>Colour Example</title>
+
+<script src="../regexgen.js"></script>
+<link rel="stylesheet" type="text/css" href="colour.css">
+
+<script>
+	function generateColour(pattern) {
+
+		document.getElementById("square_area").innerHTML = "";
+
+		try {
+			var generator = new Regexgen();
+			var hex_value;
+
+			for (var counter = 0; counter < document.getElementById('countbox').value; counter++) {
+				var current_id = "colourspace" + counter;
+
+				hex_value = generator.createString(pattern, true);
+
+				if (!document.getElementById(current_id)){
+					var container = document.createElement("div");
+					var coloursquare = document.createElement("div");
+					var label = document.createElement("div");
+
+					container.setAttribute("id", "container" + counter);
+					container.setAttribute("class", "squarecontainer");
+
+					coloursquare.setAttribute("id", current_id);
+					coloursquare.setAttribute("class", "colouredsquare");
+
+					label.setAttribute("id", "label_" + current_id);
+					label.setAttribute("class", "labels");
+
+					document.getElementById("square_area").appendChild(container);
+					document.getElementById("container" + counter).appendChild(coloursquare);
+					document.getElementById("container" + counter).appendChild(label);
+				}
+
+				document.getElementById(current_id).style.backgroundColor = "#" + hex_value;
+				document.getElementById("label_" + current_id).innerHTML = "#" + hex_value;
+			}
+		} catch(error) {
+			console.error("error: " + error.stack);
+		}
+	}
+</script>
+
+</head>
+
+<body>
+	<form>
+		<div class="inputwrap">
+			<input class="gen_button" type="button" onclick="generateColour('[\\h]{6}')" value="Random Colour">
+			<input class="gen_button" type="button" onclick="generateColour('[AABBBCCCDDDEEEEFFFF9999888877][\\h][AABBBCCCDDDEEEEFFFF9999888877][\\h][AABBBCCCDDDEEEEFFFF9999888877][\\h]')" value="Random Light Colour"> 
+			<input class="gen_button" type="button" onclick="generateColour('[98766554433221110000AB][\\h][98766554433221110000AB][\\h][98766554433221110000AB][\\h]')" value="Random Dark Colour">
+
+			<!--
+			example patterns:
+			darker colours -
+			[98766554433221110000AB][\\h][98766554433221110000AB][\\h][98766554433221110000AB][\\h]
+			[98766554433221110000AABBBCCCD][\\h][98766554433221110000AABBBCCCD][\\h][98766554433221110000AABBBCCCD][\\h]
+			-->
+
+			<input type="text" id="countbox" value="1">
+		</div>
+	</form>
+	<div class="square_area" id="square_area"></div>
+</body>
+
+</html>
