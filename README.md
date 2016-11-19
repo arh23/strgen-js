@@ -49,7 +49,7 @@ Fixed text can be used outside of the character class definition. For example:
 
 *test [1-9] message*
 
-This would return values such as 'test 4 message' or something similar. The fixed text will remain constant and [1-9] will generate a value equal to or between 1 and 9.
+This would return values such as 'test 4 message' or something similar. The fixed text will remain constant and *[1-9]* will generate a value equal to or between 1 and 9.
 
 ###Fixed text ranges
 
