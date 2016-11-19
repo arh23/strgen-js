@@ -25,7 +25,7 @@ Providing the '-' symbol has been used between two valid characters, any charact
 
 ###Pre-defined ranges
 
-The following will pick a character from a predefined set of characters:</p>
+The following will pick a character from a predefined set of characters:
 
 - /w - word characters</li>
 - /p - punctuation characters</li>
@@ -49,7 +49,7 @@ Fixed text can be used outside of the character class definition. For example:
 
 *test [1-9] message*
 
-This would return values such as 'test 4 message' or something similar. The fixed text will remain constant and <i> [1-9] </i> will generate a value equal to or between 1 and 9.
+This would return values such as 'test 4 message' or something similar. The fixed text will remain constant and [1-9] will generate a value equal to or between 1 and 9.
 
 ###Fixed text ranges
 
@@ -78,7 +78,7 @@ The operators for sequences are different:
 - The & operator - this will merge and shuffle multiple values.
   For example: *(value1&value2&value3)* can result in values such as *3llevveuaa2v1luuae* etc.
 
-Sequences do not use quantifiers to generate values.</p>
+Sequences do not use quantifiers to generate values.
 
 ###Additional controls and parameters
 
