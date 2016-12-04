@@ -54,7 +54,7 @@ body {
 	width: 1152px;
 	margin: 0 auto;
 	border-top: thin solid #000000;
-  height: auto;
+ 	height: auto;
 }
 
 .history .history_header {
@@ -80,16 +80,34 @@ body {
 
 .history_record p {
 	border: thin dotted #000000;
-  	padding: 5px;
+  padding: 5px;
  	max-height: 70px;
 }
 
 .history_list:empty:before {
   content: "Nothing here...";
-  text-align: center;
+ 	text-align: center;
 }
+
+.custom_gen_button {
+	margin: 0 auto;
+ 	width: 100px;
+	padding: 5px;
+
+ 	text-align: center;
+ 	border: thin solid #000000;
+
+	/*make it so text in the button cannot be selected*/
+	-webkit-user-select: none; /* Chrome/Safari/Opera */
+  -moz-user-select: none; /* Mozilla Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+ 	cursor: default;
+ 	user-select: none;
+}
+
 /* ------------------------------------- */
 /* main doc page css */
+/* ------------------------------------- */
 .content_backlayer {
 	border-right: thin solid #000000;
 	border-left: thin solid #000000;

@@ -11,6 +11,7 @@
 <script>
 	$(document).ready(function(){
 		var hoverColour = {'background-color': '#8FC258'};
+		var clickedColour = {'background-color': '#bbda9a'}
 		//$("div.accordion_icon").text("+");
 
 		$("div.history_header").click(function(){
@@ -31,6 +32,26 @@
 
 		$("div.history_header").mouseout(function() {
 			$(this).css("background-color", "");
+		})
+
+		$("div.custom_gen_button").click(function(){
+			initialize_generator();			
+		});
+
+		$("div.custom_gen_button").mouseover(function() {
+			$(this).css(hoverColour);
+		})
+
+		$("div.custom_gen_button").mouseout(function() {
+			$(this).css("background-color", "");
+		})
+
+		$("div.custom_gen_button").mousedown(function() {
+			$(this).css(clickedColour);	
+		})
+
+		$("div.custom_gen_button").mouseup(function() {
+			$(this).css(hoverColour);	
 		})
 	});
 </script>
@@ -104,7 +125,8 @@
 			</div>
 
 			<div class="inputwrap">
-				<p><input class="gen_button" type="button" onclick="initialize_generator()" value="Generate"></p>
+				<!--<p><input class="gen_button" type="button" onclick="initialize_generator()" value="Generate"></p>-->
+				<br><div class="custom_gen_button">Generate</div><br>
 				<textarea id="stringvalue" rows="3" cols="75" readonly></textarea> 
 				<br><input type="checkbox" id="allowduplicates" checked> Allow Duplicate Characters <br>
 			</div>
