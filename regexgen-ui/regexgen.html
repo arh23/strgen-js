@@ -11,6 +11,7 @@
 <script>
 	$(document).ready(function(){
 		var hoverColour = {'background-color': '#8FC258'};
+		var clickedColour = {'background-color': '#bbda9a'}
 		//$("div.accordion_icon").text("+");
 
 		$("div.history_header").click(function(){
@@ -32,12 +33,33 @@
 		$("div.history_header").mouseout(function() {
 			$(this).css("background-color", "");
 		})
+
+		$("div.gen_button").click(function(){
+			initialize_generator();			
+		});
+
+		$("#custom_button").mouseover(function() {
+			$(this).css(hoverColour);
+		})
+
+		$("#custom_button").mouseout(function() {
+			$(this).css("background-color", "");
+		})
+
+		$("#custom_button").mousedown(function() {
+			$(this).css(clickedColour);	
+		})
+
+		$("#custom_button").mouseup(function() {
+			$(this).css(hoverColour);	
+		})
 	});
 </script>
 
 <script>
 	var history = new Array();
 	var count = 0;
+
 	function initialize_generator() {
 	try {
 		document.getElementById('stringvalue').innerHTML = "";
@@ -76,7 +98,7 @@
 		}
 
 		if (generated_output.length > 25) {
-			document.getElementById(current_id).innerHTML = "<p /> Record " + (count + 1) + ":<br />" + pattern + "<br />" + generated_output.slice(0,25) + "...</p />";
+			document.getElementById(current_id).innerHTML = "<p /> Record " + (count + 1) + ":<br />" + pattern + "<br />" + generated_output.slice(0,24) + "...</p />";
 		} else {
 			document.getElementById(current_id).innerHTML = "<p /> Record " + (count + 1) + ":<br />" + pattern + "<br />" + generated_output + "</p />";			
 		}
@@ -104,7 +126,8 @@
 			</div>
 
 			<div class="inputwrap">
-				<p><input class="gen_button" type="button" onclick="initialize_generator()" value="Generate"></p>
+				<!--<p><input class="gen_button" type="button" onclick="initialize_generator()" value="Generate"></p>-->
+				<br><div id="custom_button" class="gen_button">Generate</div><br>
 				<textarea id="stringvalue" rows="3" cols="75" readonly></textarea> 
 				<br><input type="checkbox" id="allowduplicates" checked> Allow Duplicate Characters <br>
 			</div>
