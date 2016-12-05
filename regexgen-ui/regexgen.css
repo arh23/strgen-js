@@ -101,6 +101,7 @@ body {
 	-webkit-user-select: none; /* Chrome/Safari/Opera */
   	-moz-user-select: none; /* Mozilla Firefox */
   	-ms-user-select: none; /* Internet Explorer/Edge */
+
  	cursor: default;
  	user-select: none;
 }
