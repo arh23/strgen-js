@@ -11,6 +11,23 @@ Credits go to:
 
 This documentation will guide you through the different operators and functionality of the pattern system.
 
+###Usage
+
+Regexgen can be used as an external script, or with the UI packaged with this repo.
+
+When using Regexgen in existing code, a new instance will need to be created in the standard way, for example in JS:
+
+~~~~
+var generator = new Regexgen();
+var generated_string = generator.createString(pattern);
+~~~~
+
+There are multiple parameters which affect the way in which Regexgen handles string generation:
+
+- *pattern* - required - the regex-styled pattern string required to generate the random string.
+- *allow_duplicates* - optional - boolean to specify whether or not Regexgen should use the same character twice in a range/set of characters. *True* by default.
+- *error_output_id* - optional - string to reference the ID of the element where warning and error messages should be printed on a UI.
+
 ###Specific ranges
 
 Use a hyphen to define a range of different values of your choosing, or use text outside to denote fixed text. For example:
