@@ -76,7 +76,7 @@
 
 	} catch(error) {
 		document.getElementById('warning').innerHTML += "<br />" + error.message;
-		console.error("error: " + error.stack);
+		console.error(error.stack);
 	}
 
 	function record_value(pattern, generated_output) {

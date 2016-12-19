@@ -19,7 +19,7 @@
 			for (var counter = 0; counter < document.getElementById('countbox').value; counter++) {
 				var current_id = "colourspace" + counter;
 
-				hex_value = generator.createString(pattern, true);
+				hex_value = generator.createString(pattern);
 
 				if (!document.getElementById(current_id)){
 					var container = document.createElement("div");
@@ -44,7 +44,7 @@
 				document.getElementById("label_" + current_id).innerHTML = "#" + hex_value;
 			}
 		} catch(error) {
-			console.error("error: " + error.stack);
+			console.error(error.stack);
 		}
 	}
 </script>
@@ -57,6 +57,7 @@
 			<input class="gen_button" type="button" onclick="generateColour('[/h]{6}')" value="Random Colour">
 			<input class="gen_button" type="button" onclick="generateColour('[AABBBCCCDDDEEEEFFFF9999888877][/h][AABBBCCCDDDEEEEFFFF9999888877][/h][AABBBCCCDDDEEEEFFFF9999888877][/h]')" value="Random Light Colour"> 
 			<input class="gen_button" type="button" onclick="generateColour('[98766554433221110000AB][/h][98766554433221110000AB][/h][98766554433221110000AB][/h]')" value="Random Dark Colour">
+			<!--<input class="gen_button" type="button" onclick="generateColour('[a-z]{}')" value="error test">-->
 
 			<!--
 			example patterns:

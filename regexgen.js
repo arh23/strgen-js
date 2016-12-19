@@ -10,15 +10,17 @@ class Regexgen {
 		this.generated_value_list; // where output is stored, to be used in generation at the end of the generation process
 		this.allow_duplicate_characters; // "Allow Duplicate Characters" setting on UI, can be set when generator is initialised
 		this.generated_output; // the full output string
+		this.error_output_id; // the default UI element where errors will be output (the reference to the element must be the ID)
 	}
 
-	createString(pattern, allow_duplicates) { // initial method that is called to start generating a random string
+	createString(pattern, allow_duplicates = true, error_output_id = "warning") { // initial method that is called to start generating a random string
 		this.current_index = -1
 		this.generated_output = ""
 		this.pattern_input = pattern;
 		this.allow_duplicate_characters = allow_duplicates;
 		this.quantifier_value = 1;
-		this.generated_value_list = []; 
+		this.generated_value_list = [];
+		this.error_output_id = error_output_id;
 		// assign default values before generation/
 		// this fixes a problem with multiple generations with the same instance of the object
 
@@ -93,7 +95,7 @@ class Regexgen {
 					this.selectValueFromList(1, undefined, false);	
 					this.operatorComparison();
 					break;
-				case '\\':
+				case '/':
 					console.log('char break');
 					this.next();
 					this.getLiteral();
@@ -156,6 +158,7 @@ class Regexgen {
 	}
 
 	getQuantifier() { // get the value within the curly brackets, if present
+		var start_value = this.current_index + 1;
 		var quantifier_value = "";
 		console.log("getting quantifier");
 		do {
@@ -176,13 +179,24 @@ class Regexgen {
 
 		if (this.allow_duplicate_characters == false && quantifier_value > this.generated_value_list.length)
 		{
-			document.getElementById('warning').innerHTML += "<br />Character quantifier reduced from " + 
+			/*
+			document.getElementById('warning').innerHTML += "<br />Character quantifier at position " + start_value + " reduced from " + 
 															quantifier_value + " to " + this.generated_value_list.length + 
 															". Toggle 'Allow Duplicate Characters' to generate the full amount.";
+			*/
+			this.outputWarning("<br />Character quantifier at position " + start_value + " reduced from " + 
+						  quantifier_value + " to " + this.generated_value_list.length + 
+						  ". Toggle 'Allow Duplicate Characters' to generate the full amount.")
 			quantifier_value = this.generated_value_list.length;
 		}
 
 		console.log('quantifier_value: ' + quantifier_value);
+
+		if (quantifier_value == 0) {
+			this.outputWarning("<br /> No value was returned. <br />Character quantifier at position " + start_value + " is 0.")
+			/*document.getElementById('warning').innerHTML += "<br /> No value was returned. <br />Character quantifier at position " + start_value + " is 0.";*/		
+		}
+
 		return parseInt(quantifier_value);
 	}
 
@@ -255,7 +269,8 @@ class Regexgen {
 			default:
 			{
 				preset_characters = "";
-				document.getElementById('warning').innerHTML += "<br />Invalid preset range. \'\\" + character + "\' is not a valid preset."; 
+				/*document.getElementById('warning').innerHTML += "<br />Invalid preset range. \'/" + character + "\' is not a valid preset.";*/
+				this.outputWarning("<br />Invalid preset range. \'/" + character + "\' is not a valid preset.");
 				break;
 			}
 		}
@@ -265,7 +280,7 @@ class Regexgen {
 	generatePresetValues(preset_values, character_index = 0) { // split the preset_characters string and push each individual character into the values array
 		if (character_index < preset_values.length) {
 			this.generated_value_list.push(preset_values.charAt(character_index));
-			this.generatePresetValues(preset_values, character_index+=1)
+			this.generatePresetValues(preset_values, character_index+=1);
 		}
 	}
 
@@ -332,10 +347,12 @@ class Regexgen {
 				}
 				else if (this.lookahead() == ')' && last_operator == undefined) {
 					if (string_value == "") {
-						document.getElementById('warning').innerHTML += "<br />Unbroken Sequence starting at position " + (this.current_index + 1) + " does not contain any values."	
+						/*document.getElementById('warning').innerHTML += "<br />Unbroken Sequence starting at position " + (this.current_index + 1) + " does not contain any values."*/
+						this.outputWarning("<br />Unbroken Sequence starting at position " + (this.current_index + 1) + " does not contain any values.");
 					} else {
 						this.generated_value_list.push(string_value);
-						document.getElementById('warning').innerHTML += "<br />Sequence starting at position " + ((this.current_index + 1) - string_value.length) + " only contains one value."						
+						/*document.getElementById('warning').innerHTML += "<br />Sequence starting at position " + ((this.current_index + 1) - string_value.length) + " only contains one value."*/
+						this.outputWarning("<br />Sequence starting at position " + ((this.current_index + 1) - string_value.length) + " only contains one value.")			
 					}
 
 					break;
@@ -376,7 +393,7 @@ class Regexgen {
 		}
 		else
 		{
-			console.log("remaining array values: " + this.generated_value_list.toString())
+			console.log("remaining array values: " + this.generated_value_list.toString());
 			this.generated_value_list = [];
 		}
 	}
@@ -387,5 +404,14 @@ class Regexgen {
 
 	outputString() { // output the completed string at the end of execution
 		return this.generated_output;
+	}
+
+	outputWarning(message) {
+		if (document.getElementById(this.error_output_id)) {
+			document.getElementById(this.error_output_id).innerHTML += message;
+		}
+		else {
+			console.error(message);
+		}
 	}
 }
