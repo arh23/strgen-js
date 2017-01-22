@@ -44,19 +44,19 @@ Providing the '-' symbol has been used between two valid characters, any charact
 
 The following will pick a character from a predefined set of characters:
 
-- /w - word characters</li>
-- /p - punctuation characters</li>
-- /d - digits</li>
-- /c - lower case characters</li>
-- /u - upper case characters</li>
-- /l - letters</li>
-- /h - hex digits</li>
-- /H - hex digits (lower and upper case)</li>
-- /p - octal digits</li><br>
+- \w - word characters</li>
+- \p - punctuation characters</li>
+- \d - digits</li>
+- \c - lower case characters</li>
+- \u - upper case characters</li>
+- \l - letters</li>
+- \h - hex digits</li>
+- \H - hex digits (lower and upper case)</li>
+- \p - octal digits</li><br>
 
 For example:
 
-*[/w]*
+*[\w]*
 
 This will return any letter (upper and lower case), digit character, or underscore. You can use multiple pre-defined ranges at once, to increase the probability of a character being returned.
 

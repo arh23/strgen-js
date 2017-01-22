@@ -5,7 +5,7 @@ class Regexgen {
 
 		this.pattern_input; // the pattern
 		this.current_index; // the current pointer/index in the pattern
-		this.operators = "[]{}()-/|"; // special operator characters responsible for different behaviours
+		this.operators = "[]{}()-\\|"; // special operator characters responsible for different behaviours
 		this.quantifier_value; // stores the value specified in the pattern within the { }
 		this.generated_value_list; // where output is stored, to be used in generation at the end of the generation process
 		this.allow_duplicate_characters; // "Allow Duplicate Characters" setting on UI, can be set when generator is initialised
@@ -118,13 +118,13 @@ class Regexgen {
 		do { // starts at the [ which was successfully read in the stage before this function
 			var current_character = this.next();
 			console.log("CHARACTER AT current_index: " + this.pattern_input.charAt(this.current_index));
-			if (this.current() == '/') 
+			if (this.current() == '\\') 
 			{
-				console.log('/ operator at current()')
+				console.log('\\ operator at current()')
 				this.getPresetValues(this.next());
 				this.generateRangeValue();
 			} 
-			else if (this.operators.includes(this.current()) == true && this.last() != '\\') // if the current character is an unbroken operator, throw error
+			else if (this.operators.includes(this.current()) == true && this.last() != '/') // if the current character is an unbroken operator, throw error
 			{
 				//document.getElementById('warning').innerHTML += "<br />" + "Unexpected operator at position " + (this.current_index + 1) + ", operator '" + this.pattern_input.charAt(this.current_index) + "'.";
 				throw new Error("Unexpected operator at position " + (this.current_index + 1) + ", operator '" + this.pattern_input.charAt(this.current_index) + "'.");
@@ -136,7 +136,7 @@ class Regexgen {
 				var character_store;
 				character_store = current_character; // take current character (left side of hyphen) and store it temp
 				this.next(); // skip hyphen
-				if (this.lookahead() == '\\') { // if character after hyphen is / break character
+				if (this.lookahead() == '/') { // if character after hyphen is / break character
 					this.next() // skip \
 					current_character = this.next() // character after the /
 				}
@@ -147,7 +147,7 @@ class Regexgen {
 				console.log(character_store + " , " + current_character);
 				this.generateRangeValue(character_store.charCodeAt(0), current_character.charCodeAt(0)); // generate_range_value(ascii value of left side , ascii value of right side)
 			}
-			else if (this.lookahead() != '-' && current_character != '\\') { // if the next character is not the "-" operator, and the current isn't a character break, then push current()
+			else if (this.lookahead() != '-' && current_character != '/') { // if the next character is not the "-" operator, and the current isn't a character break, then push current()
 				this.generated_value_list.push(this.current());
 			} 
 		} while (this.lookahead() != ']')
@@ -270,7 +270,7 @@ class Regexgen {
 			{
 				preset_characters = "";
 				/*document.getElementById('warning').innerHTML += "<br />Invalid preset range. \'/" + character + "\' is not a valid preset.";*/
-				this.outputWarning("<br />Invalid preset range. \'/" + character + "\' is not a valid preset.");
+				this.outputWarning("<br />Invalid preset range. \'\\" + character + "\' is not a valid preset.");
 				break;
 			}
 		}
