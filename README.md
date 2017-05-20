@@ -2,8 +2,6 @@
 
 Generate random strings using a pattern system based on regex.
 
-Implemented with JavaScript - my first project with the language. Please take heed of this, as there could be some logical or structuring issues/inefficiencies in the code.
-
 Credits go to:
 - **Paul Wolf** for help with this project, and provision of the original Python implementation (https://github.com/paul-wolf/strgen).
 
@@ -15,12 +13,14 @@ This documentation will guide you through the different operators and functional
 
 Regexgen can be used as an external script, or with the UI packaged with this repo.
 
-When using Regexgen in existing code, a new instance will need to be created in the standard way, for example in JS:
+When using Regexgen in existing code, a new object instance will need to be created, and a pattern provided for the createString() method:
 
 ~~~~
 var generator = new Regexgen();
 var generated_string = generator.createString(pattern);
 ~~~~
+
+This will create a random string based on the pattern provided. 
 
 There are multiple parameters which affect the way in which Regexgen handles string generation:
 
@@ -28,7 +28,11 @@ There are multiple parameters which affect the way in which Regexgen handles str
 - *allow_duplicates* - optional - boolean to specify whether or not Regexgen should use the same character twice in a range/set of characters. *True* by default.
 - *error_output_id* - optional - string to reference the ID of the element where warning and error messages should be printed on a UI.
 
-###Specific ranges
+See below for more information regarding patterns and other features:
+
+###Pattern format
+
+####Specific ranges
 
 Use a hyphen to define a range of different values of your choosing, or use text outside to denote fixed text. For example:
 
@@ -40,7 +44,7 @@ This range can be used to match any types of value, including letter, numbers an
 
 Providing the '-' symbol has been used between two valid characters, any character that is between the specified characters (including the specified) will be returned.
 
-###Pre-defined ranges
+####Pre-defined ranges
 
 The following will pick a character from a predefined set of characters:
 
@@ -60,7 +64,7 @@ For example:
 
 This will return any letter (upper and lower case), digit character, or underscore. You can use multiple pre-defined ranges at once, to increase the probability of a character being returned.
 
-###Fixed text
+####Fixed text
 
 Fixed text can be used outside of the character class definition. For example:
 
@@ -68,7 +72,7 @@ Fixed text can be used outside of the character class definition. For example:
 
 This would return values such as 'test 4 message' or something similar. The fixed text will remain constant and *[1-9]* will generate a value equal to or between 1 and 9.
 
-###Fixed text ranges
+####Fixed text ranges
 
 Fixed text can be used within a character class definition, to generate a random value from a specified set of characters. For example:
 
@@ -76,7 +80,7 @@ Fixed text can be used within a character class definition, to generate a random
 
 This would return values 'a', 'w' or 'h' for each character of the random string.
 
-###Quantifiers
+####Quantifiers
 
 Use { and } with a whole number to specify how many characters will be generated for a specific range, for example:
 
@@ -84,7 +88,7 @@ Use { and } with a whole number to specify how many characters will be generated
 
 This would generate 3 values between 1 and 9, and 10 characters between a and z.
 
-###Sequences
+####Sequences
 
 Sequences, denoted by ( and ) allow the specification of whole word values to be used in the generator.
 
