@@ -11,9 +11,11 @@ class Regexgen {
 		this.allow_duplicate_characters; // "Allow Duplicate Characters" setting on UI, can be set when generator is initialised
 		this.generated_output; // the full output string
 		this.error_output_id; // the default UI element where errors will be output (the reference to the element must be the ID)
+		this.allow_logging;
+		this.generator_log;
 	}
 
-	createString(pattern, allow_duplicates = true, error_output_id = "warning") { // initial method that is called to start generating a random string
+	createString(pattern, allow_duplicates = true, allow_logging = false, error_output_id = "warning") { // initial method that is called to start generating a random string
 		this.current_index = -1
 		this.generated_output = ""
 		this.pattern_input = pattern;
@@ -21,10 +23,14 @@ class Regexgen {
 		this.quantifier_value = 1;
 		this.generated_value_list = [];
 		this.error_output_id = error_output_id;
+		this.allow_logging = allow_logging;
+		this.generator_log = [];
 		// assign default values before generation/
 		// this fixes a problem with multiple generations with the same instance of the object
 
+		this.createLogEntry("Pattern", pattern, true);
 		this.operatorComparison();
+		this.outputLog();
 		return this.outputString();
 	};
 
@@ -46,18 +52,16 @@ class Regexgen {
 	};
 
 	operatorComparison() { // main method which is used to determine whether the current character is an operator or not 
-							// (the first character is usually an operator if trying to generate random strings)
-		console.log("comparing")
+						   // (the first character is usually an operator if trying to generate random strings)
 		this.next();
+		this.createLogEntry("Parsing character at position " + (this.current_index + 1));
 
 		if (this.operators.includes(this.current()) == true) 
 		{
-			console.log("AFTER NEXT CALL: " + this.current_index);
 			this.determineOperator(this.pattern_input.charAt(this.current_index));
 		}
 		else
 		{
-			console.log("current char: " + this.pattern_input.charAt(this.current_index));
 			this.getLiteral();
 			this.operatorComparison();
 		}
@@ -65,13 +69,14 @@ class Regexgen {
 
 	determineOperator(operator) { // if an operator was found in operatorComparison, find out what operator it is and respond
 		if (operator != "") {
-			console.log("operator: " + operator);
+			this.createLogEntry("Operator", operator);
 			switch(operator) {
 				case "[":
 					this.getCharacterSet();
 					this.operatorComparison();
 					break;
 				case "]":
+					this.createLogEntry("End of range reached", this.generated_value_list.toString());
 					if (this.lookahead() != '{') {
 						this.selectValueFromList(1, undefined, this.allow_duplicate_characters);	
 					}
@@ -82,6 +87,7 @@ class Regexgen {
 					this.operatorComparison();
 					break;
 				case "}":
+					this.createLogEntry("End of quantifier reached");
 					this.selectValueFromList(this.quantifier_value, undefined, this.allow_duplicate_characters);
 					this.quantifier_value = 1;
 					this.operatorComparison();
@@ -91,7 +97,7 @@ class Regexgen {
 					this.operatorComparison();
 					break;
 				case ')':
-					console.log('end sequence')
+					this.createLogEntry("End of sequence reached");
 					this.selectValueFromList(1, undefined, false);	
 					this.operatorComparison();
 					break;
@@ -102,7 +108,6 @@ class Regexgen {
 					this.operatorComparison();
 					break;
 				default:
-					console.log("literal: " + operator);
 					this.getLiteral();
 					this.operatorComparison();
 					break;
@@ -110,17 +115,17 @@ class Regexgen {
 		}
 		else
 		{
-			console.log("reached end - value is '" + this.outputString() + "'.")
+			this.createLogEntry("End of pattern reached - final generated string", this.outputString(), true);
 		}
 	};
 
 	getCharacterSet() { // if the operator was the start of a character class definition, begin reading the pattern, and react according to a set of comparisons
 		do { // starts at the [ which was successfully read in the stage before this function
+			this.createLogEntry("Processing range at pattern position " + (this.current_index + 1));
 			var current_character = this.next();
-			console.log("CHARACTER AT current_index: " + this.pattern_input.charAt(this.current_index));
 			if (this.current() == '\\') 
 			{
-				console.log('\\ operator at current()')
+				this.createLogEntry("Preset character at position " + (this.current_index + 1));
 				this.getPresetValues(this.next());
 				this.generateRangeValue();
 			} 
@@ -132,7 +137,7 @@ class Regexgen {
 			}
 			else if (this.lookahead() == '-' && current_character != '/') // if the next character is an unbroken '-' operator
 			{
-				console.log('unbroken operator \'-\' at lookahead()')
+				this.createLogEntry("Unbroken operator", "-");
 				var character_store;
 				character_store = current_character; // take current character (left side of hyphen) and store it temp
 				this.next(); // skip hyphen
@@ -144,23 +149,25 @@ class Regexgen {
 				{
 					current_character = this.next(); // assign the next character (right side of hyphen) and store it as the current character
 				}
-				console.log(character_store + " , " + current_character);
+				this.createLogEntry("Range found", character_store + " , " + current_character);
 				this.generateRangeValue(character_store.charCodeAt(0), current_character.charCodeAt(0)); // generate_range_value(ascii value of left side , ascii value of right side)
 			}
 			else if (this.lookahead() != '-' && current_character != '/') { // if the next character is not the "-" operator, and the current isn't a character break, then push current()
+				this.createLogEntry("Literal added to range", current_character);
 				this.generated_value_list.push(this.current());
 			} 
 		} while (this.lookahead() != ']')
 	}
 
 	getLiteral() { // output a literal character, skipping any generation
+		this.createLogEntry("Literal", this.pattern_input.charAt(this.current_index));
 		this.buildGeneratedString(this.pattern_input.charAt(this.current_index));
 	}
 
 	getQuantifier() { // get the value within the curly brackets, if present
+		this.createLogEntry("Processing quantifier at pattern position " + (this.current_index + 1));
 		var start_value = this.current_index + 1;
 		var quantifier_value = "";
-		console.log("getting quantifier");
 		do {
 			if (this.operators.includes(this.lookahead()) == false) 
 			{
@@ -190,7 +197,7 @@ class Regexgen {
 			quantifier_value = this.generated_value_list.length;
 		}
 
-		console.log('quantifier_value: ' + quantifier_value);
+		this.createLogEntry("Quantifier value is " + quantifier_value);
 
 		if (quantifier_value == 0) {
 			this.outputWarning("<br /> No value was returned. <br />Character quantifier at position " + start_value + " is 0.")
@@ -207,7 +214,7 @@ class Regexgen {
 			firstvalue = secondvalue;
 			secondvalue = store;
 			character_index = firstvalue;
-			console.log("values swapped!");
+			this.createLogEntry("Range values swapped");
 		}
 
 		if (character_index <= secondvalue && character_index >= firstvalue) { // if character_index is within the range specified
@@ -218,7 +225,7 @@ class Regexgen {
 	}
 
 	getPresetValues(character) { // determine what set of pre-defined values will be used when generating with the '\' symbol, then call generatePresetValues
-		console.log("initialise preset");
+		this.createLogEntry("Getting preset values for preset character", character);
 		var preset_characters;
 		switch(character) { // may be a good idea to look this hardcode over...
 			case "w": //word characters
@@ -287,7 +294,7 @@ class Regexgen {
 	generateSequence() { // split each value in the sequence and push it to the generated_value_list array
 		var string_value = "";
 		var last_operator;
-		console.log('generating sequence')
+		this.createLogEntry("Processing sequence at pattern position " + (this.current_index + 1));
 
 		while(this.current() != ')') {
 			if (this.lookahead() == '|' || this.lookahead() == ')' || this.lookahead() == '&') 
@@ -312,30 +319,29 @@ class Regexgen {
 
 					if (temp_string == undefined) {
 						temp_string = string_value;
-						string_value = "";
 					} else {
 						temp_string += string_value;
-
-						console.log("Temp String: " + temp_string);
-
-						string_value = "";
 					}
+
+					this.createLogEntry("Sequence value", string_value);
+					string_value = "";
 
 					if (this.lookahead() == ')') { 
 						var output_string = "";
 						var temp_string_length = temp_string.length;
 						var temp_string_array = temp_string.split("");
 
+						this.createLogEntry("Combined string character range", temp_string_array.toString());
+
 						for (var index = 0; index < temp_string_length; index++) {
 							var randvalue = Math.floor(Math.random() * temp_string_array.length);
-
-							console.log("temp_string: " + temp_string);
-							console.log("current output: " + output_string);
-							console.log("selected char: " + temp_string_array[randvalue]);
-							console.log("rand_value:" + randvalue);
+							
+							this.createLogEntry("Sequence processing action " + (index + 1) + " - Selected sequence character", temp_string_array[randvalue]);
 
 							output_string += temp_string_array[randvalue];
 							temp_string_array.splice(randvalue, 1);
+
+							this.createLogEntry("Sequence processing action " + (index + 1) + " - Range after selection", temp_string_array.toString());
 						}
 
 						this.generated_value_list.push(output_string);
@@ -385,15 +391,18 @@ class Regexgen {
 
 			}
 
+			this.createLogEntry("Selected value", this.generated_value_list[randvalue]);
+
 			if (allow_duplicates == false)
 			{
 				this.generated_value_list.splice(randvalue, 1);
+				this.createLogEntry("Removed selected value from array", this.generated_value_list.toString());
 			}
+
 			this.selectValueFromList(this.quantifier_value, character_index+=1, allow_duplicates);
 		}
 		else
 		{
-			console.log("remaining array values: " + this.generated_value_list.toString());
 			this.generated_value_list = [];
 		}
 	}
@@ -412,6 +421,26 @@ class Regexgen {
 		}
 		else {
 			console.error(message);
+		}
+	}
+
+	createLogEntry(caption, content = undefined, enabled = this.allow_logging) {
+		if(enabled == true) {
+			var timestamp = new Date();
+			//var timestamp_text = timestamp.getHours() + ":" + timestamp.getMinutes() + ":" + timestamp.getSeconds() + ":" + timestamp.getMilliseconds();
+			var timestamp_text = timestamp.toTimeString().split(" ")[0] + ":" + timestamp.getMilliseconds();
+			if(content != undefined) {
+				this.generator_log.push(timestamp_text + " - " + caption + ": " + content);
+			} else {
+				this.generator_log.push(timestamp_text + " - " + caption);
+			}
+
+		}
+	}
+
+	outputLog() {
+		for (var count = 0; count <= this.generator_log.length - 1; count++) {
+			console.log((count + 1) + " - " + this.generator_log[count]);
 		}
 	}
 }

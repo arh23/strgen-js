@@ -65,24 +65,35 @@ body {
 
 .history .history_list {
 	border-top: thin dotted #000000;
+	padding-top: 20px;
 	display: none;
 	word-wrap: break-word;
 	min-height: 20px;
  	overflow: hidden;
 	padding-bottom: 18px;
+	max-height: 1250px; 
+    overflow: auto;
 }
 
 .history_list .history_record {
-	float: left;
-	padding-left: 84.5px;
-	width: 272px;
-	text-overflow: ellipsis;
+	margin: 0 auto;
+	/*float: left;*/
+	/*padding-left: 84.5px;*/
+	/*padding: 20px;*/
+	/*width: 272px;*/
+	width: 90em;
+	/*text-overflow: ellipsis;*/
+
+	font-size: 12px;
 }
 
 .history_record p {
 	border: thin dotted #000000;
-  	padding: 5px;
- 	max-height: 70px;
+  	padding: 10px;
+  	background-color: white;
+  	text-align: left;
+  	max-height: 200px;
+  	overflow: auto;
 }
 
 .history_list:empty:before {

@@ -38,6 +38,28 @@
 			initialize_generator();			
 		});
 
+		$("#enablelogging").change(function(){
+			//div.enable_logging.checked() = confirm("Warning");
+			if ($(this).is(":checked"))
+			{
+				if (confirm('Enabling logging can cause performance problems. Are you sure?') == false) {
+					$(this).removeAttr("checked")
+				}
+			}
+
+			/*
+			var $this = $(this);
+        	if ($this.is(":checked"))
+        	{
+            	if(confirm('Are you sure you are going to provide 100% satisfaction guarantee?') == true){
+                //your code
+            	}
+            	else{
+                	$this.removeAttr("checked");
+            	}
+       	 	}*/
+		});
+
 		$("#custom_button").mouseover(function() {
 			$(this).css(hoverColour);
 		})
@@ -66,12 +88,13 @@
 		document.getElementById('warning').innerHTML = "";
 		var pattern = document.getElementById('templatebox').value;
 		var allow_duplicate_characters = document.getElementById('allowduplicates').checked;
+		var enable_logging = document.getElementById('enablelogging').checked;
 
 		if (pattern != "") {
 			var generator = new Regexgen();
-			var generated_string = generator.createString(pattern, allow_duplicate_characters);
+			var generated_string = generator.createString(pattern, allow_duplicate_characters, enable_logging);
 			document.getElementById("stringvalue").innerHTML = generated_string;
-			record_value(pattern, generated_string);
+			record_value(pattern, generated_string, generator.generator_log);
 		}
 
 	} catch(error) {
@@ -79,12 +102,12 @@
 		console.error(error.stack);
 	}
 
-	function record_value(pattern, generated_output) {
-		create_fields(pattern, generated_output, count);
+	function record_value(pattern, generated_output, log_array) {
+		create_fields(pattern, generated_output, count, log_array);
 		count += 1;
 	}
 
-	function create_fields(pattern, generated_output, count) {
+	function create_fields(pattern, generated_output, count, log_array) {
 		var current_id = "result" + count;
 
 		if (!document.getElementById(current_id)){
@@ -96,11 +119,18 @@
 
 			document.getElementById("historylist").appendChild(container);
 		}
+		var paragraph = document.createElement("p");
 
-		if (generated_output.length > 25) {
-			document.getElementById(current_id).innerHTML = "<p /> Record " + (count + 1) + ":<br />" + pattern + "<br />" + generated_output.slice(0,24) + "...</p />";
-		} else {
-			document.getElementById(current_id).innerHTML = "<p /> Record " + (count + 1) + ":<br />" + pattern + "<br />" + generated_output + "</p />";			
+		paragraph.setAttribute("id", current_id + "_p");
+		document.getElementById(current_id).appendChild(paragraph);
+		//if (generated_output.length > 25) {
+		//	document.getElementById(current_id).innerHTML = "<p /> Record " + (count + 1) + ":<br />" + pattern + "<br />" + generated_output.slice(0,24) + "...</p />";
+		//} else {
+		//	document.getElementById(current_id).innerHTML = "<p /> Record " + (count + 1) + ":<br />" + pattern + "<br />" + generated_output + "</p />";			
+		//}
+
+		for (var count = 0; count <= log_array.length - 1; count++) {
+			document.getElementById(current_id + "_p").innerHTML += log_array[count] + "<br />";
 		}
 	}
 }
@@ -131,6 +161,7 @@
 
 				<textarea id="stringvalue" rows="3" cols="75" readonly></textarea> 
 				<br><input type="checkbox" id="allowduplicates" checked> Allow Duplicate Characters <br>
+				<input type="checkbox" class="enable_logging" id="enablelogging"> Enable Logging <br>
 			</div>
 
 		</form>
@@ -138,7 +169,7 @@
 		</section>
 
 		<section class = "history">
-			<div class="history_header" id="historyheader"><h4>History</h4>
+			<div class="history_header" id="historyheader"><h4>Log</h4>
 				<div class="accordion_icon"></div>
 			</div>
 			<div class="history_list" id="historylist"></div>
