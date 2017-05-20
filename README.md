@@ -1,15 +1,15 @@
-#Regexgen
+# Regexgen
 
 Generate random strings using a pattern system based on regex.
 
 Credits go to:
 - **Paul Wolf** for help with this project, and provision of the original Python implementation (https://github.com/paul-wolf/strgen).
 
-##Documentation
+## Documentation
 
 This documentation will guide you through the different operators and functionality of the pattern system.
 
-###Usage
+### Usage
 
 Regexgen can be used as an external script, or with the UI packaged with this repo.
 
@@ -30,9 +30,9 @@ There are multiple parameters which affect the way in which Regexgen handles str
 
 See below for more information regarding patterns and other features:
 
-###Pattern format
+### Pattern format
 
-####Specific ranges
+#### Specific ranges
 
 Use a hyphen to define a range of different values of your choosing, or use text outside to denote fixed text. For example:
 
@@ -44,7 +44,7 @@ This range can be used to match any types of value, including letter, numbers an
 
 Providing the '-' symbol has been used between two valid characters, any character that is between the specified characters (including the specified) will be returned.
 
-####Pre-defined ranges
+#### Pre-defined ranges
 
 The following will pick a character from a predefined set of characters:
 
@@ -64,7 +64,7 @@ For example:
 
 This will return any letter (upper and lower case), digit character, or underscore. You can use multiple pre-defined ranges at once, to increase the probability of a character being returned.
 
-####Fixed text
+#### Fixed text
 
 Fixed text can be used outside of the character class definition. For example:
 
@@ -72,7 +72,7 @@ Fixed text can be used outside of the character class definition. For example:
 
 This would return values such as 'test 4 message' or something similar. The fixed text will remain constant and *[1-9]* will generate a value equal to or between 1 and 9.
 
-####Fixed text ranges
+#### Fixed text ranges
 
 Fixed text can be used within a character class definition, to generate a random value from a specified set of characters. For example:
 
@@ -80,7 +80,7 @@ Fixed text can be used within a character class definition, to generate a random
 
 This would return values 'a', 'w' or 'h' for each character of the random string.
 
-####Quantifiers
+#### Quantifiers
 
 Use { and } with a whole number to specify how many characters will be generated for a specific range, for example:
 
@@ -88,7 +88,7 @@ Use { and } with a whole number to specify how many characters will be generated
 
 This would generate 3 values between 1 and 9, and 10 characters between a and z.
 
-####Sequences
+#### Sequences
 
 Sequences, denoted by ( and ) allow the specification of whole word values to be used in the generator.
 
@@ -101,9 +101,9 @@ The operators for sequences are different:
 
 Sequences do not use quantifiers to generate values.
 
-###Additional controls and parameters
+### Additional controls and parameters
 
-####Allow Duplicate Characters
+#### Allow Duplicate Characters
 
 This boolean parameter allows the same character to be used in the string. When set to false, the character is added to the resulting string, and then removed from the list used to store and select values valid for the current part of the template.
 
