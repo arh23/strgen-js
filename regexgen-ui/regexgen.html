@@ -24,8 +24,8 @@
 				//$("div.accordion_icon").text("+");
 				$("div.history_list").slideUp('fast');
 			}
-		});	
-		
+		});
+
 		$("div.history_header").mouseover(function() {
 			$(this).css(hoverColour);
 		})
@@ -34,9 +34,11 @@
 			$(this).css("background-color", "");
 		})
 
-		$("div.gen_button").click(function(){
-			initialize_generator();			
-		});
+		// $("div.gen_button").click(function(){
+		// 	initialize_generator();
+		// });
+		//
+		$("form[name='regex_form']").on('submit', initialize_generator);
 
 		$("#enablelogging").change(function(){
 			//div.enable_logging.checked() = confirm("Warning");
@@ -69,11 +71,11 @@
 		})
 
 		$("#custom_button").mousedown(function() {
-			$(this).css(clickedColour);	
+			$(this).css(clickedColour);
 		})
 
 		$("#custom_button").mouseup(function() {
-			$(this).css(hoverColour);	
+			$(this).css(hoverColour);
 		})
 	});
 </script>
@@ -126,7 +128,7 @@
 		//if (generated_output.length > 25) {
 		//	document.getElementById(current_id).innerHTML = "<p /> Record " + (count + 1) + ":<br />" + pattern + "<br />" + generated_output.slice(0,24) + "...</p />";
 		//} else {
-		//	document.getElementById(current_id).innerHTML = "<p /> Record " + (count + 1) + ":<br />" + pattern + "<br />" + generated_output + "</p />";			
+		//	document.getElementById(current_id).innerHTML = "<p /> Record " + (count + 1) + ":<br />" + pattern + "<br />" + generated_output + "</p />";
 		//}
 
 		for (var count = 0; count <= log_array.length - 1; count++) {
@@ -147,7 +149,7 @@
 
 	<section class="main_body">
 		<section class="main_area">
-		<form>
+		<form name="regex_form" action="javascript:void(0);">
 			<!--form to contain the two textboxes and button-->
 			<div class="inputwrap">
 				<p>Template:</p>
@@ -157,9 +159,9 @@
 
 			<div class="inputwrap">
 				<!--<p><input class="gen_button" type="button" onclick="initialize_generator()" value="Generate"></p>-->
-				<br><div id="custom_button" class="gen_button">Generate</div><br>
+				<br><button type="submit" id="custom_button" class="gen_button">Generate</div><br>
 
-				<textarea id="stringvalue" rows="3" cols="75" readonly></textarea> 
+				<textarea id="stringvalue" rows="3" cols="75" readonly></textarea>
 				<br><input type="checkbox" id="allowduplicates" checked> Allow Duplicate Characters <br>
 				<input type="checkbox" class="enable_logging" id="enablelogging"> Enable Logging <br>
 			</div>
@@ -195,7 +197,7 @@
 				</ul>
 
 				<p> Click <a href="regexgen_doc.html">here</a> for detailed documentation.</p>
-			</div> 
+			</div>
 
 		</section>
 
