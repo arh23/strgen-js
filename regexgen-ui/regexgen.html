@@ -9,132 +9,91 @@
 <script src="js/jquery-1.12.4.min.js"></script>
 
 <script>
-	$(document).ready(function(){
-		var hoverColour = {'background-color': '#8FC258'};
-		var clickedColour = {'background-color': '#bbda9a'}
-		//$("div.accordion_icon").text("+");
+    $(document).ready(function(){
+        $("div.history_header").click(function(){
+            if($("div.history_list").css("display") == "none"){
+                //$("div.accordion_icon").text("-");
+                $("div.history_list").slideToggle('fast');
+            }
+            else
+            {
+                //$("div.accordion_icon").text("+");
+                $("div.history_list").slideUp('fast');
+            }
+        });
 
-		$("div.history_header").click(function(){
-			if($("div.history_list").css("display") == "none"){
-				//$("div.accordion_icon").text("-");
-				$("div.history_list").slideToggle('fast');
-			}
-			else
-			{
-				//$("div.accordion_icon").text("+");
-				$("div.history_list").slideUp('fast');
-			}
-		});
+        // $("div.gen_button").click(function(){
+        //  initialize_generator();
+        // });
+        //
+        $("form[name='regex_form']").on('submit', initialize_generator);
 
-		$("div.history_header").mouseover(function() {
-			$(this).css(hoverColour);
-		})
-
-		$("div.history_header").mouseout(function() {
-			$(this).css("background-color", "");
-		})
-
-		// $("div.gen_button").click(function(){
-		// 	initialize_generator();
-		// });
-		//
-		$("form[name='regex_form']").on('submit', initialize_generator);
-
-		$("#enablelogging").change(function(){
-			//div.enable_logging.checked() = confirm("Warning");
-			if ($(this).is(":checked"))
-			{
-				if (confirm('Enabling logging can cause performance problems. Are you sure?') == false) {
-					$(this).removeAttr("checked")
-				}
-			}
-
-			/*
-			var $this = $(this);
-        	if ($this.is(":checked"))
-        	{
-            	if(confirm('Are you sure you are going to provide 100% satisfaction guarantee?') == true){
-                //your code
-            	}
-            	else{
-                	$this.removeAttr("checked");
-            	}
-       	 	}*/
-		});
-
-		$("#custom_button").mouseover(function() {
-			$(this).css(hoverColour);
-		})
-
-		$("#custom_button").mouseout(function() {
-			$(this).css("background-color", "");
-		})
-
-		$("#custom_button").mousedown(function() {
-			$(this).css(clickedColour);
-		})
-
-		$("#custom_button").mouseup(function() {
-			$(this).css(hoverColour);
-		})
-	});
+        $("#enablelogging").change(function(){
+            if ($(this).is(":checked"))
+            {
+                if (confirm('Enabling logging can cause performance problems. Are you sure?') == false) {
+                    $(this).removeAttr("checked")
+                }
+            }
+        });
+    });
 </script>
 
 <script>
-	var history = new Array();
-	var count = 0;
+    var history = new Array();
+    var count = 0;
 
-	function initialize_generator() {
-	try {
-		document.getElementById('stringvalue').innerHTML = "";
-		document.getElementById('warning').innerHTML = "";
-		var pattern = document.getElementById('templatebox').value;
-		var allow_duplicate_characters = document.getElementById('allowduplicates').checked;
-		var enable_logging = document.getElementById('enablelogging').checked;
+    function initialize_generator() {
+    try {
+        document.getElementById('stringvalue').innerHTML = "";
+        document.getElementById('warning').innerHTML = "";
+        var pattern = document.getElementById('templatebox').value;
+        var allow_duplicate_characters = document.getElementById('allowduplicates').checked;
+        var enable_logging = document.getElementById('enablelogging').checked;
 
-		if (pattern != "") {
-			var generator = new Regexgen();
-			var generated_string = generator.createString(pattern, allow_duplicate_characters, enable_logging);
-			document.getElementById("stringvalue").innerHTML = generated_string;
-			record_value(pattern, generated_string, generator.generator_log);
-		}
+        if (pattern != "") {
+            var generator = new Regexgen();
+            var generated_string = generator.createString(pattern, allow_duplicate_characters, enable_logging);
+            document.getElementById("stringvalue").innerHTML = generated_string;
+            record_value(pattern, generated_string, generator.generator_log);
+        }
 
-	} catch(error) {
-		document.getElementById('warning').innerHTML += "<br />" + error.message;
-		console.error(error.stack);
-	}
+    } catch(error) {
+        document.getElementById('warning').innerHTML += "<br />" + error.message;
+        console.error(error.stack);
+    }
 
-	function record_value(pattern, generated_output, log_array) {
-		create_fields(pattern, generated_output, count, log_array);
-		count += 1;
-	}
+    function record_value(pattern, generated_output, log_array) {
+        create_fields(pattern, generated_output, count, log_array);
+        count += 1;
+    }
 
-	function create_fields(pattern, generated_output, count, log_array) {
-		var current_id = "result" + count;
+    function create_fields(pattern, generated_output, count, log_array) {
+        var current_id = "result" + count;
 
-		if (!document.getElementById(current_id)){
-			var container = document.createElement("div");
+        if (!document.getElementById(current_id)){
+            var container = document.createElement("div");
 
-			container.setAttribute("id", current_id);
-			container.setAttribute("class", "history_record");
-			container.setAttribute("title", generated_output);
+            container.setAttribute("id", current_id);
+            container.setAttribute("class", "history_record");
+            container.setAttribute("title", generated_output);
 
-			document.getElementById("historylist").appendChild(container);
-		}
-		var paragraph = document.createElement("p");
+            document.getElementById("historylist").appendChild(container);
+        }
+        var paragraph = document.createElement("p");
 
-		paragraph.setAttribute("id", current_id + "_p");
-		document.getElementById(current_id).appendChild(paragraph);
-		//if (generated_output.length > 25) {
-		//	document.getElementById(current_id).innerHTML = "<p /> Record " + (count + 1) + ":<br />" + pattern + "<br />" + generated_output.slice(0,24) + "...</p />";
-		//} else {
-		//	document.getElementById(current_id).innerHTML = "<p /> Record " + (count + 1) + ":<br />" + pattern + "<br />" + generated_output + "</p />";
-		//}
+        paragraph.setAttribute("id", current_id + "_p");
+        document.getElementById(current_id).appendChild(paragraph);
+        //if (generated_output.length > 25) {
+        //  document.getElementById(current_id).innerHTML = "<p /> Record " + (count + 1) + ":<br />" + pattern + "<br />" + generated_output.slice(0,24) + "...</p />";
+        //} else {
+        //  document.getElementById(current_id).innerHTML = "<p /> Record " + (count + 1) + ":<br />" + pattern + "<br />" + generated_output + "</p />";
+        //}
 
-		for (var count = 0; count <= log_array.length - 1; count++) {
-			document.getElementById(current_id + "_p").innerHTML += log_array[count] + "<br />";
-		}
-	}
+        for (var count = 0; count <= log_array.length - 1; count++) {
+            document.getElementById(current_id + "_p").innerHTML += log_array[count] + "<br />";
+        }
+    }
 }
 </script>
 
@@ -143,65 +102,65 @@
 </head>
 
 <body>
-	<div class="backlayer"> </div>
-	<h1>Regexgen</h1>
-	<h3>Recursive descent parser</h3>
+    <div class="backlayer"> </div>
+    <h1>Regexgen</h1>
+    <h3>Recursive descent parser</h3>
 
-	<section class="main_body">
-		<section class="main_area">
-		<form name="regex_form" action="javascript:void(0);">
-			<!--form to contain the two textboxes and button-->
-			<div class="inputwrap">
-				<p>Template:</p>
-				<input type="text" id="templatebox" value=""><br>
-				<div id="warning"></div>
-			</div>
+    <section class="main_body">
+        <section class="main_area">
+        <form name="regex_form" action="javascript:void(0);">
+            <!--form to contain the two textboxes and button-->
+            <div class="inputwrap">
+                <p>Template:</p>
+                <input type="text" id="templatebox" value=""><br>
+                <div id="warning"></div>
+            </div>
 
-			<div class="inputwrap">
-				<!--<p><input class="gen_button" type="button" onclick="initialize_generator()" value="Generate"></p>-->
-				<br><button type="submit" id="custom_button" class="gen_button">Generate</div><br>
+            <div class="inputwrap">
+                <!--<p><input class="gen_button" type="button" onclick="initialize_generator()" value="Generate"></p>-->
+                <br><button type="submit" id="custom_button" class="gen_button">Generate</div><br>
 
-				<textarea id="stringvalue" rows="3" cols="75" readonly></textarea>
-				<br><input type="checkbox" id="allowduplicates" checked> Allow Duplicate Characters <br>
-				<input type="checkbox" class="enable_logging" id="enablelogging"> Enable Logging <br>
-			</div>
+                <textarea id="stringvalue" rows="3" cols="75" readonly></textarea>
+                <br><input type="checkbox" id="allowduplicates" checked> Allow Duplicate Characters <br>
+                <input type="checkbox" class="enable_logging" id="enablelogging"> Enable Logging <br>
+            </div>
 
-		</form>
+        </form>
 
-		</section>
+        </section>
 
-		<section class = "history">
-			<div class="history_header" id="historyheader"><h4>Log</h4>
-				<div class="accordion_icon"></div>
-			</div>
-			<div class="history_list" id="historylist"></div>
-		</section>
+        <section class = "history">
+            <div class="history_header" id="historyheader"><h4>Log</h4>
+                <div class="accordion_icon"></div>
+            </div>
+            <div class="history_list" id="historylist"></div>
+        </section>
 
-		<section class="doc">
-			<h3>Documentation</h3>
+        <section class="doc">
+            <h3>Documentation</h3>
 
-			<div>
-				<h4>Pre-defined ranges</h4> <br>
+            <div>
+                <h4>Pre-defined ranges</h4> <br>
 
-				<p>The following will pick a character from a predefined set of characters:</p>
-				<ul >
-				  	<li>\w - word characters</li>
-				  	<li>\p - punctuation characters</li>
-				  	<li>\d - digits</li>
-				  	<li>\c - lower case characters</li>
-				  	<li>\u - upper case characters</li>
-				  	<li>\l - letters</li>
-				  	<li>\h - hex digits (lower case letters only)</li>
-				  	<li>\H - hex digits (lower and upper case)</li>
-				  	<li>\o - octal digits</li><br>
-				</ul>
+                <p>The following will pick a character from a predefined set of characters:</p>
+                <ul >
+                    <li>\w - word characters</li>
+                    <li>\p - punctuation characters</li>
+                    <li>\d - digits</li>
+                    <li>\c - lower case characters</li>
+                    <li>\u - upper case characters</li>
+                    <li>\l - letters</li>
+                    <li>\h - hex digits (lower case letters only)</li>
+                    <li>\H - hex digits (lower and upper case)</li>
+                    <li>\o - octal digits</li><br>
+                </ul>
 
-				<p> Click <a href="regexgen_doc.html">here</a> for detailed documentation.</p>
-			</div>
+                <p> Click <a href="regexgen_doc.html">here</a> for detailed documentation.</p>
+            </div>
 
-		</section>
+        </section>
 
-	</section>
+    </section>
 
 </body>
 

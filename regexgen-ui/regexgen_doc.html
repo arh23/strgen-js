@@ -8,182 +8,172 @@
 <link rel="stylesheet" type="text/css" href="regexgen.css">
 
 <script>
-	$(document).ready(function(){
-		$(".accordion_icon").text("+");
-		var hoverColour = {'background-color': '#8FC258'};
-		
-		$("div.content").click(function(){
-			if($(this).find(".content_body").css("display") == "none"){
-				$(this).find(".accordion_icon").text("-");
-				//$(this).find(".content_body").show();
-				$(this).find(".content_body").slideToggle('fast');
-			}
-			else
-			{
-				$(this).find(".accordion_icon").text("+");
-				//$(this).find(".content_body").hide();	
-				$(this).find(".content_body").slideUp('fast');
-			}
-		});	
-		
-		$("div.content").mouseover(function() {
-			$(this).css(hoverColour);
-		})
-
-		$("div.content").mouseout(function() {
-			$(this).css("background-color", "");
-		})
-	});
+    $(document).ready(function(){
+        $(".accordion_icon").text("+");
+        var hoverColour = {'background-color': '#8FC258'};
+        
+        $("div.content").click(function(){
+            if($(this).find(".content_body").css("display") == "none"){
+                $(this).find(".accordion_icon").text("-");
+                //$(this).find(".content_body").show();
+                $(this).find(".content_body").slideToggle('fast');
+            }
+            else
+            {
+                $(this).find(".accordion_icon").text("+");
+                //$(this).find(".content_body").hide(); 
+                $(this).find(".content_body").slideUp('fast');
+            }
+        }); 
+    });
 </script>
 
 </head>
 
 <body>
-	<div class="backlayer"> </div>
-	<h1>Regexgen Documentation</h1>
-	<p><a href="regexgen.html">Back to Regexgen</a></p>
+    <div class="backlayer"> </div>
+    <h1>Regexgen Documentation</h1>
+    <p><a href="regexgen.html">Back to Regexgen</a></p>
 
-	<section class="doc">
-		<div class="content_backlayer"></div>
-		<!--<div class="backlayer"> </div> -->
+    <section class="doc">
+        <div class="content_backlayer"></div>
+        <!--<div class="backlayer"> </div> -->
 
-		<div class="intro"> Click a heading to expand</div>
+        <div class="intro"> Click a heading to expand</div>
 
-		<div class="content"> 
-			<div class="accordion_icon"></div>
-			<h4>Specific ranges</h4> <br> 
+        <div class="content"> 
+            <div class="accordion_icon"></div>
+            <h4>Specific ranges</h4> <br> 
 
-			<div class="content_body">
-				<br><p>Use a hyphen to define a range of different values of your choosing, or use text outside to denote fixed text. For example:</p><br>
+            <div class="content_body">
+                <p>Use a hyphen to define a range of different values of your choosing, or use text outside to denote fixed text. For example:</p><br>
 
-				<p><i>[1-9]</i></p><br>
+                <p><i>[1-9]</i></p><br>
 
-				<p>This would return values such as '<i>4</i>' or something similar. The range <i> [1-9] </i> will generate a value equal to or between 1 and 9.</p><br>
+                <p>This would return values such as '<i>4</i>' or something similar. The range <i> [1-9] </i> will generate a value equal to or between 1 and 9.</p><br>
 
-				<p>This range can be used to match any types of value, including letter, numbers and symbols. Providing the '-' symbol has been used between two valid characters, any character that is between the specified characters (including the specified) will be returned.</p>
-			</div>
-		</div>
+                <p>This range can be used to match any types of value, including letter, numbers and symbols. Providing the '-' symbol has been used between two valid characters, any character that is between the specified characters (including the specified) will be returned.</p>
+            </div>
+        </div>
 
-		<div class="content"> 
-			<div class="accordion_icon"></div>
-			<h4>Pre-defined ranges</h4><br>
+        <div class="content"> 
+            <div class="accordion_icon"></div>
+            <h4>Pre-defined ranges</h4><br>
 
-			<div class="content_body">
-				<br><p>The following will pick a character from a predefined set of characters:</p>
-			  	<ul >
-			  		<li>\w - word characters</li>
-			  		<li>\p - punctuation characters</li>
-			  		<li>\d - digits</li>
-			  		<li>\c - lower case characters</li>
-			  		<li>\u - upper case characters</li>
-			  		<li>\l - letters</li>
-			  		<li>\h - hex digits</li>
-				  	<li>\H - hex digits (lower and upper case)</li>
-			  		<li>\p - octal digits</li><br>
-			  	</ul>
-				<p>For example:</p><br>
+            <div class="content_body">
+                <p>The following will pick a character from a predefined set of characters:</p>
+                <ul >
+                    <li>\w - word characters</li>
+                    <li>\p - punctuation characters</li>
+                    <li>\d - digits</li>
+                    <li>\c - lower case characters</li>
+                    <li>\u - upper case characters</li>
+                    <li>\l - letters</li>
+                    <li>\h - hex digits</li>
+                    <li>\H - hex digits (lower and upper case)</li>
+                    <li>\p - octal digits</li><br>
+                </ul>
+                <p>For example:</p><br>
 
-				<p><i>[\w]</i></p><br>
+                <p><i>[\w]</i></p><br>
 
-				<p>This will return any letter (upper and lower case), digit character, or underscore. You can use multiple pre-defined ranges at once, to increase the probability of a character being returned.</p>
-			</div>
-		</div> 
+                <p>This will return any letter (upper and lower case), digit character, or underscore. You can use multiple pre-defined ranges at once, to increase the probability of a character being returned.</p>
+            </div>
+        </div> 
 
-		<div class="content">
-			<div class="accordion_icon"></div>
-			<h4>Fixed text</h4> <br>
+        <div class="content">
+            <div class="accordion_icon"></div>
+            <h4>Fixed text</h4> <br>
 
-			<div class="content_body">
-				<br><p>Fixed text can be used outside of the character class definition. For example:</p><br>
+            <div class="content_body">
+                <p>Fixed text can be used outside of the character class definition. For example:</p><br>
 
-				<p><i>test [1-9] message</i></p><br>
+                <p><i>test [1-9] message</i></p><br>
 
-				<p>This would return values such as '<i>test 4 message</i>' or something similar. The fixed text will remain constant and <i> [1-9] </i> will generate a value equal to or between 1 and 9.</p>
-			</div>
-		</div>
+                <p>This would return values such as '<i>test 4 message</i>' or something similar. The fixed text will remain constant and <i> [1-9] </i> will generate a value equal to or between 1 and 9.</p>
+            </div>
+        </div>
 
-		<div class="content"> 
-			<div class="accordion_icon"></div>
-			<h4>Fixed text ranges</h4> <br> 
+        <div class="content"> 
+            <div class="accordion_icon"></div>
+            <h4>Fixed text ranges</h4> <br> 
 
-			<div class="content_body">
-				<br><p>Fixed text can be used within a character class definition, to generate a random value from a specified set of characters. For example:</p><br>
+            <div class="content_body">
+                <p>Fixed text can be used within a character class definition, to generate a random value from a specified set of characters. For example:</p><br>
 
-				<p><i>[awh]</i></p><br>
+                <p><i>[awh]</i></p><br>
 
-				<p>This would return values 'a', 'w' or 'h' for each character of the random string.</p>
-			</div>
-		</div>
+                <p>This would return values 'a', 'w' or 'h' for each character of the random string.</p>
+            </div>
+        </div>
 
-		<div class="content"> 
-			<div class="accordion_icon"></div>
-			<h4>Quantifiers</h4> <br>
+        <div class="content"> 
+            <div class="accordion_icon"></div>
+            <h4>Quantifiers</h4> <br>
 
-			<div class="content_body">
-				<br><p>Use { and } with a whole number to specify how many characters will be generated for a specific range, for example:</p><br>
+            <div class="content_body">
+                <br><p>Use { and } with a whole number to specify how many characters will be generated for a specific range, for example:</p><br>
 
-				<p><i>[1-9]{3}[a-z]{10}</i></p><br>
+                <p><i>[1-9]{3}[a-z]{10}</i></p><br>
 
-				<p>This would generate 3 values between 1 and 9, and 10 characters between a and z.</p>
-			</div>
-		</div>
+                <p>This would generate 3 values between 1 and 9, and 10 characters between a and z.</p>
+            </div>
+        </div>
 
-		<div class="content">
-			<div class="accordion_icon"></div>
-			<h4>Sequences</h4> <br>
+        <div class="content">
+            <div class="accordion_icon"></div>
+            <h4>Sequences</h4> <br>
 
-			<div class="content_body">
-				<br><p>Sequences, denoted by ( and ) allow the specification of whole word values to be used in the generator.</p> <br>
+            <div class="content_body">
+                <p>Sequences, denoted by ( and ) allow the specification of whole word values to be used in the generator.</p> <br>
 
-				<p>The operators for sequences are different:</p>
-				<ul>
-					<li> The | operator - this will pick one value in a list of values. <br>
-					For example: <i>(value1|value2|value3)</i> can result in either <i>value1</i>, <i>value2</i> or <i>value3</i>.</li>
-					<li> The & operator - this will merge and shuffle multiple values. <br>
-					For example: <i>(value1&value2&value3)</i> can result in values such as <i>3llevveuaa2v1luuae</i> etc.</li>
-				</ul><br>
+                <p>The operators for sequences are different:</p>
+                <ul>
+                    <li> The | operator - this will pick one value in a list of values. <br>
+                    For example: <i>(value1|value2|value3)</i> can result in either <i>value1</i>, <i>value2</i> or <i>value3</i>.</li>
+                    <li> The & operator - this will merge and shuffle multiple values. <br>
+                    For example: <i>(value1&value2&value3)</i> can result in values such as <i>3llevveuaa2v1luuae</i> etc.</li>
+                </ul><br>
 
-				<p>Sequences do not use quantifiers to generate values.</p>
-			</div>
-		</div>
+                <p>Sequences do not use quantifiers to generate values.</p>
+            </div>
+        </div>
 
-		<div class="content">
-			<div class="accordion_icon"></div>
-			<h4>Additional controls</h4> <br>
+        <div class="content">
+            <div class="accordion_icon"></div>
+            <h4>Additional controls</h4> <br>
 
-			<div class="content_body">
-				<br><b>Allow Duplicate Characters</b> <br>
+            <div class="content_body">
+                <p><b>Allow Duplicate Characters</b><br>This allows the same character to be used in the string. When disabled, the character is added to the resulting string, and then removed from the list used to store and select values valid for the current part of the template. </p> <br>
 
-				<p>This allows the same character to be used in the string. When disabled, the character is added to the resulting string, and then removed from the list used to store and select values valid for the current part of the template. </p> <br>
+                <p>As a result of the character removal, if the quantifier is greater than the max number of characters the script can randomly select from, then the quantifier is reduced to equal the maximum, to avoid problems when generating strings with this option disabled.</p>
+            </div>
+        </div>
 
-				<p>As a result of the character removal, if the quantifier is greater than the max number of characters the script can randomly select from, then the quantifier is reduced to equal the maximum, to avoid problems when generating strings with this option disabled.</p>
-			</div>
-		</div>
+        <div class="content">
+            <div class="accordion_icon"></div>
+            <h4>Applications of Regexgen</h4> <br>
 
-		<div class="content">
-			<div class="accordion_icon"></div>
-			<h4>Applications of Regexgen</h4> <br>
+            <div class="content_body">
+                <p>Regexgen can be used outside of this interface to generate random values to assign to variables at run time for web-based applications.</p> <br>
 
-			<div class="content_body">
-				<br><p>Regexgen can be used outside of this interface to generate random values to assign to variables at run time for web-based applications.</p> <br>
+                <p>This script has use in any area where a randomly generated value of any length, type or purpose is required.</p> <br>
 
-				<p>This script has use in any area where a randomly generated value of any length, type or purpose is required.</p> <br>
+                <p>As well as the integration of the script demonstrated by this interface, I have also created a small project, where random colours, as well as colours of different intensities can be generated.</p>
+                <p><a href="../colour-gen/colour.html">Click here to see the colours project.</a></p>
 
-				<p>As well as the integration of the script demonstrated by this interface, I have also created a small project, where random colours, as well as colours of different intensities can be generated.</p>
-				<p><a href="../colour-gen/colour.html">Click here to see the colours project.</a></p>
+            </div>
+        </div>
 
-			</div>
-		</div>
+        <div class="content">
+            <div class="accordion_icon"></div>
+            <h4>Credits</h4> <br>
 
-		<div class="content">
-			<div class="accordion_icon"></div>
-			<h4>Credits</h4> <br>
-
-			<div class="content_body">
-				<p>Credits will go here...</p> <br>
-			</div>
-		</div>
-	</section>
+            <div class="content_body">
+                <p>Credits will go here...</p> <br>
+            </div>
+        </div>
+    </section>
 
 </body>
 
