@@ -293,29 +293,28 @@ class Regexgen {
 
     generateSequence() { // split each value in the sequence and push it to the generated_value_list array
         var string_value = "";
-        var last_operator;
+        var last_operator = "none";
+        var temp_string;
         this.createLogEntry("Processing sequence at pattern position " + (this.current_index + 1));
 
         while(this.current() != ')') {
             if (this.lookahead() == '|' || this.lookahead() == ')' || this.lookahead() == '&') 
             {
-                console.log(string_value);
-                if (this.lookahead() == '|' || last_operator == '|' && this.lookahead() == ')')
+                if (this.lookahead() == '|' && last_operator != "&" || last_operator == '|' && this.lookahead() == ')')
                 {
+                    this.createLogEntry("OR operator - last operator", last_operator);
                     last_operator = '|';
 
                     this.generated_value_list.push(string_value);
+                    this.createLogEntry("OR word parsed", string_value);
                     string_value = "";
 
                     if (this.lookahead() == ')') { break; } else { this.next(); }
                 }
-                else if (this.lookahead() == '&' || last_operator == '&' && this.lookahead() == ')')
+                else if (this.lookahead() == '&' || last_operator == '&' && this.lookahead() == ')' || last_operator == '&' && this.lookahead() == '|')
                 {
+                    this.createLogEntry("AND operator - last operator", last_operator);
                     last_operator = "&";
-
-                    // to do: split string and place characters in generated_value_list array individually
-
-                    var temp_string;
 
                     if (temp_string == undefined) {
                         temp_string = string_value;
@@ -323,10 +322,11 @@ class Regexgen {
                         temp_string += string_value;
                     }
 
-                    this.createLogEntry("Sequence value", string_value);
+                    this.createLogEntry("AND word parsed", string_value);
                     string_value = "";
 
-                    if (this.lookahead() == ')') { 
+                    if (this.lookahead() == ')' || this.lookahead() == '|') { 
+                        this.createLogEntry("OR operator or end ahead");
                         var output_string = "";
                         var temp_string_length = temp_string.length;
                         var temp_string_array = temp_string.split("");
@@ -343,10 +343,20 @@ class Regexgen {
 
                             this.createLogEntry("Sequence processing action " + (index + 1) + " - Range after selection", temp_string_array.toString());
                         }
-
+                        temp_string = "";
                         this.generated_value_list.push(output_string);
 
-                        break; 
+                        if (this.lookahead() == ')') {
+                            break;  
+                        }
+                        if (this.lookahead() == '|') {
+                            last_operator = '|'
+                            this.createLogEntry("last_operator set to '|'");
+                            this.next();
+                        } 
+                        else {
+                            this.next();
+                        }
                     } else { 
                         this.next(); 
                     }
@@ -379,6 +389,7 @@ class Regexgen {
         //var error_bool = false;
         if (character_index < this.quantifier_value) {
             //console.log("character_index= " + character_index);
+            this.createLogEntry("Final contents of value list", this.generated_value_list.toString());
             var randvalue = Math.floor(Math.random() * this.generated_value_list.length)
             if (this.generated_value_list[randvalue] != undefined) {
                 this.buildGeneratedString(this.generated_value_list[randvalue]); // store value in generated_output
