@@ -222,7 +222,7 @@ h1, h3, h4 {
     color: darkgrey;
 }
 
-.content_body p, .content h4, .history_header h4, .history_record p {
+.content_body p, .content_body li, .content h4, .history_header h4, .history_record p {
     color: unset;
     letter-spacing: unset;
 }
