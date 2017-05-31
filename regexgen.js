@@ -297,11 +297,11 @@ class Regexgen {
         var temp_string;
         this.createLogEntry("Processing sequence at pattern position " + (this.current_index + 1));
 
-        while(this.current() != ')') {
-            if (this.lookahead() == '|' || this.lookahead() == ')' || this.lookahead() == '&') 
+        while(this.current() != ')') { // while the current character is not the end of the sequence
+            if (this.lookahead() == '|' || this.lookahead() == ')' || this.lookahead() == '&') // if the next character is a closing bracket or sequence operators
             {
                 if (this.lookahead() == '|' && last_operator != "&" || last_operator == '|' && this.lookahead() == ')')
-                {
+                { // if next character is OR operator and last_operator is not AND, or, if last_operator is OR operator and next character is end of sequence - perform OR
                     this.createLogEntry("OR operator - last operator", last_operator);
                     last_operator = '|';
 
@@ -312,7 +312,7 @@ class Regexgen {
                     if (this.lookahead() == ')') { break; } else { this.next(); }
                 }
                 else if (this.lookahead() == '&' || last_operator == '&' && this.lookahead() == ')' || last_operator == '&' && this.lookahead() == '|')
-                {
+                { // if next character is AND operator, or, if last_operator is AND operator and next character is end of sequence or OR operator - perform AND
                     this.createLogEntry("AND operator - last operator", last_operator);
                     last_operator = "&";
 
@@ -325,7 +325,7 @@ class Regexgen {
                     this.createLogEntry("AND word parsed", string_value);
                     string_value = "";
 
-                    if (this.lookahead() == ')' || this.lookahead() == '|') { 
+                    if (this.lookahead() == ')' || this.lookahead() == '|') { // if next character is end or OR operator (AND operator has ended/no more ANDs yet) - split temp_string and create random word
                         this.createLogEntry("OR operator or end ahead");
                         var output_string = "";
                         var temp_string_length = temp_string.length;
@@ -346,28 +346,23 @@ class Regexgen {
                         temp_string = "";
                         this.generated_value_list.push(output_string);
 
-                        if (this.lookahead() == ')') {
+                        if (this.lookahead() == ')') { // if next character is end of sequence, break loop
                             break;  
                         }
-                        if (this.lookahead() == '|') {
+                        else if (this.lookahead() == '|') { // if next character is OR operator, set last_operator to OR and move to next character
                             last_operator = '|'
                             this.createLogEntry("last_operator set to '|'");
                             this.next();
                         } 
-                        else {
-                            this.next();
-                        }
                     } else { 
                         this.next(); 
                     }
                 }
                 else if (this.lookahead() == ')' && last_operator == undefined) {
                     if (string_value == "") {
-                        /*document.getElementById('warning').innerHTML += "<br />Unbroken Sequence starting at position " + (this.current_index + 1) + " does not contain any values."*/
                         this.outputWarning("<br />Unbroken Sequence starting at position " + (this.current_index + 1) + " does not contain any values.");
                     } else {
                         this.generated_value_list.push(string_value);
-                        /*document.getElementById('warning').innerHTML += "<br />Sequence starting at position " + ((this.current_index + 1) - string_value.length) + " only contains one value."*/
                         this.outputWarning("<br />Sequence starting at position " + ((this.current_index + 1) - string_value.length) + " only contains one value.")         
                     }
 
