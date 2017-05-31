@@ -105,6 +105,7 @@ body {
 
 .history_list:empty:before {
     content: "Nothing here...";
+    color: darkgrey;
     text-align: center;
 }
 
@@ -160,7 +161,7 @@ body {
 .content h4 {
     text-align: center !important;
     display: inline;
-    padding-left: 30px
+    padding-left: 30px;
 }
 
 .doc div *{
@@ -212,17 +213,30 @@ a {
     color: var(--active-colour);
 }
 
+p, li, label {
+    color: darkgrey;
+}
+
+h1, h3, h4 {
+    letter-spacing: 0.75px;
+    color: darkgrey;
+}
+
+.content_body p, .content h4, .history_header h4, .history_record p {
+    color: unset;
+    letter-spacing: unset;
+}
 /* ------------------------------------- */
 /* general page element css */
 /* ------------------------------------- */
 
 #custom_button:hover, .history_header:hover, .content:hover {
   background-color: var(--hover-colour);
-    color: white;
+    color: white !important;
 }
 
 #custom_button:active, .history_header:active, .content:active {
   background-color: var(--active-colour);
-    color: black;
+    color: black !important;
 }
 
