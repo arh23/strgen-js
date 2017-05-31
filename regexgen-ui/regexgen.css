@@ -71,12 +71,12 @@ body {
 }
 
 .history .history_list {
-    border-top: thin dotted #000000;
-    padding-top: 20px;
+    border-top: thin dotted #000000 0px;
     display: none;
     word-wrap: break-word;
     min-height: 20px;
     overflow: hidden;
+    padding-top: 18px;
     padding-bottom: 18px;
     max-height: 1250px; 
     overflow: auto;

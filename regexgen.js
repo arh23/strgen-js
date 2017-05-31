@@ -2,7 +2,6 @@
 
 class Regexgen {
     constructor() {
-
         this.pattern_input; // the pattern
         this.current_index; // the current pointer/index in the pattern
         this.operators = "[]{}()-\\|"; // special operator characters responsible for different behaviours
@@ -343,6 +342,7 @@ class Regexgen {
 
                             this.createLogEntry("Sequence processing action " + (index + 1) + " - Range after selection", temp_string_array.toString());
                         }
+
                         temp_string = "";
                         this.generated_value_list.push(output_string);
 
@@ -353,31 +353,35 @@ class Regexgen {
                             last_operator = '|'
                             this.createLogEntry("last_operator set to '|'");
                             this.next();
-                        } 
+                        }
                     } else { 
                         this.next(); 
                     }
                 }
-                else if (this.lookahead() == ')' && last_operator == undefined) {
+                else if (this.lookahead() == ')' && last_operator == "none" || this.lookahead() == '') {
                     if (string_value == "") {
+                        this.createLogEntry("<b>ERROR! Unbroken Sequence does not contain any values at position", (this.current_index + 1) + "</b>");
                         this.outputWarning("<br />Unbroken Sequence starting at position " + (this.current_index + 1) + " does not contain any values.");
                     } else {
                         this.generated_value_list.push(string_value);
+                        this.createLogEntry("<b>WARNING! Sequence starting at position " + ((this.current_index + 1) - string_value.length) + " only contains one value.</b>");
                         this.outputWarning("<br />Sequence starting at position " + ((this.current_index + 1) - string_value.length) + " only contains one value.")         
                     }
-
                     break;
                 }
             }
-            else 
+            else if (this.lookahead() != '') 
             {
                 string_value += this.lookahead();
                 this.next();    
             }
+            else 
+            {
+                this.createLogEntry("<b>ERROR! End of sequence expected at postion", (this.current_index + 1) + "</b>");
+                this.outputWarning("<br />End of sequence expected at position " + (this.current_index + 1) + ".");
+                break;
+            }
         }
-
-        console.log("array: " + this.generated_value_list.toString());
-        console.log("current: " + this.current());
     }
 
     selectValueFromList(defined_no_of_chars, character_index = 0, allow_duplicates = false) { // pick a random value from the generated_value_list and do this quantifier_value number of times
@@ -392,9 +396,9 @@ class Regexgen {
             else
             {
                 if (this.generated_output == "") {
-                    throw new Error("No value was returned. Please check the template.");                   
+                    this.createLogEntry("<b>ERROR! No value was returned. Please check the template.</b>");
+                    this.outputWarning("<br />No value was returned. Please check the template.");                 
                 }
-
             }
 
             this.createLogEntry("Selected value", this.generated_value_list[randvalue]);
