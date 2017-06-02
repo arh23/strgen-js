@@ -240,3 +240,7 @@ h1, h3, h4 {
     color: black !important;
 }
 
+.content h4, .accordion_icon {
+    pointer-events: none;
+}
+

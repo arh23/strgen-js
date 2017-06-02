@@ -12,17 +12,19 @@
         $(".accordion_icon").text("+");
         var hoverColour = {'background-color': '#8FC258'};
         
-        $("div.content").click(function(){
-            if($(this).find(".content_body").css("display") == "none"){
-                $(this).find(".accordion_icon").text("-");
-                //$(this).find(".content_body").show();
-                $(this).find(".content_body").slideToggle('fast');
-            }
-            else
-            {
-                $(this).find(".accordion_icon").text("+");
-                //$(this).find(".content_body").hide(); 
-                $(this).find(".content_body").slideUp('fast');
+        $("div.content").click(function(e){
+            if (e.target == this) {
+                if($(this).find(".content_body").css("display") == "none"){
+                    $(this).find(".accordion_icon").text("-");
+                    //$(this).find(".content_body").show();
+                    $(this).find(".content_body").slideToggle('fast');
+                }
+                else
+                {
+                    $(this).find(".accordion_icon").text("+");
+                    //$(this).find(".content_body").hide(); 
+                    $(this).find(".content_body").slideUp('fast');
+                }
             }
         }); 
     });
@@ -112,7 +114,7 @@
             <h4>Quantifiers</h4> <br>
 
             <div class="content_body">
-                <br><p>Use { and } with a whole number to specify how many characters will be generated for a specific range, for example:</p><br>
+                <p>Use { and } with a whole number to specify how many characters will be generated for a specific range, for example:</p><br>
 
                 <p><i>[1-9]{3}[a-z]{10}</i></p><br>
 
@@ -170,7 +172,7 @@
             <h4>Credits</h4> <br>
 
             <div class="content_body">
-                <p>Credits will go here...</p> <br>
+                <p><b>Paul Wolf</b> for help with this project, and provision of the <a target="_blank" href="https://github.com/paul-wolf/strgen">original</a> Python implementation.</p>
             </div>
         </div>
     </section>
