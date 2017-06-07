@@ -5,16 +5,19 @@
     --body-background-colour: #364229;
     --backlayer-background-colour: #719649;
     */
-    --backlayer-background-colour: rgba(150,150,150,0.5);
+    /*--backlayer-background-colour: rgba(150,150,150,0.5);*/
+    --backlayer-background-colour: white;
     --warning-colour: #f2f735;
-    --hover-colour: #006b00;
-    --active-colour: #00bf00;
-    --element-colour: rgb(150,150,150);
+    --hover-colour: #b80000;
+    --active-colour: #ff0505;
+    --element-colour: white;
 }
 
 body {
     /*background-color: lightblue;*/
-    background-image: url("bg/background02.png");
+    background-image: url("bg/background03.png");
+    background-attachment: fixed;
+    /*background-color: white;*/
     text-align: center;
     font-family: verdana;
     font-size: 16px;
@@ -34,6 +37,9 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
+    
+    border-left: solid 1px #b80000;
+    border-right: solid 1px #b80000;
 }
 
 .inputwrap input, textarea {
@@ -68,10 +74,12 @@ body {
     display: inline-block;
     background-color: var(--element-colour);
     width: inherit;
+    border-bottom: thin solid #000000;
 }
 
 .history .history_list {
     border-top: thin dotted #000000 0px;
+    border-bottom: thin solid #000000;
     display: none;
     word-wrap: break-word;
     min-height: 20px;
@@ -147,7 +155,7 @@ body {
 }
 .doc {
     /*width: 44.68%%;*/
-    border-top: thin solid #000000;
+    /*border-top: thin solid #000000;*/
     font-family: verdana;
 }
 
@@ -214,12 +222,12 @@ a {
 }
 
 p, li, label {
-    color: darkgrey;
+    /*color: darkgrey;*/
 }
 
 h1, h3, h4 {
     letter-spacing: 0.75px;
-    color: darkgrey;
+    /*color: darkgrey;*/
 }
 
 .content_body p, .content_body li, .content h4, .history_header h4, .history_record p {
@@ -243,4 +251,3 @@ h1, h3, h4 {
 .content h4, .accordion_icon {
     pointer-events: none;
 }
-
