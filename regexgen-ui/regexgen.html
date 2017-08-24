@@ -64,12 +64,13 @@
     }
 
     function record_value(pattern, generated_output, log_array) {
-        create_fields(pattern, generated_output, count, log_array);
+        create_fields(pattern, generated_output, count, pattern, log_array);
         count += 1;
     }
 
-    function create_fields(pattern, generated_output, count, log_array) {
+    function create_fields(pattern, generated_output, count, log_label, log_array) {
         var current_id = "result" + count;
+        var current_count = count;
 
         if (!document.getElementById(current_id)){
             var container = document.createElement("div");
@@ -80,19 +81,53 @@
 
             document.getElementById("historylist").appendChild(container);
         }
-        var paragraph = document.createElement("p");
+        var divLabel = document.createElement("div"); // create log label
+
+        divLabel.setAttribute("id", current_id + "_label");
+        divLabel.setAttribute("class", "log_label");
+        document.getElementById(current_id).appendChild(divLabel);
+
+        document.getElementById(current_id + "_label").innerHTML = "<b>Log entry " + (current_count + 1) + ":</b> " + "   Pattern: " + log_label;
+
+        var divExport = document.createElement("div"); // create export label
+
+        divExport.setAttribute("id", current_id + "_export");
+        divExport.setAttribute("class", "log_export");
+        document.getElementById(current_id).appendChild(divExport);
+
+        /*
+        document.getElementById(current_id + "_export").innerHTML = "<a href=\"data:text/plain,\" + document.getElementById(\"current_id + \"_p\").innerHTML download=\"export.txt\"><b>Export</b></a>";
+        */
+        var paragraph = document.createElement("p"); // create log content
 
         paragraph.setAttribute("id", current_id + "_p");
         document.getElementById(current_id).appendChild(paragraph);
-        //if (generated_output.length > 25) {
-        //  document.getElementById(current_id).innerHTML = "<p /> Record " + (count + 1) + ":<br />" + pattern + "<br />" + generated_output.slice(0,24) + "...</p />";
-        //} else {
-        //  document.getElementById(current_id).innerHTML = "<p /> Record " + (count + 1) + ":<br />" + pattern + "<br />" + generated_output + "</p />";
-        //}
+
+        var log_string = "";
 
         for (var count = 0; count <= log_array.length - 1; count++) {
-            document.getElementById(current_id + "_p").innerHTML += log_array[count] + "<br />";
+            log_string += log_array[count] + "~";
         }
+
+        document.getElementById(current_id + "_p").innerHTML = log_string.split('~').join("\r\n");
+
+        var a = document.getElementById(current_id + "_export").appendChild(
+            document.createElement("a")
+            );
+
+        var currentdate = new Date(); 
+
+        var date_string = currentdate.toLocaleDateString();
+        date_string = date_string.split('/').join("-");
+
+        var time_string = currentdate.toLocaleTimeString();
+        time_string = time_string.split(':').join("-");
+        
+        var date_time_string = date_string + "-" + time_string;
+
+        a.download = log_label + "_" + current_id + "_" + date_time_string + ".txt";
+        a.href = "data:text/plain," + document.getElementById(current_id + "_p").innerHTML;
+        a.innerHTML = "Export";
     }
 }
 </script>

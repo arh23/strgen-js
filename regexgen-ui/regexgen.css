@@ -15,7 +15,6 @@
 
 body {
     /*background-color: lightblue;*/
-    background-image: url("bg/background03.png");
     background-attachment: fixed;
     /*background-color: white;*/
     text-align: center;
@@ -100,6 +99,25 @@ body {
     /*text-overflow: ellipsis;*/
 
     font-size: 12px;
+    border-bottom: thin dashed;
+    padding-bottom: 4px;
+}
+
+.history_record .log_label {
+    padding-top: 4px;
+    padding-bottom: 4px;
+    text-align: left;
+    float: left;
+    width: 75%
+    
+}
+
+.history_record .log_export {
+    padding-top: 4px;
+    padding-bottom: 4px;
+    text-align: right;
+    float: left;
+    width: 25%;
 }
 
 .history_record p {
@@ -109,6 +127,7 @@ body {
     text-align: left;
     max-height: 200px;
     overflow: auto;
+    white-space: pre-line;
 }
 
 .history_list:empty:before {
