@@ -109,7 +109,10 @@
             log_string += log_array[count] + "~";
         }
 
-        document.getElementById(current_id + "_p").innerHTML = log_string.split('~').join("\r\n");
+        var log_content = log_string.split('~').join("\r\n");
+        var export_content = encodeURIComponent(log_content);
+
+        document.getElementById(current_id + "_p").innerHTML = log_content;
 
         var a = document.getElementById(current_id + "_export").appendChild(
             document.createElement("a")
@@ -126,7 +129,7 @@
         var date_time_string = date_string + "-" + time_string;
 
         a.download = log_label + "_" + current_id + "_" + date_time_string + ".txt";
-        a.href = "data:text/plain," + document.getElementById(current_id + "_p").innerHTML;
+        a.href = "data:text/plain;charset=utf-8," + export_content;
         a.innerHTML = "Export";
     }
 }
