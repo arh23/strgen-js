@@ -117,7 +117,6 @@ class Regexgen {
                     this.operatorComparison();
                     break;
                 case '/':
-                    console.log('char break');
                     this.next();
                     this.getLiteral();
                     this.operatorComparison();
@@ -206,14 +205,11 @@ class Regexgen {
 
         if (this.allow_duplicate_characters == false && quantifier_value > this.generated_value_list.length)
         {
-            /*
-            document.getElementById('warning').innerHTML += "<br />Character quantifier at position " + start_value + " reduced from " + 
-                                                            quantifier_value + " to " + this.generated_value_list.length + 
-                                                            ". Toggle 'Allow Duplicate Characters' to generate the full amount.";
-            */
             this.outputWarning("<br />Character quantifier at position " + start_value + " reduced from " + 
                           quantifier_value + " to " + this.generated_value_list.length + 
-                          ". Toggle 'Allow Duplicate Characters' to generate the full amount.")
+                          ".<br />Toggle 'Allow Duplicate Characters' to generate the full amount.")
+            this.createLogEntry("<b>Quantifier reduced from " + quantifier_value + " to " + this.generated_value_list.length + "</b>");
+
             quantifier_value = this.generated_value_list.length;
         }
 
