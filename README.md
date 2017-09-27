@@ -16,17 +16,24 @@ Regexgen can be used as an external script, or with the UI packaged with this re
 When using Regexgen in existing code, a new object instance will need to be created, and a pattern provided for the createString() method:
 
 ~~~~
-var generator = new Regexgen();
-var generated_string = generator.createString(pattern);
+var stringGenerator = new Regexgen();
+var generated_string = stringGenerator.createString(pattern);
 ~~~~
 
 This will create a random string based on the pattern provided. 
 
-There are multiple parameters which affect the way in which Regexgen handles string generation:
+There are multiple parameters which affect the way in which Regexgen handles string generation (listed in order):
 
 - *pattern* - required - the regex-styled pattern string required to generate the random string.
+
 - *allow_duplicates* - optional - boolean to specify whether or not Regexgen should use the same character twice in a range/set of characters. *True* by default.
-- *error_output_id* - optional - string to reference the ID of the element where warning and error messages should be printed on a UI.
+
+- *allow_logging* - optional - boolean to specify whether every significant action during the generation process should be logged or not. *False* by default. Has the potential to cause performance issues. The log is accessible via the browser console, or can be accessed directly from the Regexgen object. For example, using the example object defined above, you will be able to access the logs using: *stringGenerator.generator_log*.
+
+- *reporting_type* -  optional - string to specify the level of detail the messages posted before and after string generation. To show the pattern at the start, and the final string generated at the end of generation, use "full". To show a message stating when generation has started and finished, use "less". To show nothing, use "none". Any invalid values assigned to this parameter will be set to the "none" state. If *allow_logging* has been set to *true*, this will be set to full. Set to *full* by default.
+
+- *error_output_id* - optional - string to reference the ID of the element where warning and error messages should be printed on a UI. Uses element ID *warning* by default.
+
 
 See below for more information regarding patterns and other features:
 
