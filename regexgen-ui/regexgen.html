@@ -50,10 +50,11 @@
         var pattern = document.getElementById('templatebox').value;
         var allow_duplicate_characters = document.getElementById('allowduplicates').checked;
         var enable_logging = document.getElementById('enablelogging').checked;
+        var reporting_type = "full";
 
         if (pattern != "") {
             var generator = new Regexgen();
-            var generated_string = generator.createString(pattern, allow_duplicate_characters, enable_logging);
+            var generated_string = generator.createString(pattern, allow_duplicate_characters, enable_logging, reporting_type);
             document.getElementById("stringvalue").innerHTML = generated_string;
             record_value(pattern, generated_string, generator.generator_log);
         }
@@ -105,8 +106,12 @@
 
         var log_string = "";
 
-        for (var count = 0; count <= log_array.length - 1; count++) {
-            log_string += log_array[count] + "~";
+        if (log_array != "") {
+            for (var count = 0; count <= log_array.length - 1; count++) {
+                log_string += log_array[count] + "~";
+            }
+        } else {
+            log_string = "No log entries..."
         }
 
         var log_content = log_string.split('~').join("\r\n");

@@ -7,14 +7,15 @@ class Regexgen {
         this.operators = "[]{}()-\\|"; // special operator characters responsible for different behaviours
         this.quantifier_value; // stores the value specified in the pattern within the { }
         this.generated_value_list; // where output is stored, to be used in generation at the end of the generation process
-        this.allow_duplicate_characters; // "Allow Duplicate Characters" setting on UI, can be set when generator is initialised
+        this.allow_duplicate_characters; // parameter, can be set when generator is initialised
         this.generated_output; // the full output string
-        this.error_output_id; // the default UI element where errors will be output (the reference to the element must be the ID)
+        this.error_output_id; // parameter, the default UI element where errors will be output (the reference to the element must be the ID)
         this.allow_logging;
+        this.reporting_type; // parameter, controls level of basic reporting at the start and end of string generation
         this.generator_log;
     }
 
-    createString(pattern, allow_duplicates = true, allow_logging = false, error_output_id = "warning") { // initial method that is called to start generating a random string
+    createString(pattern, allow_duplicates = true, allow_logging = false, reporting_type = "full", error_output_id = "warning") { // initial method that is called to start generating a random string
         this.current_index = -1
         this.generated_output = ""
         this.pattern_input = pattern;
@@ -23,15 +24,30 @@ class Regexgen {
         this.generated_value_list = [];
         this.error_output_id = error_output_id;
         this.allow_logging = allow_logging;
+        this.reporting_type = reporting_type;
         this.generator_log = [];
         // assign default values before generation/
         // this fixes a problem with multiple generations with the same instance of the object
 
-        this.createLogEntry("Pattern", pattern, true);
+        this.initialiseLogger();
         this.operatorComparison();
         this.outputLog();
+
         return this.outputString();
     };
+
+    initialiseLogger() {
+        if (this.reporting_type != "full" && this.allow_logging == true) { // set reporting to full if logging is enabled
+            this.createLogEntry("Report set to full because logging is enabled!");
+            this.reporting_type = "full";
+        }
+
+        if (this.reporting_type == "full") { // report pattern at the start of generation, if reporting is set to full
+            this.createLogEntry("Starting string generation - pattern", this.pattern_input, true);            
+        } else if (this.reporting_type == "less") { // report start of generation, , if reporting is set to less
+            this.createLogEntry("Regexgen - start", undefined, true);
+        }
+    }
 
     lookahead() { // return the next character in the string
         return this.pattern_input.charAt(this.current_index + 1);
@@ -114,7 +130,12 @@ class Regexgen {
         }
         else
         {
-            this.createLogEntry("End of pattern reached - final generated string", this.outputString(), true);
+            if (this.reporting_type == 'full') { // report the full information at the end, if reporting is set to full
+                this.createLogEntry("End of pattern reached - final generated string", this.outputString(), true);
+            }
+            else if (this.reporting_type == "less") { // report complete generation at the end, if reporting is set to less
+                this.createLogEntry("Regexgen - finish", undefined, true);
+            }
         }
     };
 
