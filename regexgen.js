@@ -207,7 +207,7 @@ class Regexgen {
         {
             this.outputWarning("<br />Character quantifier at position " + start_value + " reduced from " + 
                           quantifier_value + " to " + this.generated_value_list.length + 
-                          ".<br />Toggle 'Allow Duplicate Characters' to generate the full amount.")
+                          ".<br /> Toggle 'Allow Duplicate Characters' to generate the full amount.")
             this.createLogEntry("<b>Quantifier reduced from " + quantifier_value + " to " + this.generated_value_list.length + "</b>");
 
             quantifier_value = this.generated_value_list.length;
@@ -216,7 +216,7 @@ class Regexgen {
         this.createLogEntry("Quantifier value is " + quantifier_value);
 
         if (quantifier_value == 0) {
-            this.outputWarning("<br /> No value was returned. <br />Character quantifier at position " + start_value + " is 0.")
+            this.outputWarning("<br />No value was returned. <br />Character quantifier at position " + start_value + " is 0.")
             /*document.getElementById('warning').innerHTML += "<br /> No value was returned. <br />Character quantifier at position " + start_value + " is 0.";*/       
         }
 
@@ -291,7 +291,7 @@ class Regexgen {
             }
             default:
             {
-                preset_characters = "";
+                preset_characters = undefined;
                 /*document.getElementById('warning').innerHTML += "<br />Invalid preset range. \'/" + character + "\' is not a valid preset.";*/
                 this.outputWarning("<br />Invalid preset range. \'\\" + character + "\' is not a valid preset.");
                 break;
@@ -301,7 +301,7 @@ class Regexgen {
     }
 
     generatePresetValues(preset_values, character_index = 0) { // split the preset_characters string and push each individual character into the values array
-        if (character_index < preset_values.length) {
+        if (preset_values != undefined && character_index < preset_values.length) {
             this.generated_value_list.push(preset_values.charAt(character_index));
             this.generatePresetValues(preset_values, character_index+=1);
         }
@@ -406,19 +406,23 @@ class Regexgen {
         if (character_index < this.quantifier_value) {
             //console.log("character_index= " + character_index);
             this.createLogEntry("Final contents of value list", this.generated_value_list.toString());
-            var randvalue = Math.floor(Math.random() * this.generated_value_list.length)
+            var randvalue = Math.floor(Math.random() * this.generated_value_list.length);
+
             if (this.generated_value_list[randvalue] != undefined) {
                 this.buildGeneratedString(this.generated_value_list[randvalue]); // store value in generated_output
+                this.createLogEntry("Selected value", this.generated_value_list[randvalue]);
             }
             else
             {
                 if (this.generated_output == "") {
                     this.createLogEntry("<b>ERROR! No value was returned. Please check the template.</b>");
-                    this.outputWarning("<br />No value was returned. Please check the template.");                 
+                    this.outputWarning("<br />No value was returned. Please check the template.");
+                    if (this.generated_value_list.length == 0) {
+                        this.createLogEntry("<b>Ending value selection and continuing generation...</b>");
+                        character_index = this.quantifier_value;
+                    }                 
                 }
             }
-
-            this.createLogEntry("Selected value", this.generated_value_list[randvalue]);
 
             if (allow_duplicates == false)
             {
@@ -447,6 +451,7 @@ class Regexgen {
             document.getElementById(this.error_output_id).innerHTML += message;
         }
         else {
+            message = message.split("<br />").join("");
             console.error(message);
         }
     }
