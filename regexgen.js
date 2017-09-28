@@ -38,7 +38,7 @@ class Regexgen {
 
     initialiseLogger() {
         if (this.reporting_type != "full" && this.allow_logging == true) { // set reporting to full if logging is enabled
-            this.createLogEntry("Report set to full because logging is enabled!");
+            this.createLogEntry("Reporting set to full because logging is enabled!");
             this.reporting_type = "full";
         }
 

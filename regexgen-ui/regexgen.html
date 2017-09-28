@@ -50,7 +50,7 @@
         var pattern = document.getElementById('templatebox').value;
         var allow_duplicate_characters = document.getElementById('allowduplicates').checked;
         var enable_logging = document.getElementById('enablelogging').checked;
-        var reporting_type = "full";
+        var reporting_type = document.getElementById('reportingdropdown').value;
 
         if (pattern != "") {
             var generator = new Regexgen();
@@ -170,8 +170,14 @@
 
                 <input type="checkbox" class="enable_logging" id="enablelogging" /> 
                 <label for="enabledlogging">Enable Logging</label><br>
-            </div>
 
+                <label for=reportingdropdown> Reporting type: </label>
+                <select id=reportingdropdown>
+                    <option value="full">Full</option>
+                    <option value="less">Less</option>
+                    <option value="none">None</option>
+                </select> <br>
+            </div>
         </form>
 
         </section>
