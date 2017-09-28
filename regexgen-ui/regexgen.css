@@ -160,8 +160,6 @@ body {
 /* ------------------------------------- */
 
 .content_backlayer {
-    border-right: thin solid #000000;
-    border-left: thin solid #000000;
     position: fixed;
     z-index: -99;
     min-height: 80%;
