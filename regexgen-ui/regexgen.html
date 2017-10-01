@@ -65,8 +65,10 @@
     }
 
     function record_value(pattern, generated_output, log_array) {
-        create_fields(pattern, generated_output, count, pattern, log_array);
-        count += 1;
+        if (log_array != "") {
+            create_fields(pattern, generated_output, count, pattern, log_array);
+            count += 1;
+        }
     }
 
     function create_fields(pattern, generated_output, count, log_label, log_array) {

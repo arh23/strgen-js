@@ -187,10 +187,18 @@ class Regexgen {
         this.createLogEntry("Processing quantifier at pattern position " + (this.current_index + 1));
         var start_value = this.current_index + 1;
         var quantifier_value = "";
+        var quantifier_first_value = "";
+
         do {
-            if (this.operators.includes(this.lookahead()) == false) 
+            if (this.operators.includes(this.lookahead()) == false && this.lookahead() != ":") 
             {
                 quantifier_value+= this.next();
+            }
+            else if (this.lookahead() == ":" && quantifier_first_value == "") {
+                this.createLogEntry("Quantifier range specified");
+                quantifier_first_value = quantifier_value;
+                quantifier_value = "";
+                this.next();
             }
             else if (this.lookahead() == "") {
                 throw new Error("Quantifier not closed.");  
@@ -202,6 +210,26 @@ class Regexgen {
                 throw new Error("Unexpected character at position " + (this.current_index + 1) + ", character '" + this.pattern_input.charAt(this.current_index) + "'.");               
             }
         } while (this.lookahead() != '}')
+
+        if (quantifier_first_value != "") { // if the quantifier contained : and the first quantifier has been set
+            this.createLogEntry("Generating random quantifier between", quantifier_first_value + " and " + quantifier_value);
+
+            if (quantifier_first_value > quantifier_value) // swap values if the quantifier_first_value is the largest value
+            {
+                var store = quantifier_first_value;
+                quantifier_first_value = quantifier_value;
+                quantifier_value = store;
+                this.createLogEntry("Quantifier values swapped");
+            }
+
+            var randomVal = Math.random();
+            /*this.createLogEntry("Calculation", "(" +  randomVal + " * (" + max + " - " + min + " + 1)) + " + min);*/
+            quantifier_value = parseInt(quantifier_value);
+            quantifier_first_value = parseInt(quantifier_first_value);
+            var result = Math.floor(randomVal * (quantifier_value - quantifier_first_value - 1) + (quantifier_first_value + 1));
+
+            quantifier_value = result;
+        }
 
         if (this.allow_duplicate_characters == false && quantifier_value > this.generated_value_list.length)
         {
