@@ -214,21 +214,43 @@ class Regexgen {
         if (quantifier_first_value != "") { // if the quantifier contained : and the first quantifier has been set
             this.createLogEntry("Generating random quantifier between", quantifier_first_value + " and " + quantifier_value);
 
+            quantifier_first_value = parseInt(quantifier_first_value);
+            quantifier_value = parseInt(quantifier_value);
+
             if (quantifier_first_value > quantifier_value) // swap values if the quantifier_first_value is the largest value
             {
+                this.createLogEntry("quantifier_first_value", quantifier_first_value);
+                this.createLogEntry("quantifier_value", quantifier_value);
+
                 var store = quantifier_first_value;
                 quantifier_first_value = quantifier_value;
                 quantifier_value = store;
                 this.createLogEntry("Quantifier values swapped");
             }
 
-            var randomVal = Math.random();
-            /*this.createLogEntry("Calculation", "(" +  randomVal + " * (" + max + " - " + min + " + 1)) + " + min);*/
+            /*var randomVal = Math.random();
+            //this.createLogEntry("Calculation", "(" +  randomVal + " * (" + max + " - " + min + " + 1)) + " + min);
+
             quantifier_value = parseInt(quantifier_value);
             quantifier_first_value = parseInt(quantifier_first_value);
-            var result = Math.floor(randomVal * (quantifier_value - quantifier_first_value - 1) + (quantifier_first_value + 1));
+            var selectedQuantifier = Math.floor(randomVal * (quantifier_value - quantifier_first_value + 1) + (quantifier_first_value));*/
 
-            quantifier_value = result;
+            // temporary solution to getting a random quantifier from a range, the above code is not balanced enough
+            var quantifierArray = [];
+
+            for (var count = quantifier_first_value; count <= quantifier_value; count++) { // populate array with every value between quantifier_first_value and quantifier_value
+                quantifierArray.push(count);
+            }
+            this.createLogEntry("Quantifier range values", quantifierArray.toString());
+
+            var randvalue = Math.floor(Math.random() * quantifierArray.length);
+            var selected_quantifier = quantifierArray[randvalue]; // select a value based math.random and array length
+            this.createLogEntry("Selected index", randvalue + ", selected quantifier value: " + selected_quantifier);
+
+            quantifierArray = [];
+            //end of temp code 
+
+            quantifier_value = selected_quantifier;
         }
 
         if (this.allow_duplicate_characters == false && quantifier_value > this.generated_value_list.length)
