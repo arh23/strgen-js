@@ -194,7 +194,7 @@ class Regexgen {
             {
                 quantifier_value+= this.next();
             }
-            else if (this.lookahead() == ":" && quantifier_first_value == "") {
+            else if (this.lookahead() == "-" && quantifier_first_value == "" ||this.lookahead() == ":" && quantifier_first_value == "") {
                 this.createLogEntry("Quantifier range specified");
                 quantifier_first_value = quantifier_value;
                 quantifier_value = "";
