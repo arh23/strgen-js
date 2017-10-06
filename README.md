@@ -13,16 +13,24 @@ This documentation will guide you through the different operators and functional
 
 Regexgen can be used as an external script, or with the UI packaged with this repo.
 
-When using Regexgen in existing code, a new object instance will need to be created, and a pattern provided for the createString() method:
+When using Regexgen in existing code, a new object instance will need to be created, and a pattern assigned to the class variable (optionally, parameter variables can also be set. Then, the createString() method will be called. See below:
 
 ~~~~
+var examplePattern = "[a-z]{10}"
 var stringGenerator = new Regexgen();
-var generated_string = stringGenerator.createString(pattern);
+
+stringGenerator.pattern = examplePattern; // required parameter
+stringGenerator.allow_duplicate_characters = true; // optional parameters
+stringGenerator.allow_logging = false;
+stringGenerator.reporting_type = "less";
+stringGenerator.error_output_id = "error";
+
+var generated_string = stringGenerator.createString();
 ~~~~
 
 This will create a random string based on the pattern provided. 
 
-There are multiple parameters which affect the way in which Regexgen handles string generation (listed in order):
+There are multiple parameters/variables which affect the way in which Regexgen handles string generation:
 
 - *pattern* - required - the regex-styled pattern string required to generate the random string.
 
@@ -95,6 +103,12 @@ Use { and } with a whole number to specify how many characters will be generated
 
 This would generate 3 values between 1 and 9, and 10 characters between a and z.
 
+You can also use a range of quantifiers, for example:
+
+*[a-z]{4:8} or [a-z]{4-8}*
+
+This will generate a string containing characters a to z with a length of between 4 and 8 characters (inclusive). A colon or dash can be used as shown above. 
+
 #### Sequences
 
 Sequences, denoted by ( and ) allow the specification of whole word values to be used in the generator.
@@ -107,11 +121,3 @@ The operators for sequences are different:
   For example: *(value1&value2&value3)* can result in values such as *3llevveuaa2v1luuae* etc.
 
 Sequences do not use quantifiers to generate values.
-
-### Additional controls and parameters
-
-#### Allow Duplicate Characters
-
-This boolean parameter allows the same character to be used in the string. When set to false, the character is added to the resulting string, and then removed from the list used to store and select values valid for the current part of the template.
-
-As a result of the character removal, if the quantifier is greater than the max number of characters the script can randomly select from, then the quantifier is reduced to equal the maximum, to avoid problems when generating strings when this parameter is set to false.

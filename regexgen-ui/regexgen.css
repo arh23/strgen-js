@@ -51,7 +51,7 @@ body {
     width: 1000px;
 }
 
-.inputwrap #warning {
+.inputwrap #error {
     color: var(--warning-colour);
     word-wrap: break-word;
     margin: 0 auto;

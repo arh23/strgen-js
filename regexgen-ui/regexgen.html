@@ -46,22 +46,32 @@
     function initialize_generator() {
     try {
         document.getElementById('stringvalue').innerHTML = "";
-        document.getElementById('warning').innerHTML = "";
+        document.getElementById('error').innerHTML = "";
         var pattern = document.getElementById('templatebox').value;
         var allow_duplicate_characters = document.getElementById('allowduplicates').checked;
         var enable_logging = document.getElementById('enablelogging').checked;
         var reporting_type = document.getElementById('reportingdropdown').value;
 
-        if (pattern != "") {
+        //if (pattern != "") {
             var generator = new Regexgen();
-            var generated_string = generator.createString(pattern, allow_duplicate_characters, enable_logging, reporting_type);
+            
+            generator.pattern = pattern;
+            generator.allow_duplicate_characters = allow_duplicate_characters;
+            generator.allow_logging = enable_logging;
+            generator.reporting_type = reporting_type;
+            generator.error_output_id = "error";
+
+            var generated_string = generator.createString();
             document.getElementById("stringvalue").innerHTML = generated_string;
             record_value(pattern, generated_string, generator.generator_log);
-        }
+        //}
 
     } catch(error) {
-        document.getElementById('warning').innerHTML += "<br />" + error.message;
+        
+        //document.getElementById('error').innerHTML += "<br />" + error.message;
+        console.error(error.message);
         console.error(error.stack);
+        
     }
 
     function record_value(pattern, generated_output, log_array) {
@@ -158,7 +168,7 @@
             <div class="inputwrap">
                 <p>Template:</p>
                 <input type="text" id="templatebox" value=""><br>
-                <div id="warning"></div>
+                <div id="error"></div>
             </div>
 
             <div class="inputwrap">

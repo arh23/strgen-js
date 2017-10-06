@@ -2,38 +2,39 @@
 
 class Regexgen {
     constructor() {
-        this.pattern_input; // the pattern
+        this.pattern = ""; // the pattern
         this.current_index; // the current pointer/index in the pattern
         this.operators = "[]{}()-\\|"; // special operator characters responsible for different behaviours
         this.quantifier_value; // stores the value specified in the pattern within the { }
         this.generated_value_list; // where output is stored, to be used in generation at the end of the generation process
-        this.allow_duplicate_characters; // parameter, can be set when generator is initialised
+        this.allow_duplicate_characters = true; // parameter, can be set when generator is initialised
         this.generated_output; // the full output string
-        this.error_output_id; // parameter, the default UI element where errors will be output (the reference to the element must be the ID)
-        this.allow_logging;
-        this.reporting_type; // parameter, controls level of basic reporting at the start and end of string generation
+        this.error_output_id = "warning"; // parameter, the default UI element where errors will be output (the reference to the element must be the ID)
+        this.allow_logging = false;
+        this.reporting_type = "full"; // parameter, controls level of basic reporting at the start and end of string generation
         this.generator_log;
     }
 
-    createString(pattern, allow_duplicates = true, allow_logging = false, reporting_type = "full", error_output_id = "warning") { // initial method that is called to start generating a random string
+    createString() { // initial method that is called to start generating a random string allow_duplicates = true, allow_logging = false, reporting_type = "full", error_output_id = "warning"
         this.current_index = -1
         this.generated_output = ""
-        this.pattern_input = pattern;
-        this.allow_duplicate_characters = allow_duplicates;
         this.quantifier_value = 1;
         this.generated_value_list = [];
-        this.error_output_id = error_output_id;
-        this.allow_logging = allow_logging;
-        this.reporting_type = reporting_type;
         this.generator_log = [];
         // assign default values before generation/
         // this fixes a problem with multiple generations with the same instance of the object
 
-        this.initialiseLogger();
-        this.operatorComparison();
-        this.outputLog();
+        if (this.pattern != "") {
+            this.initialiseLogger();
+            this.operatorComparison();
+            this.outputLog();
 
-        return this.outputString();
+            return this.outputString();
+        } else {
+            this.outputWarning("<br />Pattern is not defined.");
+            throw new Error("Pattern is not defined.");
+        }
+
     };
 
     initialiseLogger() {
@@ -43,27 +44,27 @@ class Regexgen {
         }
 
         if (this.reporting_type == "full") { // report pattern at the start of generation, if reporting is set to full
-            this.createLogEntry("Starting string generation - pattern", this.pattern_input, true);            
+            this.createLogEntry("Starting string generation - pattern", this.pattern, true);            
         } else if (this.reporting_type == "less") { // report start of generation, , if reporting is set to less
             this.createLogEntry("Regexgen - start", undefined, true);
         }
     }
 
     lookahead() { // return the next character in the string
-        return this.pattern_input.charAt(this.current_index + 1);
+        return this.pattern.charAt(this.current_index + 1);
     };
 
     next() { // increment the current_index value and return the character at that value in the string
         this.current_index += 1;
-        return this.pattern_input.charAt(this.current_index);
+        return this.pattern.charAt(this.current_index);
     };
 
     current() { // return the character at the current_index position in the string
-        return this.pattern_input.charAt(this.current_index);
+        return this.pattern.charAt(this.current_index);
     };
 
     last() { // return the character before the current_index position in the string
-        return this.pattern_input.charAt(this.current_index - 1);
+        return this.pattern.charAt(this.current_index - 1);
     };
 
     operatorComparison() { // main method which is used to determine whether the current character is an operator or not 
@@ -73,7 +74,7 @@ class Regexgen {
 
         if (this.operators.includes(this.current()) == true) 
         {
-            this.determineOperator(this.pattern_input.charAt(this.current_index));
+            this.determineOperator(this.pattern.charAt(this.current_index));
         }
         else
         {
@@ -150,8 +151,8 @@ class Regexgen {
             } 
             else if (this.operators.includes(this.current()) == true && this.last() != '/') // if the current character is an unbroken operator, throw error
             {
-                //document.getElementById('warning').innerHTML += "<br />" + "Unexpected operator at position " + (this.current_index + 1) + ", operator '" + this.pattern_input.charAt(this.current_index) + "'.";
-                throw new Error("Unexpected operator at position " + (this.current_index + 1) + ", operator '" + this.pattern_input.charAt(this.current_index) + "'.");
+                //document.getElementById('warning').innerHTML += "<br />" + "Unexpected operator at position " + (this.current_index + 1) + ", operator '" + this.pattern.charAt(this.current_index) + "'.";
+                throw new Error("Unexpected operator at position " + (this.current_index + 1) + ", operator '" + this.pattern.charAt(this.current_index) + "'.");
                 break;
             }
             else if (this.lookahead() == '-' && current_character != '/') // if the next character is an unbroken '-' operator
@@ -179,8 +180,8 @@ class Regexgen {
     }
 
     getLiteral() { // output a literal character, skipping any generation
-        this.createLogEntry("Literal", this.pattern_input.charAt(this.current_index));
-        this.buildGeneratedString(this.pattern_input.charAt(this.current_index));
+        this.createLogEntry("Literal", this.pattern.charAt(this.current_index));
+        this.buildGeneratedString(this.pattern.charAt(this.current_index));
     }
 
     getQuantifier() { // get the value within the curly brackets, if present
@@ -207,7 +208,7 @@ class Regexgen {
             {
                 this.next();
                 quantifier_value = 1;
-                throw new Error("Unexpected character at position " + (this.current_index + 1) + ", character '" + this.pattern_input.charAt(this.current_index) + "'.");               
+                throw new Error("Unexpected character at position " + (this.current_index + 1) + ", character '" + this.pattern.charAt(this.current_index) + "'.");               
             }
         } while (this.lookahead() != '}')
 
