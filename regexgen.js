@@ -25,7 +25,7 @@ class Regexgen {
         // this fixes a problem with multiple generations with the same instance of the object
 
         if (this.pattern != "") {
-            this.initialiseLogger();
+            this.setLogger();
             this.operatorComparison();
             this.outputLog();
 
@@ -34,10 +34,9 @@ class Regexgen {
             this.outputWarning("<br />Pattern is not defined.");
             throw new Error("Pattern is not defined.");
         }
-
     };
 
-    initialiseLogger() {
+    setLogger() { // sets reporting to full if logging is enabled, will post the first log message if reporting is "full" or "less"
         if (this.reporting_type != "full" && this.allow_logging == true) { // set reporting to full if logging is enabled
             this.createLogEntry("Reporting set to full because logging is enabled!");
             this.reporting_type = "full";
@@ -45,7 +44,7 @@ class Regexgen {
 
         if (this.reporting_type == "full") { // report pattern at the start of generation, if reporting is set to full
             this.createLogEntry("Starting string generation - pattern", this.pattern, true);            
-        } else if (this.reporting_type == "less") { // report start of generation, , if reporting is set to less
+        } else if (this.reporting_type == "less") { // report start of generation, if reporting is set to less
             this.createLogEntry("Regexgen - start", undefined, true);
         }
     }
@@ -151,7 +150,6 @@ class Regexgen {
             } 
             else if (this.operators.includes(this.current()) == true && this.last() != '/') // if the current character is an unbroken operator, throw error
             {
-                //document.getElementById('warning').innerHTML += "<br />" + "Unexpected operator at position " + (this.current_index + 1) + ", operator '" + this.pattern.charAt(this.current_index) + "'.";
                 throw new Error("Unexpected operator at position " + (this.current_index + 1) + ", operator '" + this.pattern.charAt(this.current_index) + "'.");
                 break;
             }
@@ -184,7 +182,7 @@ class Regexgen {
         this.buildGeneratedString(this.pattern.charAt(this.current_index));
     }
 
-    getQuantifier() { // get the value within the curly brackets, if present
+    getQuantifier() { // get the value within quantifier operators, if present
         this.createLogEntry("Processing quantifier at pattern position " + (this.current_index + 1));
         var start_value = this.current_index + 1;
         var quantifier_value = "";
@@ -229,13 +227,6 @@ class Regexgen {
                 this.createLogEntry("Quantifier values swapped");
             }
 
-            /*var randomVal = Math.random();
-            //this.createLogEntry("Calculation", "(" +  randomVal + " * (" + max + " - " + min + " + 1)) + " + min);
-
-            quantifier_value = parseInt(quantifier_value);
-            quantifier_first_value = parseInt(quantifier_first_value);
-            var selectedQuantifier = Math.floor(randomVal * (quantifier_value - quantifier_first_value + 1) + (quantifier_first_value));*/
-
             // temporary solution to getting a random quantifier from a range, the above code is not balanced enough
             var quantifierArray = [];
 
@@ -268,7 +259,6 @@ class Regexgen {
 
         if (quantifier_value == 0) {
             this.outputWarning("<br />No value was returned. <br />Character quantifier at position " + start_value + " is 0.")
-            /*document.getElementById('warning').innerHTML += "<br /> No value was returned. <br />Character quantifier at position " + start_value + " is 0.";*/       
         }
 
         return parseInt(quantifier_value);
@@ -285,7 +275,6 @@ class Regexgen {
         }
 
         if (character_index <= secondvalue && character_index >= firstvalue) { // if character_index is within the range specified
-            //console.log(character_index)
             this.generated_value_list.push(String.fromCharCode(character_index));
             this.generateRangeValue(firstvalue, secondvalue, parseInt(character_index+=1));
         }
@@ -343,7 +332,6 @@ class Regexgen {
             default:
             {
                 preset_characters = undefined;
-                /*document.getElementById('warning').innerHTML += "<br />Invalid preset range. \'/" + character + "\' is not a valid preset.";*/
                 this.outputWarning("<br />Invalid preset range. \'\\" + character + "\' is not a valid preset.");
                 break;
             }
@@ -453,9 +441,7 @@ class Regexgen {
     }
 
     selectValueFromList(defined_no_of_chars, character_index = 0, allow_duplicates = false) { // pick a random value from the generated_value_list and do this quantifier_value number of times
-        //var error_bool = false;
         if (character_index < this.quantifier_value) {
-            //console.log("character_index= " + character_index);
             this.createLogEntry("Final contents of value list", this.generated_value_list.toString());
             var randvalue = Math.floor(Math.random() * this.generated_value_list.length);
 
@@ -497,7 +483,7 @@ class Regexgen {
         return this.generated_output;
     }
 
-    outputWarning(message) {
+    outputWarning(message) { // output a warning to the UI or to the console
         if (document.getElementById(this.error_output_id)) {
             document.getElementById(this.error_output_id).innerHTML += message;
         }
@@ -507,21 +493,20 @@ class Regexgen {
         }
     }
 
-    createLogEntry(caption, content = undefined, enabled = this.allow_logging) {
+    createLogEntry(caption, content = undefined, enabled = this.allow_logging) { // create a new log entry
         if(enabled == true) {
             var timestamp = new Date();
-            //var timestamp_text = timestamp.getHours() + ":" + timestamp.getMinutes() + ":" + timestamp.getSeconds() + ":" + timestamp.getMilliseconds();
             var timestamp_text = timestamp.toTimeString().split(" ")[0] + ":" + timestamp.getMilliseconds();
+
             if(content != undefined) {
                 this.generator_log.push(timestamp_text + " - " + caption + ": " + content);
             } else {
                 this.generator_log.push(timestamp_text + " - " + caption);
             }
-
         }
     }
 
-    outputLog() {
+    outputLog() { // output the log to the console
         for (var count = 0; count <= this.generator_log.length - 1; count++) {
             console.log((count + 1) + " - " + this.generator_log[count]);
         }
