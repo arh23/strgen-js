@@ -1,3 +1,4 @@
+var Regexgen = require('../regexgen.js');
 var stringGenerator = new Regexgen();
 
 QUnit.test( "Parameter default values", function(assert) {
@@ -9,6 +10,8 @@ QUnit.test( "Parameter default values", function(assert) {
 });
 
 QUnit.test( "Generate string using a range", function(assert) {
+    stringGenerator.reporting_type = "none";
+    
     var regex = /[a-z]{10}/
     var regexString = regex.toString().slice(1, -1);
 

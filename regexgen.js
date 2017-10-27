@@ -1,6 +1,6 @@
 "use strict";
 
-class Regexgen {
+module.exports = class Regexgen {
     constructor() {
         this.pattern = ""; // the pattern
         this.current_index; // the current pointer/index in the pattern
