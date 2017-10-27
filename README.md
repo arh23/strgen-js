@@ -5,6 +5,10 @@ Generate random strings using a pattern system based on regex.
 Credits go to:
 - **Paul Wolf** for help with this project, and provision of the original Python implementation (https://github.com/paul-wolf/strgen).
 
+## Tests
+
+View the QUnitJS tests [here](https://arh23.github.io/regexgen/tests/test.html).
+
 ## Documentation
 
 This documentation will guide you through the different operators and functionality of the pattern system.
@@ -117,6 +121,7 @@ The operators for sequences are different:
 
 - The | operator - this will pick one value in a list of values.
   For example: *(value1|value2|value3)* can result in either *value1*, *value2* or *value3*.
+
 - The & operator - this will merge and shuffle multiple values.
   For example: *(value1&value2&value3)* can result in values such as *3llevveuaa2v1luuae* etc.
 
