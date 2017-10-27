@@ -5,6 +5,7 @@ class Regexgen {
         this.pattern = ""; // the pattern
         this.current_index; // the current pointer/index in the pattern
         this.operators = "[]{}()-\\|"; // special operator characters responsible for different behaviours
+        this.quantifier_operators = ":,-"; // operators used within a quantifier, each does the same thing (create range of quantifier values)
         this.quantifier_value; // stores the value specified in the pattern within the { }
         this.generated_value_list; // where output is stored, to be used in generation at the end of the generation process
         this.allow_duplicate_characters = true; // parameter, can be set when generator is initialised
@@ -189,11 +190,10 @@ class Regexgen {
         var quantifier_first_value = "";
 
         do {
-            if (this.operators.includes(this.lookahead()) == false && this.lookahead() != ":") 
-            {
+            if (this.operators.includes(this.lookahead()) == false && this.quantifier_operators.includes(this.lookahead()) == false) {
                 quantifier_value+= this.next();
             }
-            else if (this.lookahead() == "-" && quantifier_first_value == "" ||this.lookahead() == ":" && quantifier_first_value == "") {
+            else if (this.quantifier_operators.includes(this.lookahead()) == true && quantifier_first_value == "") {
                 this.createLogEntry("Quantifier range specified");
                 quantifier_first_value = quantifier_value;
                 quantifier_value = "";
