@@ -5,5 +5,4 @@ node_js:
 before_script: 
   - npm install -g qunit-cli
 
-script:
-qunit-cli tests/tests.js
+script: qunit-cli tests/tests.js
