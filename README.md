@@ -7,7 +7,7 @@ Credits go to:
 
 ## Tests
 
-View the QUnitJS tests [here](https://arh23.github.io/regexgen/tests/test.html).
+View the QUnitJS tests [here](https://arh23.github.io/regexgen/tests/tests.html).
 
 ## Documentation
 
