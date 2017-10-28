@@ -28,7 +28,7 @@ QUnit.test( "Generate string using a range", function(assert) {
     stringGenerator.pattern = regexString;
     var generatedString = stringGenerator.createString();
 
-    assert.notEqual(stringGenerator.pattern, regexString, "'" + regexString + "' assigned to stringGenerator.pattern");
+    assert.equal(stringGenerator.pattern, regexString, "'" + regexString + "' assigned to stringGenerator.pattern");
     assert.notEqual(generatedString, "", "generatedString should not be empty");
     assert.equal(regex.test(generatedString), true, "checking string '" + generatedString + "' matches pattern '" + regexString + "'");
 });
