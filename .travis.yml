@@ -2,9 +2,12 @@ language: node_js
 node_js:
   - "6"
 
-before_script: 
-  - npm install grunt
-  - npm install grunt-cli
-  - npm install grunt-contrib-qunit
+addons:
+  chrome: stable
 
-script: grunt test
+#before_script: 
+#  - npm install grunt
+#  - npm install grunt-cli
+#  - npm install grunt-contrib-qunit
+
+#script: grunt test

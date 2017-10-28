@@ -1,0 +1,17 @@
+{
+  "private": true,
+  "scripts": {
+    "test": "qunit tests/tests.js && karma start",
+    "karma-debug": "karma start --no-single-run --browsers Chrome --logLevel DEBUG"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "eslint": "4.3.0",
+    "karma": "1.7.0",
+    "karma-chrome-launcher": "2.2.0",
+    "karma-cli": "^1.0.1",
+    "karma-coverage": "1.1.1",
+    "karma-qunit": "1.2.1",
+    "qunitjs": "2.4.0"
+  }
+}
