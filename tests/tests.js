@@ -1,4 +1,3 @@
-import '../regexgen.js';
 var stringGenerator = new Regexgen;
 
 QUnit.test( "Parameter default values", function(assert) {
