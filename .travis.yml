@@ -4,6 +4,7 @@ node_js:
 
 before_script: 
   - npm install -g grunt
+  - npm install -g grunt-cli
   - npm install -g grunt-contrib-qunit
 
 script: grunt test
