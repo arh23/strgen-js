@@ -1,4 +1,15 @@
-var stringGenerator = new Regexgen;
+try {
+    if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
+        console.log("node");
+        var RegexgenClass = require("../regexgen.js");
+        var stringGenerator = new RegexgenClass();
+    } else {
+        console.log("browser");
+        var stringGenerator = new Regexgen();
+    }
+} catch(e) {
+    console.log(e);
+}
 
 QUnit.test( "Parameter default values", function(assert) {
     assert.equal(stringGenerator.pattern, "", "generator uses empty string for pattern by default");
@@ -9,6 +20,8 @@ QUnit.test( "Parameter default values", function(assert) {
 });
 
 QUnit.test( "Generate string using a range", function(assert) {
+    stringGenerator.reporting_type = "none";
+    
     var regex = /[a-z]{10}/
     var regexString = regex.toString().slice(1, -1);
 

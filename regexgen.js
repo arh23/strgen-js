@@ -512,3 +512,10 @@ class Regexgen {
         }
     }
 }
+
+if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
+     module.exports = Regexgen;
+}
+else {
+    window.Regexgen = Regexgen;
+}; // source: http://www.matteoagosti.com/blog/2013/02/24/writing-javascript-modules-for-both-browser-and-node/
