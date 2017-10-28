@@ -7,6 +7,8 @@ Credits go to:
 
 ## Tests
 
+[![Build Status](https://travis-ci.org/arh23/regexgen.svg?branch=node-branch)](https://travis-ci.org/arh23/regexgen)
+
 View the QUnitJS tests [here](https://arh23.github.io/regexgen/tests/tests.html).
 
 ## Documentation
@@ -38,7 +40,7 @@ There are multiple parameters/variables which affect the way in which Regexgen h
 
 - *pattern* - required - the regex-styled pattern string required to generate the random string.
 
-- *allow_duplicates* - optional - boolean to specify whether or not Regexgen should use the same character twice in a range/set of characters. *True* by default.
+- *allow_duplicate_characters* - optional - boolean to specify whether or not Regexgen should use the same character twice in a range/set of characters. *True* by default.
 
 - *allow_logging* - optional - boolean to specify whether every significant action during the generation process should be logged or not. *False* by default. Has the potential to cause performance issues. The log is accessible via the browser console, or can be accessed directly from the Regexgen object. For example, using the example object defined above, you will be able to access the logs using: *stringGenerator.generator_log*.
 

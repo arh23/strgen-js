@@ -3,6 +3,8 @@ node_js:
   - "6"
 
 before_script: 
-  - npm install -g qunit-cli
+  - npm install -g qunit
+  #- npm install -g qunit-cli
 
-script: qunit-cli tests/tests.js
+script: qunit -c ./regexgen.js -t ./tests/tests.js
+#qunit-cli tests/tests.js
