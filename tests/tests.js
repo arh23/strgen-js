@@ -15,9 +15,9 @@ QUnit.test( "Generate string using a range", function(assert) {
     stringGenerator.pattern = regexString;
     var generatedString = stringGenerator.createString();
 
-    assert.equal(stringGenerator.pattern, regexString, `'${regexString}' assigned to stringGenerator.pattern`);
+    assert.equal(stringGenerator.pattern, regexString, "'" + regexString + "' assigned to stringGenerator.pattern");
     assert.notEqual(generatedString, "", "generatedString should not be empty");
-    assert.equal(regex.test(generatedString), true, `checking string '${generatedString}' matches pattern '${regexString}'`);
+    assert.equal(regex.test(generatedString), true, "checking string '" + generatedString + "' matches pattern '" + regexString + "'");
 });
 
 QUnit.test( "Generate string using a range preset", function(assert) {
@@ -27,9 +27,9 @@ QUnit.test( "Generate string using a range preset", function(assert) {
     stringGenerator.pattern = regexString;
     var generatedString = stringGenerator.createString();
 
-    assert.equal(stringGenerator.pattern, regexString, `'${regexString}' assigned to stringGenerator.pattern`);
+    assert.equal(stringGenerator.pattern, regexString, "'" + regexString + "' assigned to stringGenerator.pattern");
     assert.notEqual(generatedString, "", "generatedString should not be empty");
-    assert.equal(regex.test(generatedString), true, `checking string '${generatedString}' matches pattern '${regexString}'`);
+    assert.equal(regex.test(generatedString), true, "checking string '" + generatedString + "' matches pattern '" + regexString + "'");
 });
 
 QUnit.test( "Generate string using an OR sequence", function(assert) {
@@ -39,9 +39,9 @@ QUnit.test( "Generate string using an OR sequence", function(assert) {
     stringGenerator.pattern = regexString;
     var generatedString = stringGenerator.createString();
 
-    assert.equal(stringGenerator.pattern, regexString, `'${regexString}' assigned to stringGenerator.pattern`);
+    assert.equal(stringGenerator.pattern, regexString, "'" + regexString + "' assigned to stringGenerator.pattern");
     assert.notEqual(generatedString, "", "generatedString should not be empty");
-    assert.equal(regex.test(generatedString), true, `checking string '${generatedString}' matches pattern '${regexString}'`);
+    assert.equal(regex.test(generatedString), true, "checking string '" + generatedString + "' matches pattern '" + regexString + "'");
 });
 
 QUnit.test( "Generate string using an AND sequence", function(assert) {
@@ -53,9 +53,9 @@ QUnit.test( "Generate string using an AND sequence", function(assert) {
     stringGenerator.pattern = regexString;
     var generatedString = stringGenerator.createString();
 
-    assert.equal(stringGenerator.pattern, regexString, `'${regexString}' assigned to stringGenerator.pattern`);
+    assert.equal(stringGenerator.pattern, regexString, "'" + regexString + "' assigned to stringGenerator.pattern");
     assert.notEqual(generatedString, "", "generatedString should not be empty");
-    assert.equal(regexMatch.test(generatedString), true, `checking string '${generatedString}' matches pattern '${regexMatchString}'`);
+    assert.equal(regexMatch.test(generatedString), true, "checking string '" + generatedString + "' matches pattern '" + regexMatchString + "'");
 });
 
 QUnit.test( "Generate string using a quantifier range", function(assert) {
@@ -67,9 +67,9 @@ QUnit.test( "Generate string using a quantifier range", function(assert) {
     stringGenerator.pattern = regexString;
     var generatedString = stringGenerator.createString();
 
-    assert.equal(stringGenerator.pattern, regexString, `'${regexString}' assigned to stringGenerator.pattern`);
+    assert.equal(stringGenerator.pattern, regexString, "'" + regexString + "' assigned to stringGenerator.pattern");
     assert.notEqual(generatedString, "", "generatedString should not be empty");
-    assert.equal(regex.test(generatedString), true, `checking string '${generatedString}' matches pattern '${regexString}'`);
+    assert.equal(regex.test(generatedString), true, "checking string '" + generatedString + "' matches pattern '" + regexString + "'");
 
     regex = /[a-z]{5:10}/
     regexString = regex.toString().slice(1, -1);
@@ -77,9 +77,9 @@ QUnit.test( "Generate string using a quantifier range", function(assert) {
     stringGenerator.pattern = regexString;
     generatedString = stringGenerator.createString();
 
-    assert.equal(stringGenerator.pattern, regexString, `'${regexString}' assigned to stringGenerator.pattern`);
+    assert.equal(stringGenerator.pattern, regexString, "'" + regexString + "' assigned to stringGenerator.pattern");
     assert.notEqual(generatedString, "", "generatedString should not be empty");
-    assert.equal(regexMatch.test(generatedString), true, `checking string '${generatedString}' matches pattern '${regexMatchString}'`);
+    assert.equal(regexMatch.test(generatedString), true, "checking string '" + generatedString + "' matches pattern '" + regexMatchString + "'");
 
     regex = /[a-z]{5-10}/
     regexString = regex.toString().slice(1, -1);
@@ -87,7 +87,7 @@ QUnit.test( "Generate string using a quantifier range", function(assert) {
     stringGenerator.pattern = regexString;
     generatedString = stringGenerator.createString();
 
-    assert.equal(stringGenerator.pattern, regexString, `'${regexString}' assigned to stringGenerator.pattern`);
+    assert.equal(stringGenerator.pattern, regexString, "'" + regexString + "' assigned to stringGenerator.pattern");
     assert.notEqual(generatedString, "", "generatedString should not be empty");
-    assert.equal(regexMatch.test(generatedString), true, `checking string '${generatedString}' matches pattern '${regexMatchString}'`);
+    assert.equal(regexMatch.test(generatedString), true, "checking string '" + generatedString + "' matches pattern '" + regexMatchString + "'");
 });
