@@ -1,6 +1,6 @@
 "use strict";
 
-module.exports = class Regexgen {
+class Regexgen {
     constructor() {
         this.pattern = ""; // the pattern
         this.current_index; // the current pointer/index in the pattern
@@ -512,3 +512,10 @@ module.exports = class Regexgen {
         }
     }
 }
+
+if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
+     module.exports = Regexgen;
+}
+else {
+    window.Regexgen = Regexgen;
+}; // source: http://www.matteoagosti.com/blog/2013/02/24/writing-javascript-modules-for-both-browser-and-node/

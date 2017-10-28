@@ -1,5 +1,15 @@
-var Regexgen = require('../regexgen.js');
-var stringGenerator = new Regexgen();
+try {
+    if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
+        console.log("node");
+        var RegexgenClass = require("../regexgen.js");
+        var stringGenerator = new RegexgenClass();
+    } else {
+        console.log("browser");
+        var stringGenerator = new Regexgen();
+    }
+} catch(e) {
+    console.log(e);
+}
 
 QUnit.test( "Parameter default values", function(assert) {
     assert.equal(stringGenerator.pattern, "", "generator uses empty string for pattern by default");
