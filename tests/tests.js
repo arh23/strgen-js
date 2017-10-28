@@ -1,4 +1,5 @@
-var stringGenerator = new Regexgen();
+import '../regexgen.js';
+var stringGenerator = new Regexgen;
 
 QUnit.test( "Parameter default values", function(assert) {
     assert.equal(stringGenerator.pattern, "", "generator uses empty string for pattern by default");
