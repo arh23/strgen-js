@@ -1,6 +1,6 @@
 # strgen-js
 
-Generate random strings using a pattern system based on regex.
+Generate random strings using a pattern system based on regular expressions.
 
 Credits go to:
 - **Paul Wolf** for help with this project, and provision of the original Python implementation (https://github.com/paul-wolf/strgen).
@@ -22,10 +22,10 @@ Strgen can be used as an external script, or with the UI packaged with this repo
 When using Strgen in existing code, a new object instance will need to be created, and a pattern assigned to the class variable (optionally, parameter variables can also be set). Then, the createString() method will be called. See below:
 
 ~~~~
-var example_pattern = "[a-z]{10}"
+var example_pattern = "[a-z]{10}";
 var stringGenerator = new Strgen();
 
-stringGenerator.pattern = examplePattern; // required parameter
+stringGenerator.pattern = example_pattern; // required parameter
 stringGenerator.allow_duplicate_characters = true; // optional parameters
 stringGenerator.allow_logging = false;
 stringGenerator.reporting_type = "less";
@@ -47,7 +47,6 @@ There are multiple parameters/variables which affect the way in which Strgen han
 - *reporting_type* -  optional - string to specify the level of detail the messages posted before and after string generation. To show the pattern at the start, and the final string generated at the end of generation, use "full". To show a message stating when generation has started and finished, use "less". To show nothing, use "none". Any invalid values assigned to this parameter will be set to the "none" state. If *allow_logging* has been set to *true*, this will be set to full. Set to *full* by default.
 
 - *error_output_id* - optional - string to reference the ID of the element where warning and error messages should be printed on a UI. Uses element ID *warning* by default.
-
 
 See below for more information regarding patterns and other features:
 
@@ -77,7 +76,7 @@ The following will pick a character from a predefined set of characters:
 - \l - letters</li>
 - \h - hex digits</li>
 - \H - hex digits (lower and upper case)</li>
-- \p - octal digits</li><br>
+- \p - octal digits</li>
 
 For example:
 
@@ -111,9 +110,9 @@ This would generate 3 values between 1 and 9, and 10 characters between a and z.
 
 You can also use a range of quantifiers, for example:
 
-*[a-z]{4:8} or [a-z]{4-8}*
+*[a-z]{4:8} or [a-z]{4-8} or [a-z]{4,8}*
 
-This will generate a string containing characters a to z with a length of between 4 and 8 characters (inclusive). A colon or dash can be used as shown above. 
+This will generate a string containing characters a to z with a length of between 4 and 8 characters (inclusive). A colon, dash or comma can be used as shown above. 
 
 #### Sequences
 
