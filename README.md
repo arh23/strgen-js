@@ -1,4 +1,4 @@
-# Regexgen
+# strgen-js
 
 Generate random strings using a pattern system based on regex.
 
@@ -7,9 +7,9 @@ Credits go to:
 
 ## Tests
 
-[![Build Status](https://travis-ci.org/arh23/regexgen.svg?branch=node-branch)](https://travis-ci.org/arh23/regexgen)
+[![Build Status](https://travis-ci.org/arh23/strgen-js.svg?branch=node-branch)](https://travis-ci.org/arh23/strgen-js)
 
-View the QUnitJS tests [here](https://arh23.github.io/regexgen/tests/tests.html).
+View the QUnitJS tests [here](https://arh23.github.io/strgen-js/tests/tests.html).
 
 ## Documentation
 
@@ -17,13 +17,13 @@ This documentation will guide you through the different operators and functional
 
 ### Usage
 
-Regexgen can be used as an external script, or with the UI packaged with this repo.
+Strgen can be used as an external script, or with the UI packaged with this repo.
 
-When using Regexgen in existing code, a new object instance will need to be created, and a pattern assigned to the class variable (optionally, parameter variables can also be set. Then, the createString() method will be called. See below:
+When using Strgen in existing code, a new object instance will need to be created, and a pattern assigned to the class variable (optionally, parameter variables can also be set). Then, the createString() method will be called. See below:
 
 ~~~~
-var examplePattern = "[a-z]{10}"
-var stringGenerator = new Regexgen();
+var example_pattern = "[a-z]{10}"
+var stringGenerator = new Strgen();
 
 stringGenerator.pattern = examplePattern; // required parameter
 stringGenerator.allow_duplicate_characters = true; // optional parameters
@@ -36,13 +36,13 @@ var generated_string = stringGenerator.createString();
 
 This will create a random string based on the pattern provided. 
 
-There are multiple parameters/variables which affect the way in which Regexgen handles string generation:
+There are multiple parameters/variables which affect the way in which Strgen handles string generation:
 
 - *pattern* - required - the regex-styled pattern string required to generate the random string.
 
-- *allow_duplicate_characters* - optional - boolean to specify whether or not Regexgen should use the same character twice in a range/set of characters. *True* by default.
+- *allow_duplicate_characters* - optional - boolean to specify whether or not Strgen should use the same character twice in a range/set of characters. *True* by default.
 
-- *allow_logging* - optional - boolean to specify whether every significant action during the generation process should be logged or not. *False* by default. Has the potential to cause performance issues. The log is accessible via the browser console, or can be accessed directly from the Regexgen object. For example, using the example object defined above, you will be able to access the logs using: *stringGenerator.generator_log*.
+- *allow_logging* - optional - boolean to specify whether every significant action during the generation process should be logged or not. *False* by default. Has the potential to cause performance issues. The log is accessible via the browser console, or can be accessed directly from the Strgen object. For example, using the example object defined above, you will be able to access the logs using: *stringGenerator.generator_log*.
 
 - *reporting_type* -  optional - string to specify the level of detail the messages posted before and after string generation. To show the pattern at the start, and the final string generated at the end of generation, use "full". To show a message stating when generation has started and finished, use "less". To show nothing, use "none". Any invalid values assigned to this parameter will be set to the "none" state. If *allow_logging* has been set to *true*, this will be set to full. Set to *full* by default.
 

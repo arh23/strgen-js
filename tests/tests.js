@@ -1,11 +1,11 @@
 try {
     if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
         console.log("node");
-        var RegexgenClass = require("../regexgen.js");
-        var stringGenerator = new RegexgenClass();
+        var strgen_class = require("../strgen.js");
+        var stringGenerator = new strgen_class();
     } else {
         console.log("browser");
-        var stringGenerator = new Regexgen();
+        var stringGenerator = new Strgen();
     }
 } catch(e) {
     console.log(e);

@@ -1,6 +1,6 @@
 "use strict";
 
-class Regexgen {
+class Strgen {
     constructor() {
         this.pattern = ""; // the pattern
         this.current_index; // the current pointer/index in the pattern
@@ -46,7 +46,7 @@ class Regexgen {
         if (this.reporting_type == "full") { // report pattern at the start of generation, if reporting is set to full
             this.createLogEntry("Starting string generation - pattern", this.pattern, true);            
         } else if (this.reporting_type == "less") { // report start of generation, if reporting is set to less
-            this.createLogEntry("Regexgen - start", undefined, true);
+            this.createLogEntry("Strgen-JS - start", undefined, true);
         }
     }
 
@@ -134,7 +134,7 @@ class Regexgen {
                 this.createLogEntry("End of pattern reached - final generated string", this.outputString(), true);
             }
             else if (this.reporting_type == "less") { // report complete generation at the end, if reporting is set to less
-                this.createLogEntry("Regexgen - finish", undefined, true);
+                this.createLogEntry("Strgen-JS - finish", undefined, true);
             }
         }
     };
@@ -514,8 +514,8 @@ class Regexgen {
 }
 
 if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
-     module.exports = Regexgen;
+     module.exports = Strgen;
 }
 else {
-    window.Regexgen = Regexgen;
+    window.Strgen = Strgen;
 }; // source: http://www.matteoagosti.com/blog/2013/02/24/writing-javascript-modules-for-both-browser-and-node/
