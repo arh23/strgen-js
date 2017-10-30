@@ -1,9 +1,20 @@
 {
   "name": "strgen-js",
-  "version": "1.0",
+  "author": "arh23",
+  "description": "Generate random strings using patterns based on regular expression",
+  "version": "0.1.0",
   "main": "strgen.js",
   "repository":
-  { "type" : "git", 
-  	"url" : "https://github.com/arh23/strgen-js.git"
-  }
+  { 
+      "type" : "git", 
+      "url" : "https://github.com/arh23/strgen-js.git"
+  },
+  "homepage": "https://github.com/arh23/strgen-js",
+  "keywords": [
+    "generator",
+    "javascript",
+    "regex",
+    "string",
+    "string-generator"
+  ]
 }
