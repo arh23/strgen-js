@@ -89,44 +89,37 @@ class Strgen {
             switch(operator) {
                 case "[":
                     this.getCharacterSet();
-                    this.operatorComparison();
                     break;
                 case "]":
                     this.createLogEntry("End of range reached", this.generated_value_list.toString());
                     if (this.lookahead() != '{') {
                         this.selectValueFromList(1, undefined, this.allow_duplicate_characters);    
                     }
-                    this.operatorComparison();
                     break;
                 case "{":
                     this.quantifier_value = this.getQuantifier();
-                    this.operatorComparison();
                     break;
                 case "}":
                     this.createLogEntry("End of quantifier reached");
                     this.selectValueFromList(this.quantifier_value, undefined, this.allow_duplicate_characters);
                     this.quantifier_value = 1;
-                    this.operatorComparison();
                     break;
                 case '(':
                     this.generateSequence();
-                    this.operatorComparison();
                     break;
                 case ')':
                     this.createLogEntry("End of sequence reached");
                     this.selectValueFromList(1, undefined, false);  
-                    this.operatorComparison();
                     break;
                 case '/':
                     this.next();
                     this.getLiteral();
-                    this.operatorComparison();
                     break;
                 default:
                     this.getLiteral();
-                    this.operatorComparison();
                     break;
             }
+            this.operatorComparison();
         }
         else
         {
@@ -291,7 +284,7 @@ class Strgen {
             }
             case "p": //punctuation characters
             {
-                preset_characters = "{}[](),./\\\'\":;?!*&@`~'";
+                preset_characters = "{}[](),./\\:;?!*&@~`'\"";
                 break;
             }
             case "d": //digits
