@@ -11,7 +11,33 @@ try {
     console.log(e);
 }
 
-QUnit.test( "Parameter default values", function(assert) {
+function testRun(assert, regex, regexMatch) {
+    if (regexMatch == undefined) 
+    {
+        var regexString = regex.toString().slice(1, -1);
+
+        stringGenerator.pattern = regexString;
+        var generatedString = stringGenerator.createString();
+
+        assert.equal(stringGenerator.pattern, regexString, "'" + regexString + "' assigned to stringGenerator.pattern");
+        assert.notEqual(generatedString, "", "generatedString should not be empty");
+        assert.equal(regex.test(generatedString), true, "checking string '" + generatedString + "' matches pattern '" + regexString + "'");
+    }
+    else if (regexMatch != undefined) 
+    {
+        var regexString = regex.toString().slice(1, -1);
+        var regexMatchString = regexMatch.toString().slice(1, -1);
+
+        stringGenerator.pattern = regexString;
+        generatedString = stringGenerator.createString();
+
+        assert.equal(stringGenerator.pattern, regexString, "'" + regexString + "' assigned to stringGenerator.pattern");
+        assert.notEqual(generatedString, "", "generatedString should not be empty");
+        assert.equal(regexMatch.test(generatedString), true, "checking string '" + generatedString + "' matches pattern '" + regexMatchString + "'");
+    }
+}
+
+QUnit.test("Parameter default values", function(assert) {
     assert.equal(stringGenerator.pattern, "", "generator uses empty string for pattern by default");
     assert.equal(stringGenerator.allow_duplicate_characters, true, "allow_duplicate_characters is set to true by default");
     assert.equal(stringGenerator.allow_logging, false, "allow_logging is set to false by default");
@@ -19,88 +45,69 @@ QUnit.test( "Parameter default values", function(assert) {
     assert.equal(stringGenerator.error_output_id, "warning", "error_output_id set to ID 'warning' by default");
 });
 
-QUnit.test( "Generate string using a range", function(assert) {
-    stringGenerator.reporting_type = "none";
-    
-    var regex = /[a-z]{10}/
-    var regexString = regex.toString().slice(1, -1);
+QUnit.module("String generation tests", function( hooks ) {
 
-    stringGenerator.pattern = regexString;
-    var generatedString = stringGenerator.createString();
+    hooks.before(function() {
+        stringGenerator.reporting_type = "none";
+    });
 
-    assert.equal(stringGenerator.pattern, regexString, "'" + regexString + "' assigned to stringGenerator.pattern");
-    assert.notEqual(generatedString, "", "generatedString should not be empty");
-    assert.equal(regex.test(generatedString), true, "checking string '" + generatedString + "' matches pattern '" + regexString + "'");
-});
+    QUnit.test( "Generate string using a range", function(assert) {   
+        testRun(assert, /[a-z]{10}/);
+    });
 
-QUnit.test( "Generate string using a range preset", function(assert) {
-    var regex = /[\w]{10}/
-    var regexString = regex.toString().slice(1, -1);
+    QUnit.test( "Generate string using a range preset - \\w test", function(assert) {
+        testRun(assert, /[\w]{10}/);
+    });
 
-    stringGenerator.pattern = regexString;
-    var generatedString = stringGenerator.createString();
+    QUnit.test( "Generate string using a range preset - \\p test", function(assert) {
+        testRun(assert, /[\p]{10}/, /[{}[\](),.\/\\:;\?!\*&@~`'"]{10}/); // [{}[](),.\/\\\'\":;?!*&@\`~\'
+    });
 
-    assert.equal(stringGenerator.pattern, regexString, "'" + regexString + "' assigned to stringGenerator.pattern");
-    assert.notEqual(generatedString, "", "generatedString should not be empty");
-    assert.equal(regex.test(generatedString), true, "checking string '" + generatedString + "' matches pattern '" + regexString + "'");
-});
+    QUnit.test( "Generate string using a range preset - \\d test", function(assert) {
+        testRun(assert, /[\d]{10}/);
+    });
 
-QUnit.test( "Generate string using an OR sequence", function(assert) {
-    var regex = /(test1|test2)/
-    var regexString = regex.toString().slice(1, -1);
+    QUnit.test( "Generate string using a range preset - \\c test", function(assert) {
+        testRun(assert, /[\c]{10}/, /[abcdefghijklmnopqrstuvwxyz]{10}/);
+    });
 
-    stringGenerator.pattern = regexString;
-    var generatedString = stringGenerator.createString();
+    QUnit.test( "Generate string using a range preset - \\u test", function(assert) {
+        testRun(assert, /[\u]{10}/, /[ABCDEFGHIJKLMNOPQRSTUVWXYZ]{10}/);
+    });
 
-    assert.equal(stringGenerator.pattern, regexString, "'" + regexString + "' assigned to stringGenerator.pattern");
-    assert.notEqual(generatedString, "", "generatedString should not be empty");
-    assert.equal(regex.test(generatedString), true, "checking string '" + generatedString + "' matches pattern '" + regexString + "'");
-});
+    QUnit.test( "Generate string using a range preset - \\l test", function(assert) {
+        testRun(assert, /[\l]{10}/, /[ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz]{10}/);
+    });
 
-QUnit.test( "Generate string using an AND sequence", function(assert) {
-    var regex = /(test1&test2)/
-    var regexString = regex.toString().slice(1, -1);
-    var regexMatch = /\b(t|e|s|1|2){10}\b/
-    var regexMatchString = regexMatch.toString().slice(1, -1);
+    QUnit.test( "Generate string using a range preset - \\h test", function(assert) {
+        testRun(assert, /[\h]{10}/, /[0123456789abcdfabcdf]{10}/);
+    });
 
-    stringGenerator.pattern = regexString;
-    var generatedString = stringGenerator.createString();
+    QUnit.test( "Generate string using a range preset - \\H test", function(assert) {
+        testRun(assert, /[\H]{10}/, /[0123456789ABCDFabcdf]{10}/);
+    });
 
-    assert.equal(stringGenerator.pattern, regexString, "'" + regexString + "' assigned to stringGenerator.pattern");
-    assert.notEqual(generatedString, "", "generatedString should not be empty");
-    assert.equal(regexMatch.test(generatedString), true, "checking string '" + generatedString + "' matches pattern '" + regexMatchString + "'");
-});
+    QUnit.test( "Generate string using a range preset - \\o test", function(assert) {
+        testRun(assert, /[\o]{10}/, /[01234567]{10}/);
+    });
 
-QUnit.test( "Generate string using a quantifier range", function(assert) {
-    var regex = /[a-z]{5,10}/
-    var regexString = regex.toString().slice(1, -1);
-    var regexMatch = /[a-z{5,10}]/
-    var regexMatchString = regexString;
+    QUnit.test( "Generate string using an OR sequence", function(assert) {
+        testRun(assert, /(test1|test2)/);
+    });
 
-    stringGenerator.pattern = regexString;
-    var generatedString = stringGenerator.createString();
+    QUnit.test( "Generate string using an AND sequence", function(assert) {
+        testRun(assert, /(test1&test2)/, /\b[tes12]{10}\b/);
+    });
 
-    assert.equal(stringGenerator.pattern, regexString, "'" + regexString + "' assigned to stringGenerator.pattern");
-    assert.notEqual(generatedString, "", "generatedString should not be empty");
-    assert.equal(regex.test(generatedString), true, "checking string '" + generatedString + "' matches pattern '" + regexString + "'");
+    QUnit.test( "Generate string using a quantifier range - comma test", function(assert) {
+        testRun(assert, /[a-z]{5,10}/);
+    });
 
-    regex = /[a-z]{5:10}/
-    regexString = regex.toString().slice(1, -1);
+    QUnit.test( "Generate string using a quantifier range - colon test", function(assert) {
+        testRun(assert, /[a-z]{5:10}/, /[a-z]{5,10}/);
+    });
 
-    stringGenerator.pattern = regexString;
-    generatedString = stringGenerator.createString();
-
-    assert.equal(stringGenerator.pattern, regexString, "'" + regexString + "' assigned to stringGenerator.pattern");
-    assert.notEqual(generatedString, "", "generatedString should not be empty");
-    assert.equal(regexMatch.test(generatedString), true, "checking string '" + generatedString + "' matches pattern '" + regexMatchString + "'");
-
-    regex = /[a-z]{5-10}/
-    regexString = regex.toString().slice(1, -1);
-
-    stringGenerator.pattern = regexString;
-    generatedString = stringGenerator.createString();
-
-    assert.equal(stringGenerator.pattern, regexString, "'" + regexString + "' assigned to stringGenerator.pattern");
-    assert.notEqual(generatedString, "", "generatedString should not be empty");
-    assert.equal(regexMatch.test(generatedString), true, "checking string '" + generatedString + "' matches pattern '" + regexMatchString + "'");
+    QUnit.test( "Generate string using a quantifier range - dash test", function(assert) {
+        testRun(assert, /[a-z]{5-10}/, /[a-z]{5,10}/);
+    });
 });
