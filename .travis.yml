@@ -6,6 +6,7 @@ before_script:
   - npm install -g qunit
   #- npm install -g qunit-cli
 
-script: cd tests
-qunit tests.js
+script: 
+- cd tests
+- qunit tests.js
 #qunit-cli tests/tests.js
