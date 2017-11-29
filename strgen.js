@@ -32,7 +32,7 @@ class Strgen {
 
             return this.outputString();
         } else {
-            this.outputWarning("<br />Pattern is not defined.");
+            //this.outputWarning("<br />Pattern is not defined.");
             throw new Error("Pattern is not defined.");
         }
     };
@@ -220,7 +220,7 @@ class Strgen {
                 this.createLogEntry("Quantifier values swapped");
             }
 
-            // temporary solution to getting a random quantifier from a range, the above code is not balanced enough
+            // temporary solution to getting a random quantifier from a range
             var quantifierArray = [];
 
             for (var count = quantifier_first_value; count <= quantifier_value; count++) { // populate array with every value between quantifier_first_value and quantifier_value
@@ -507,7 +507,7 @@ class Strgen {
 }
 
 if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
-     module.exports = Strgen;
+    module.exports = Strgen;
 }
 else {
     window.Strgen = Strgen;
