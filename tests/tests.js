@@ -111,7 +111,7 @@ QUnit.module("String generation tests", function( hooks ) {
         testRun(assert, /[a-z]{5-10}/, /[a-z]{5,10}/);
     });
 });
-
+/*
 QUnit.module("Warnings", function( hooks ) {
 
     hooks.before(function() {
@@ -146,4 +146,4 @@ QUnit.module("Warnings", function( hooks ) {
         assert.equal(stringGenerator.error_list.length, 0, "check if the warning/error list is empty");
         assert.equal(document.getElementById("warning").innerHTML, "", "check if the 'warning' div is empty");
     });
-});
+});*/
