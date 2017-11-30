@@ -11,9 +11,11 @@ class Strgen {
         this.allow_duplicate_characters = true; // parameter, can be set when generator is initialised
         this.generated_output; // the full output string
         this.error_output_id = "warning"; // parameter, the default UI element where errors will be output (the reference to the element must be the ID)
+        this.store_errors = false;
         this.allow_logging = false;
         this.reporting_type = "full"; // parameter, controls level of basic reporting at the start and end of string generation
         this.generator_log;
+        this.error_list;
     }
 
     createString() { // initial method that is called to start generating a random string allow_duplicates = true, allow_logging = false, reporting_type = "full", error_output_id = "warning"
@@ -22,6 +24,7 @@ class Strgen {
         this.quantifier_value = 1;
         this.generated_value_list = [];
         this.generator_log = [];
+        this.error_list = [];
         // assign default values before generation/
         // this fixes a problem with multiple generations with the same instance of the object
 
@@ -480,7 +483,11 @@ class Strgen {
         if (document.getElementById(this.error_output_id)) {
             document.getElementById(this.error_output_id).innerHTML += message;
         }
-        else {
+        else if (this.store_errors == true) {
+            this.error_list.push(message);
+        } 
+        else
+        {
             message = message.split("<br />").join("");
             console.error(message);
         }
