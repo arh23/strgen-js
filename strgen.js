@@ -147,7 +147,11 @@ class Strgen {
             } 
             else if (this.operators.includes(this.current()) == true && this.last() != '/') // if the current character is an unbroken operator, throw error
             {
-                throw new Error("Unexpected operator at position " + (this.current_index + 1) + ", operator '" + this.pattern.charAt(this.current_index) + "'.");
+                if(this.pattern.charAt(this.current_index) != "") {
+                    throw new Error("Unexpected operator at position " + (this.current_index + 1) + ", operator '" + this.pattern.charAt(this.current_index) + "'.");
+                } else {
+                    throw new Error("Character class not closed.");
+                }
                 break;
             }
             else if (this.lookahead() == '-' && current_character != '/') // if the next character is an unbroken '-' operator
@@ -255,6 +259,10 @@ class Strgen {
 
         if (quantifier_value == 0) {
             this.outputWarning("<br />No value was returned. <br />Character quantifier at position " + start_value + " is 0.")
+        }
+
+        if (isNaN(quantifier_value)) {
+            this.outputWarning("<br />Quantifier at position " + start_value + " contains invalid characters.")
         }
 
         return parseInt(quantifier_value);
@@ -486,8 +494,7 @@ class Strgen {
         else if (this.store_errors == true) {
             this.error_list.push(message);
         } 
-        else
-        {
+        else {
             message = message.split("<br />").join("");
             console.error(message);
         }
