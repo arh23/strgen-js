@@ -16,6 +16,7 @@ class Strgen {
         this.reporting_type = "full"; // parameter, controls level of basic reporting at the start and end of string generation
         this.generator_log;
         this.error_list;
+        this.error_state;
     }
 
     createString() { // initial method that is called to start generating a random string allow_duplicates = true, allow_logging = false, reporting_type = "full", error_output_id = "warning"
@@ -33,10 +34,15 @@ class Strgen {
             this.operatorComparison();
             this.outputLog();
 
-            return this.outputString();
+            if (!this.error_state) {
+                return this.outputString();
+            } else {
+                return ""
+            }
         } else {
             //this.outputWarning("<br />Pattern is not defined.");
-            throw new Error("Pattern is not defined.");
+            //throw new Error("Pattern is not defined.");
+            this.outputError("Pattern is not defined.");
         }
     };
 
@@ -127,7 +133,13 @@ class Strgen {
         else
         {
             if (this.reporting_type == 'full') { // report the full information at the end, if reporting is set to full
-                this.createLogEntry("End of pattern reached - final generated string", this.outputString(), true);
+                if (this.error_state) {
+                    this.createLogEntry("End of pattern reached - string failed to generate due to error", undefined, true);
+                } else if (this.generated_output == "") {
+                    this.createLogEntry("End of pattern reached - no string generated", undefined, true);
+                } else {
+                    this.createLogEntry("End of pattern reached - final generated string", this.outputString(), true);  
+                } 
             }
             else if (this.reporting_type == "less") { // report complete generation at the end, if reporting is set to less
                 this.createLogEntry("Strgen-JS - finish", undefined, true);
@@ -148,9 +160,11 @@ class Strgen {
             else if (this.operators.includes(this.current()) == true && this.last() != '/') // if the current character is an unbroken operator, throw error
             {
                 if(this.pattern.charAt(this.current_index) != "") {
-                    throw new Error("Unexpected operator at position " + (this.current_index + 1) + ", operator '" + this.pattern.charAt(this.current_index) + "'.");
+                    //throw new Error("Unexpected operator at position " + (this.current_index + 1) + ", operator '" + this.pattern.charAt(this.current_index) + "'.");
+                    this.outputError("Unexpected operator at position " + (this.current_index + 1) + ", operator '" + this.pattern.charAt(this.current_index) + "'.");
                 } else {
-                    throw new Error("Character class not closed.");
+                    //throw new Error("Character class not closed.");
+                    this.outputError("Character class not closed.");
                 }
                 break;
             }
@@ -200,13 +214,17 @@ class Strgen {
                 this.next();
             }
             else if (this.lookahead() == "") {
-                throw new Error("Quantifier not closed.");  
+                //throw new Error("Quantifier not closed.");
+                this.outputError("Quantifier not closed.");
+                break;  
             }
             else
             {
                 this.next();
                 quantifier_value = 1;
-                throw new Error("Unexpected character at position " + (this.current_index + 1) + ", character '" + this.pattern.charAt(this.current_index) + "'.");               
+                //throw new Error("Unexpected character at position " + (this.current_index + 1) + ", character '" + this.pattern.charAt(this.current_index) + "'."); 
+                this.outputError("Unexpected character at position " + (this.current_index + 1) + ", character '" + this.pattern.charAt(this.current_index) + "'.");
+                break;          
             }
         } while (this.lookahead() != '}')
 
@@ -218,9 +236,6 @@ class Strgen {
 
             if (quantifier_first_value > quantifier_value) // swap values if the quantifier_first_value is the largest value
             {
-                this.createLogEntry("quantifier_first_value", quantifier_first_value);
-                this.createLogEntry("quantifier_value", quantifier_value);
-
                 var store = quantifier_first_value;
                 quantifier_first_value = quantifier_value;
                 quantifier_value = store;
@@ -247,10 +262,9 @@ class Strgen {
 
         if (this.allow_duplicate_characters == false && quantifier_value > this.generated_value_list.length)
         {
-            this.outputWarning("<br />Character quantifier at position " + start_value + " reduced from " + 
+            this.outputWarning("Character quantifier at position " + start_value + " reduced from " + 
                           quantifier_value + " to " + this.generated_value_list.length + 
-                          ".<br /> Toggle 'Allow Duplicate Characters' to generate the full amount.")
-            this.createLogEntry("<b>Quantifier reduced from " + quantifier_value + " to " + this.generated_value_list.length + "</b>");
+                          ". Toggle 'Allow Duplicate Characters' to generate the full amount.")
 
             quantifier_value = this.generated_value_list.length;
         }
@@ -258,11 +272,11 @@ class Strgen {
         this.createLogEntry("Quantifier value is " + quantifier_value);
 
         if (quantifier_value == 0) {
-            this.outputWarning("<br />No value was returned. <br />Character quantifier at position " + start_value + " is 0.")
+            this.outputWarning("No value was returned. Character quantifier at position " + start_value + " is 0.")
         }
 
-        if (isNaN(quantifier_value)) {
-            this.outputWarning("<br />Quantifier at position " + start_value + " contains invalid characters.")
+        if (quantifier_value != null && isNaN(quantifier_value)) {
+            this.outputWarning("Quantifier at position " + start_value + " contains invalid characters.")
         }
 
         return parseInt(quantifier_value);
@@ -336,7 +350,7 @@ class Strgen {
             default:
             {
                 preset_characters = undefined;
-                this.outputWarning("<br />Invalid preset range. \'\\" + character + "\' is not a valid preset.");
+                this.outputWarning("Invalid preset range. \'\\" + character + "\' is not a valid preset.");
                 break;
             }
         }
@@ -420,12 +434,10 @@ class Strgen {
                 }
                 else if (this.lookahead() == ')' && last_operator == "none" || this.lookahead() == '') {
                     if (string_value == "") {
-                        this.createLogEntry("<b>ERROR! Unbroken Sequence does not contain any values at position", (this.current_index + 1) + "</b>");
-                        this.outputWarning("<br />Unbroken Sequence starting at position " + (this.current_index + 1) + " does not contain any values.");
+                        this.outputWarning("Unbroken Sequence starting at position " + (this.current_index + 1) + " does not contain any values.");
                     } else {
                         this.generated_value_list.push(string_value);
-                        this.createLogEntry("<b>WARNING! Sequence starting at position " + ((this.current_index + 1) - string_value.length) + " only contains one value.</b>");
-                        this.outputWarning("<br />Sequence starting at position " + ((this.current_index + 1) - string_value.length) + " only contains one value.")         
+                        this.outputWarning("Sequence starting at position " + ((this.current_index + 1) - string_value.length) + " only contains one value.")         
                     }
                     break;
                 }
@@ -437,8 +449,7 @@ class Strgen {
             }
             else 
             {
-                this.createLogEntry("<b>ERROR! End of sequence expected at postion", (this.current_index + 1) + "</b>");
-                this.outputWarning("<br />End of sequence expected at position " + (this.current_index + 1) + ".");
+                this.outputError("End of sequence expected at position " + (this.current_index + 1) + ".");
                 break;
             }
         }
@@ -456,8 +467,7 @@ class Strgen {
             else
             {
                 if (this.generated_output == "") {
-                    this.createLogEntry("<b>ERROR! No value was returned. Please check the template.</b>");
-                    this.outputWarning("<br />No value was returned. Please check the template.");
+                    this.outputWarning("No value was returned. Please check the template.");
                     if (this.generated_value_list.length == 0) {
                         this.createLogEntry("<b>Ending value selection and continuing generation...</b>");
                         character_index = this.quantifier_value;
@@ -492,12 +502,32 @@ class Strgen {
             document.getElementById(this.error_output_id).innerHTML += message;
         }
         else if (this.store_errors == true) {
-            this.error_list.push(message);
+            this.error_list.push({
+                msg: message,
+                state: "warning"
+            });
         } 
         else {
-            message = message.split("<br />").join("");
+            //message = message.split("<br />").join("");
             console.error(message);
         }
+
+        this.createLogEntry("<b>WARNING</b>", message, true);
+    }
+
+    outputError(message) {
+        if (document.getElementById(this.error_output_id)) {
+            document.getElementById(this.error_output_id).innerHTML += message;
+        }
+        else if (this.store_errors == true) {
+            this.error_list.push({msg: message, state: "error"});
+        } 
+
+        console.error(message);
+
+        this.createLogEntry("<b>ERROR</b>", message, true);
+
+        this.error_state = true;    
     }
 
     createLogEntry(caption, content = undefined, enabled = this.allow_logging) { // create a new log entry
