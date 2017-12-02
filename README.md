@@ -25,11 +25,15 @@ When using Strgen in existing code, a new object instance will need to be create
 var example_pattern = "[a-z]{10}";
 var stringGenerator = new Strgen();
 
-stringGenerator.pattern = example_pattern; // required parameter
-stringGenerator.allow_duplicate_characters = true; // optional parameters
+// required parameter
+stringGenerator.pattern = example_pattern; 
+
+// optional parameters
+stringGenerator.allow_duplicate_characters = true; 
 stringGenerator.allow_logging = false;
 stringGenerator.reporting_type = "less";
 stringGenerator.error_output_id = "error";
+stringGenerator.store_errors = true;
 
 var generated_string = stringGenerator.createString();
 ~~~~
@@ -47,6 +51,8 @@ There are multiple parameters/variables which affect the way in which Strgen han
 - *reporting_type* -  optional - string to specify the level of detail the messages posted before and after string generation. To show the pattern at the start, and the final string generated at the end of generation, use "full". To show a message stating when generation has started and finished, use "less". To show nothing, use "none". Any invalid values assigned to this parameter will be set to the "none" state. If *allow_logging* has been set to *true*, this will be set to full. Set to *full* by default.
 
 - *error_output_id* - optional - string to reference the ID of the element where warning and error messages should be printed on a UI. Uses element ID *warning* by default.
+
+- *store_errors* - optional - boolean to specify whether all errors and warnings should be stored in a list of objects or not. Each object in the list will contain two properties, *msg* and *state*. *msg* is the string to describe what the error/warning is, *state* is either "error" or "warning". *False* by default.
 
 See below for more information regarding patterns and other features:
 

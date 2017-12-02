@@ -2,21 +2,21 @@
 
 class Strgen {
     constructor() {
-        this.pattern = ""; // the pattern
+        this.pattern = ""; // parameter, the pattern
+        this.allow_duplicate_characters = true; // parameter, can be set when generator is initialised
+        this.allow_logging = false; // parameter, controls whether events during the generation process are stored in a list
+        this.reporting_type = "full"; // parameter, controls level of basic reporting at the start and end of string generation
+        this.error_output_id = "warning"; // parameter, the default UI element where errors will be output (the reference to the element must be the ID)
+        this.store_errors = false; // parameter, controls whether errors and warnings should be stored in a list of objects when they occur
         this.current_index; // the current pointer/index in the pattern
         this.operators = "[]{}()-\\|"; // special operator characters responsible for different behaviours
         this.quantifier_operators = ":,-"; // operators used within a quantifier, each does the same thing (create range of quantifier values)
         this.quantifier_value; // stores the value specified in the pattern within the { }
         this.generated_value_list; // where output is stored, to be used in generation at the end of the generation process
-        this.allow_duplicate_characters = true; // parameter, can be set when generator is initialised
         this.generated_output; // the full output string
-        this.error_output_id = "warning"; // parameter, the default UI element where errors will be output (the reference to the element must be the ID)
-        this.store_errors = false;
-        this.allow_logging = false;
-        this.reporting_type = "full"; // parameter, controls level of basic reporting at the start and end of string generation
-        this.generator_log;
-        this.error_list;
-        this.error_state;
+        this.generator_log; // if allow_logging is true, events during the generation process will be stored in this list
+        this.error_list; // if store_errors is true, errors and warnings are stored in this list
+        this.error_state; // boolean to store whether an error has been encountered
     }
 
     createString() { // initial method that is called to start generating a random string allow_duplicates = true, allow_logging = false, reporting_type = "full", error_output_id = "warning"
@@ -497,7 +497,7 @@ class Strgen {
         return this.generated_output;
     }
 
-    outputWarning(message) { // output a warning to the UI or to the console
+    outputWarning(message) { // output a warning to the UI element, to the console, or store it in error_list
         if (document.getElementById(this.error_output_id)) {
             document.getElementById(this.error_output_id).innerHTML += message;
         }
@@ -515,12 +515,15 @@ class Strgen {
         this.createLogEntry("<b>WARNING</b>", message, true);
     }
 
-    outputError(message) {
+    outputError(message) { // output an error to the console and set error_state to true, and either display the error message on the UI element, or store it in error_list
         if (document.getElementById(this.error_output_id)) {
             document.getElementById(this.error_output_id).innerHTML += message;
         }
         else if (this.store_errors == true) {
-            this.error_list.push({msg: message, state: "error"});
+            this.error_list.push({
+                msg: message, 
+                state: "error"
+            });
         } 
 
         console.error(message);
