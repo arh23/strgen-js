@@ -3,11 +3,13 @@
 class Strgen {
     constructor() {
         this.pattern = ""; // parameter, the pattern
-        this.allow_duplicate_characters = true; // parameter, can be set when generator is initialised
-        this.allow_logging = false; // parameter, controls whether events during the generation process are stored in a list
+        this.allow_duplicate_characters = true; // parameter, controls whether the string can be constructed with the same character multiple times (same character at same index) or not
+        this.allow_multiple_instances = true; // parameter, allow the string to be constructed with the same character multiple times IF the pattern contains the character more than once
+        this.ignore_duplicate_case = false; // parameter, ignore the case of duplicates - i.e. 'A' and 'a' are treated the same, if this is set to true (requires allow_multiple_instances)
+        this.allow_logging = false; // parameter, allow the storing of events during the generation process in a list, if set to true
         this.reporting_type = "full"; // parameter, controls level of basic reporting at the start and end of string generation
         this.error_output_id = "warning"; // parameter, the default UI element where errors will be output (the reference to the element must be the ID)
-        this.store_errors = false; // parameter, controls whether errors and warnings should be stored in a list of objects when they occur
+        this.store_errors = false; // parameter, store errors and warnings in a list of objects when they occur, if set to true
         this.current_index; // the current pointer/index in the pattern
         this.operators = "[]{}()-\\|"; // special operator characters responsible for different behaviours
         this.quantifier_operators = ":,-"; // operators used within a quantifier, each does the same thing (create range of quantifier values)
@@ -30,6 +32,7 @@ class Strgen {
         // this fixes a problem with multiple generations with the same instance of the object
 
         if (this.pattern != "") {
+            this.checkParameters();
             this.setLogger();
             this.operatorComparison();
             this.outputLog();
@@ -56,6 +59,13 @@ class Strgen {
             this.createLogEntry("Starting string generation - pattern", this.pattern, true);            
         } else if (this.reporting_type == "less") { // report start of generation, if reporting is set to less
             this.createLogEntry("Strgen-JS - start", undefined, true);
+        }
+    }
+
+    checkParameters() {
+        if (this.allow_multiple_instances == true && this.ignore_duplicate_case == true) {
+            this.outputWarning("Cannot ignore character case of duplicates, if multiple instances of characters are allowed!");
+            this.ignore_duplicate_case = false;
         }
     }
 
@@ -260,23 +270,26 @@ class Strgen {
             quantifier_value = selected_quantifier;
         }
 
-        if (this.allow_duplicate_characters == false && quantifier_value > this.generated_value_list.length)
+        if (this.allow_duplicate_characters == false)
         {
-            this.outputWarning("Character quantifier at position " + start_value + " reduced from " + 
-                          quantifier_value + " to " + this.generated_value_list.length + 
-                          ". Toggle 'Allow Duplicate Characters' to generate the full amount.")
+            var valueListLength = this.getValueListLength();
+            if (quantifier_value > valueListLength) {
+                this.outputWarning("Character quantifier at position " + start_value + " reduced from " + 
+                    quantifier_value + " to " + valueListLength + 
+                    ". Toggle 'Allow Duplicate Characters' to generate the full amount.")
 
-            quantifier_value = this.generated_value_list.length;
+                    quantifier_value = valueListLength;
+            }
         }
 
         this.createLogEntry("Quantifier value is " + quantifier_value);
 
         if (quantifier_value == 0) {
-            this.outputWarning("No value was returned. Character quantifier at position " + start_value + " is 0.")
+            this.outputWarning("No value was returned. Character quantifier at position " + start_value + " is 0.");
         }
 
         if (quantifier_value != null && isNaN(quantifier_value)) {
-            this.outputWarning("Quantifier at position " + start_value + " contains invalid characters.")
+            this.outputWarning("Quantifier at position " + start_value + " contains invalid characters.");
         }
 
         return parseInt(quantifier_value);
@@ -477,8 +490,24 @@ class Strgen {
 
             if (allow_duplicates == false)
             {
+                var value = this.generated_value_list[randvalue];
                 this.generated_value_list.splice(randvalue, 1);
                 this.createLogEntry("Removed selected value from array", this.generated_value_list.toString());
+                if (this.allow_multiple_instances == false) {
+                    this.removeValueFromList(value);
+                    if (this.ignore_duplicate_case == true && value.match(/[a-zA-Z]/)) {
+                        var value_upper = value.toUpperCase();
+                        var value_lower = value.toLowerCase();
+
+                        if (value != value_lower) {
+                            value = value_lower;
+                        } else {
+                            value = value_upper;
+                        }
+
+                        this.removeValueFromList(value);
+                    }
+                }
             }
 
             this.selectValueFromList(this.quantifier_value, character_index+=1, allow_duplicates);
@@ -486,6 +515,50 @@ class Strgen {
         else
         {
             this.generated_value_list = [];
+        }
+    }
+
+    removeValueFromList(value, previouslySearched = false, count = 0) {
+        if (this.generated_value_list.indexOf(value) != -1) {
+            var valueIndex = this.generated_value_list.indexOf(value)
+
+            this.generated_value_list.splice(valueIndex, 1);
+            count += 1;
+
+            this.removeValueFromList(value, true, count);
+        } else if (this.generated_value_list.indexOf(value) == -1 && previouslySearched == true) {
+            if (count > 1) {
+                this.createLogEntry("Removed value '" + value + "' from " + count + " indexes in the array", this.generated_value_list.toString());
+            } else {
+                this.createLogEntry("Removed value '" + value + "' from array", this.generated_value_list.toString());
+            }  
+        } else {
+            this.createLogEntry("Value '" + value + "' was not found in the values list", this.generated_value_list.toString());
+        }
+    }
+
+    getValueListLength(index = 0, countList = [], currentCount = 0, allowMultiple = this.allow_multiple_instances, ignoreCase = this.ignore_duplicate_case) {
+        if (allowMultiple == true && ignoreCase == false) {
+            this.createLogEntry("Values array length is", this.generated_value_list.length);
+            return this.generated_value_list.length;
+        } else if (index != this.generated_value_list.length && ignoreCase == true) {
+            if (countList.indexOf(this.generated_value_list[index].toLowerCase()) == -1) {
+                if (countList.indexOf(this.generated_value_list[index].toUpperCase()) == -1) {
+                    countList.push(this.generated_value_list[index]);
+                }
+            }
+            index += 1;
+            return this.getValueListLength(index, countList, countList.length);
+        } else if (index != this.generated_value_list.length) {
+            if (countList.indexOf(this.generated_value_list[index]) == -1) {
+                countList.push(this.generated_value_list[index]);
+            }
+            index += 1;
+            return this.getValueListLength(index, countList, countList.length);
+        } else if (index == this.generated_value_list.length) {
+            this.createLogEntry("List counted, " + currentCount  + " unique values. Unique values are: ", countList.toString());
+            console.log(countList.toString());
+            return currentCount;
         }
     }
 
