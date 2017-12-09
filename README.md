@@ -29,7 +29,9 @@ var stringGenerator = new Strgen();
 stringGenerator.pattern = example_pattern; 
 
 // optional parameters
-stringGenerator.allow_duplicate_characters = true; 
+stringGenerator.allow_duplicate_characters = false; 
+stringGenerator.allow_multiple_instances = true;
+stringGenerator.ignore_duplicate_case = false;
 stringGenerator.allow_logging = false;
 stringGenerator.reporting_type = "less";
 stringGenerator.error_output_id = "error";
@@ -44,7 +46,11 @@ There are multiple parameters/variables which affect the way in which Strgen han
 
 - *pattern* - required - the regex-styled pattern string required to generate the random string.
 
-- *allow_duplicate_characters* - optional - boolean to specify whether or not Strgen should use the same character twice in a range/set of characters. *True* by default.
+- *allow_duplicate_characters* - optional - boolean to specify whether or not Strgen should use the same character twice (or more) in a range/set of characters. *True* by default.
+
+- *allow_multiple_instances* - optional - boolean to specify whether or not Strgen should generate a string with multiple instances of a character, IF the character has been specified multiple times in the pattern. For example, if character "A" has been selected, all instances of "A" will be removed from the values list, if this parameter has been set to *false*. *True* by default. Requires *allow_duplicate_characters* to be false.
+
+- *ignore_duplicate_case* - optional - boolean to specify whether or not Strgen should ignore case, when multiple instances are not allowed. For example, if character "A" has been selected, all instances of "A" and "a" will be removed from the values list, if this parameter has been set to *true*. *False* by default. Requires *allow_multiple_characters* to be false.
 
 - *allow_logging* - optional - boolean to specify whether every significant action during the generation process should be logged or not. *False* by default. Has the potential to cause performance issues. The log is accessible via the browser console, or can be accessed directly from the Strgen object. For example, using the example object defined above, you will be able to access the logs using: *stringGenerator.generator_log*.
 
