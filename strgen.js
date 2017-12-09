@@ -119,7 +119,8 @@ class Strgen {
                     this.quantifier_value = this.getQuantifier();
                     break;
                 case "}":
-                    this.createLogEntry("End of quantifier reached");
+                    this.createLogEntry("End of quantifier reached", this.quantifier_value);
+                    this.createLogEntry("Final contents of value list", this.generated_value_list.toString());
                     this.selectValueFromList(this.quantifier_value, undefined, this.allow_duplicate_characters);
                     this.quantifier_value = 1;
                     break;
@@ -470,7 +471,6 @@ class Strgen {
 
     selectValueFromList(defined_no_of_chars, character_index = 0, allow_duplicates = false) { // pick a random value from the generated_value_list and do this quantifier_value number of times
         if (character_index < this.quantifier_value) {
-            this.createLogEntry("Final contents of value list", this.generated_value_list.toString());
             var randvalue = Math.floor(Math.random() * this.generated_value_list.length);
 
             if (this.generated_value_list[randvalue] != undefined) {
@@ -491,8 +491,9 @@ class Strgen {
             if (allow_duplicates == false)
             {
                 var value = this.generated_value_list[randvalue];
-                this.generated_value_list.splice(randvalue, 1);
-                this.createLogEntry("Removed selected value from array", this.generated_value_list.toString());
+                //this.generated_value_list.splice(randvalue, 1);
+                //this.createLogEntry("Removed selected value from array", this.generated_value_list.toString());
+                this.removeValueFromList(value, randvalue, true);
                 if (this.allow_multiple_instances == false) {
                     this.removeValueFromList(value);
                     if (this.ignore_duplicate_case == true && value.match(/[a-zA-Z]/)) {
@@ -518,14 +519,18 @@ class Strgen {
         }
     }
 
-    removeValueFromList(value, previouslySearched = false, count = 0) {
+    removeValueFromList(value, index = 0, oneValueOnly = false, previouslySearched = false, count = 0) {
         if (this.generated_value_list.indexOf(value) != -1) {
-            var valueIndex = this.generated_value_list.indexOf(value)
+            var valueIndex = this.generated_value_list.indexOf(value, index);
 
             this.generated_value_list.splice(valueIndex, 1);
             count += 1;
 
-            this.removeValueFromList(value, true, count);
+            if (oneValueOnly == false) {
+                this.removeValueFromList(value, 0, false, true, count);
+            } else {
+                this.createLogEntry("Removed value '" + value + "' from array", this.generated_value_list.toString());
+            }
         } else if (this.generated_value_list.indexOf(value) == -1 && previouslySearched == true) {
             if (count > 1) {
                 this.createLogEntry("Removed value '" + value + "' from " + count + " indexes in the array", this.generated_value_list.toString());
@@ -612,7 +617,11 @@ class Strgen {
             var timestamp_text = timestamp.toTimeString().split(" ")[0] + ":" + timestamp.getMilliseconds();
 
             if(content != undefined) {
-                this.generator_log.push(timestamp_text + " - " + caption + ": " + content);
+                if(content != "") {
+                    this.generator_log.push(timestamp_text + " - " + caption + ": " + content);
+                } else {
+                    this.generator_log.push(timestamp_text + " - " + caption + ": empty");
+                }
             } else {
                 this.generator_log.push(timestamp_text + " - " + caption);
             }
