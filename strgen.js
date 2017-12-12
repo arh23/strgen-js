@@ -213,12 +213,14 @@ class Strgen {
         var start_value = this.current_index + 1;
         var quantifier_value = "";
         var quantifier_first_value = "";
+        var quantRangeState = false;
 
         do {
             if (this.operators.includes(this.lookahead()) == false && this.quantifier_operators.includes(this.lookahead()) == false) {
                 quantifier_value+= this.next();
             }
             else if (this.quantifier_operators.includes(this.lookahead()) == true && quantifier_first_value == "") {
+                quantRangeState = true;
                 this.createLogEntry("Quantifier range specified");
                 quantifier_first_value = quantifier_value;
                 quantifier_value = "";
@@ -239,37 +241,42 @@ class Strgen {
             }
         } while (this.lookahead() != '}')
 
-        if (quantifier_first_value != "") { // if the quantifier contained : and the first quantifier has been set
-            this.createLogEntry("Generating random quantifier between", quantifier_first_value + " and " + quantifier_value);
-
-            quantifier_first_value = parseInt(quantifier_first_value);
-            quantifier_value = parseInt(quantifier_value);
-
-            if (quantifier_first_value > quantifier_value) // swap values if the quantifier_first_value is the largest value
-            {
-                var store = quantifier_first_value;
-                quantifier_first_value = quantifier_value;
-                quantifier_value = store;
-                this.createLogEntry("Quantifier values swapped");
-            }
-
-            // temporary solution to getting a random quantifier from a range
-            var quantifierArray = [];
-
-            for (var count = quantifier_first_value; count <= quantifier_value; count++) { // populate array with every value between quantifier_first_value and quantifier_value
-                quantifierArray.push(count);
-            }
-            this.createLogEntry("Quantifier range values", quantifierArray.toString());
-
-            var randvalue = Math.floor(Math.random() * quantifierArray.length);
-            var selected_quantifier = quantifierArray[randvalue]; // select a value based math.random and array length
-            this.createLogEntry("Selected index", randvalue + ", selected quantifier value: " + selected_quantifier);
-
-            quantifierArray = [];
-            //end of temp code 
-
-            quantifier_value = selected_quantifier;
+        if (quantifier_first_value == undefined || quantifier_first_value == "") {
+            quantifier_first_value = 0;
+        } else if (quantifier_value == undefined || quantifier_value == "") {
+            this.outputWarning("Max quantifier value was not set, quantifier at position " + start_value + " set to 0.");
+            quantifier_value = 0;
         }
+
+        this.createLogEntry("Generating random quantifier between", quantifier_first_value + " and " + quantifier_value);
+
+        quantifier_first_value = parseInt(quantifier_first_value);
+        quantifier_value = parseInt(quantifier_value);
+
+        if (quantifier_first_value > quantifier_value) // swap values if the quantifier_first_value is the largest value
+        {
+            var store = quantifier_first_value;
+            quantifier_first_value = quantifier_value;
+            quantifier_value = store;
+            this.createLogEntry("Quantifier values swapped");
+        }
+
+        // temporary solution to getting a random quantifier from a range
+        var quantifierArray = [];
+
+        for (var count = quantifier_first_value; count <= quantifier_value; count++) { // populate array with every value between quantifier_first_value and quantifier_value
+            quantifierArray.push(count);
+        }
+        this.createLogEntry("Quantifier range values", quantifierArray.toString());
+
+        var randvalue = Math.floor(Math.random() * quantifierArray.length);
+        var selected_quantifier = quantifierArray[randvalue]; // select a value based math.random and array length
+        this.createLogEntry("Selected index", randvalue + ", selected quantifier value: " + selected_quantifier);
+
+        quantifierArray = [];
+        //end of temp code 
+
+        quantifier_value = selected_quantifier;
 
         if (this.allow_duplicate_characters == false)
         {
@@ -285,12 +292,14 @@ class Strgen {
 
         this.createLogEntry("Quantifier value is " + quantifier_value);
 
-        if (quantifier_value == 0) {
+        if (quantifier_value == 0 && quantRangeState == false) {
             this.outputWarning("No value was returned. Character quantifier at position " + start_value + " is 0.");
+        } else if (quantifier_value == 0 && quantRangeState == true) {
+            this.outputWarning("No value was returned. Character quantifier range at position " + start_value + " generated the value 0!");
         }
 
-        if (quantifier_value != null && isNaN(quantifier_value)) {
-            this.outputWarning("Quantifier at position " + start_value + " contains invalid characters.");
+        if (isNaN(quantifier_value)) {
+            this.outputError("Quantifier at position " + start_value + " contains invalid characters.");
         }
 
         return parseInt(quantifier_value);
