@@ -241,52 +241,55 @@ class Strgen {
             }
         } while (this.lookahead() != '}')
 
-        if (quantifier_first_value == undefined || quantifier_first_value == "") {
-            quantifier_first_value = 0;
-        } else if (quantifier_value == undefined || quantifier_value == "") {
-            this.outputWarning("Max quantifier value was not set, quantifier at position " + start_value + " set to 0.");
-            quantifier_value = 0;
-        }
+        if (quantRangeState == true) {
 
-        this.createLogEntry("Generating random quantifier between", quantifier_first_value + " and " + quantifier_value);
+            if (quantifier_first_value == undefined || quantifier_first_value == "") {
+                quantifier_first_value = 0;
+            } else if (quantifier_value == undefined || quantifier_value == "") {
+                this.outputWarning("Max quantifier value was not set, quantifier at position " + start_value + " set to 0.");
+                quantifier_value = 0;
+            }
 
-        quantifier_first_value = parseInt(quantifier_first_value);
-        quantifier_value = parseInt(quantifier_value);
+            this.createLogEntry("Generating random quantifier between", quantifier_first_value + " and " + quantifier_value);
 
-        if (quantifier_first_value > quantifier_value) // swap values if the quantifier_first_value is the largest value
-        {
-            var store = quantifier_first_value;
-            quantifier_first_value = quantifier_value;
-            quantifier_value = store;
-            this.createLogEntry("Quantifier values swapped");
-        }
+            quantifier_first_value = parseInt(quantifier_first_value);
+            quantifier_value = parseInt(quantifier_value);
 
-        // temporary solution to getting a random quantifier from a range
-        var quantifierArray = [];
+            if (quantifier_first_value > quantifier_value) // swap values if the quantifier_first_value is the largest value
+            {
+                var store = quantifier_first_value;
+                quantifier_first_value = quantifier_value;
+                quantifier_value = store;
+                this.createLogEntry("Quantifier values swapped");
+            }
 
-        for (var count = quantifier_first_value; count <= quantifier_value; count++) { // populate array with every value between quantifier_first_value and quantifier_value
-            quantifierArray.push(count);
-        }
-        this.createLogEntry("Quantifier range values", quantifierArray.toString());
+            // temporary solution to getting a random quantifier from a range
+            var quantifierArray = [];
 
-        var randvalue = Math.floor(Math.random() * quantifierArray.length);
-        var selected_quantifier = quantifierArray[randvalue]; // select a value based math.random and array length
-        this.createLogEntry("Selected index", randvalue + ", selected quantifier value: " + selected_quantifier);
+            for (var count = quantifier_first_value; count <= quantifier_value; count++) { // populate array with every value between quantifier_first_value and quantifier_value
+                quantifierArray.push(count);
+            }
+            this.createLogEntry("Quantifier range values", quantifierArray.toString());
 
-        quantifierArray = [];
-        //end of temp code 
+            var randvalue = Math.floor(Math.random() * quantifierArray.length);
+            var selected_quantifier = quantifierArray[randvalue]; // select a value based math.random and array length
+            this.createLogEntry("Selected index", randvalue + ", selected quantifier value: " + selected_quantifier);
 
-        quantifier_value = selected_quantifier;
+            quantifierArray = [];
+            //end of temp code 
 
-        if (this.allow_duplicate_characters == false)
-        {
-            var valueListLength = this.getValueListLength();
-            if (quantifier_value > valueListLength) {
-                this.outputWarning("Character quantifier at position " + start_value + " reduced from " + 
-                    quantifier_value + " to " + valueListLength + 
-                    ". Toggle 'Allow Duplicate Characters' to generate the full amount.")
+            quantifier_value = selected_quantifier;
 
-                    quantifier_value = valueListLength;
+            if (this.allow_duplicate_characters == false)
+            {
+                var valueListLength = this.getValueListLength();
+                if (quantifier_value > valueListLength) {
+                    this.outputWarning("Character quantifier at position " + start_value + " reduced from " + 
+                        quantifier_value + " to " + valueListLength + 
+                        ". Toggle 'Allow Duplicate Characters' to generate the full amount.")
+
+                        quantifier_value = valueListLength;
+                }
             }
         }
 
