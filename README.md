@@ -36,6 +36,7 @@ stringGenerator.allow_logging = false;
 stringGenerator.reporting_type = "less";
 stringGenerator.error_output_id = "error";
 stringGenerator.store_errors = true;
+stringGenerator.symbol_quantifier_max = 25;
 
 var generated_string = stringGenerator.createString();
 ~~~~
@@ -59,6 +60,8 @@ There are multiple parameters/variables which affect the way in which Strgen han
 - *error_output_id* - optional - string to reference the ID of the element where warning and error messages should be printed on a UI. Uses element ID *warning* by default.
 
 - *store_errors* - optional - boolean to specify whether all errors and warnings should be stored in a list of objects or not. Each object in the list will contain two properties, *msg* and *state*. *msg* is the string to describe what the error/warning is, *state* is either "error" or "warning". *False* by default.
+
+- *symbol_quantifier_max* - optional - number to specify the maximum value a symbol quantifier can generate. *10* by default.
 
 See below for more information regarding patterns and other features:
 

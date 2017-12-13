@@ -10,9 +10,12 @@ class Strgen {
         this.reporting_type = "full"; // parameter, controls level of basic reporting at the start and end of string generation
         this.error_output_id = "warning"; // parameter, the default UI element where errors will be output (the reference to the element must be the ID)
         this.store_errors = false; // parameter, store errors and warnings in a list of objects when they occur, if set to true
+        this.symbol_quantifier_max = 10; // parameter, the highest value possible when using symbol quantifiers
+
         this.current_index; // the current pointer/index in the pattern
-        this.operators = "[]{}()-\\|"; // special operator characters responsible for different behaviours
-        this.quantifier_operators = ":,-"; // operators used within a quantifier, each does the same thing (create range of quantifier values)
+        this.operators = "[]{}()-\\|"; // special operator characters responsible for different behaviours TODO: fix error when this is an array
+        this.quantifier_operators = [":", ",", "-"]; // operators used within a quantifier, each does the same thing (create range of quantifier values)
+        this.symbol_quantifiers = ["+", "*", "?"] // symbol quantifiers based on the quantifiers of regular expression
         this.quantifier_value; // stores the value specified in the pattern within the { }
         this.generated_value_list; // where output is stored, to be used in generation at the end of the generation process
         this.generated_output; // the full output string
@@ -43,8 +46,6 @@ class Strgen {
                 return ""
             }
         } else {
-            //this.outputWarning("<br />Pattern is not defined.");
-            //throw new Error("Pattern is not defined.");
             this.outputError("Pattern is not defined.");
         }
     };
@@ -91,7 +92,7 @@ class Strgen {
         this.next();
         this.createLogEntry("Parsing character at position " + (this.current_index + 1));
 
-        if (this.operators.includes(this.current()) == true) 
+        if (this.operators.includes(this.current()) == true || this.symbol_quantifiers.includes(this.current()) == true) 
         {
             this.determineOperator(this.pattern.charAt(this.current_index));
         }
@@ -111,7 +112,7 @@ class Strgen {
                     break;
                 case "]":
                     this.createLogEntry("End of range reached", this.generated_value_list.toString());
-                    if (this.lookahead() != '{') {
+                    if (this.lookahead() != '{' && !this.symbol_quantifiers.includes(this.lookahead())){
                         this.selectValueFromList(1, undefined, this.allow_duplicate_characters);    
                     }
                     break;
@@ -134,6 +135,15 @@ class Strgen {
                 case '/':
                     this.next();
                     this.getLiteral();
+                    break;
+                case '+':
+                case '*':
+                case '?':
+                    this.quantifier_value = this.getQuantifier();
+                    this.createLogEntry("Symbol quantifier reached", this.quantifier_value);
+                    this.createLogEntry("Final contents of value list", this.generated_value_list.toString());
+                    this.selectValueFromList(this.quantifier_value, undefined, this.allow_duplicate_characters);
+                    this.quantifier_value = 1;
                     break;
                 default:
                     this.getLiteral();
@@ -211,36 +221,58 @@ class Strgen {
     getQuantifier() { // get the value within quantifier operators, if present
         this.createLogEntry("Processing quantifier at pattern position " + (this.current_index + 1));
         var start_value = this.current_index + 1;
-        var quantifier_value = "";
-        var quantifier_first_value = "";
+        var quantifier_value;
+        var quantifier_first_value;
         var quantRangeState = false;
+        var symbolQuantifier = false;
 
-        do {
-            if (this.operators.includes(this.lookahead()) == false && this.quantifier_operators.includes(this.lookahead()) == false) {
-                quantifier_value+= this.next();
-            }
-            else if (this.quantifier_operators.includes(this.lookahead()) == true && quantifier_first_value == "") {
-                quantRangeState = true;
-                this.createLogEntry("Quantifier range specified");
-                quantifier_first_value = quantifier_value;
-                quantifier_value = "";
-                this.next();
-            }
-            else if (this.lookahead() == "") {
-                //throw new Error("Quantifier not closed.");
-                this.outputError("Quantifier not closed.");
-                break;  
-            }
-            else
-            {
-                this.next();
+        if (this.symbol_quantifiers.includes(this.current())) {
+            this.createLogEntry("Symbol quantifier specified");
+            quantRangeState = true;
+            symbolQuantifier = true;
+            if(this.current() == "?") {
+                this.createLogEntry("Quantifier", "?");
                 quantifier_value = 1;
-                //throw new Error("Unexpected character at position " + (this.current_index + 1) + ", character '" + this.pattern.charAt(this.current_index) + "'."); 
-                this.outputError("Unexpected character at position " + (this.current_index + 1) + ", character '" + this.pattern.charAt(this.current_index) + "'.");
-                break;          
+                quantifier_first_value = 0;
+            } else if (this.current() == "*") {
+                this.createLogEntry("Quantifier", "*");
+                quantifier_value = this.symbol_quantifier_max;
+                quantifier_first_value = 0;
+            } else if (this.current() == "+") {
+                this.createLogEntry("Quantifier", "+");
+                quantifier_value = this.symbol_quantifier_max;
+                quantifier_first_value = 1;
             }
-        } while (this.lookahead() != '}')
-
+        } else {
+            do {
+                if (this.operators.includes(this.lookahead()) == false && this.quantifier_operators.includes(this.lookahead()) == false) { // if lookahead is not any operator
+                    if (quantifier_value == undefined) {
+                        quantifier_value = this.next();
+                    } else {
+                        quantifier_value+= this.next();  
+                    }
+                }
+                else if (this.quantifier_operators.includes(this.lookahead()) == true && quantifier_first_value == undefined) { // if lookahead is quantifier operator i.e. , : -
+                    quantRangeState = true;
+                    this.createLogEntry("Quantifier range specified");
+                    quantifier_first_value = quantifier_value;
+                    quantifier_value = "";
+                    this.next();
+                }
+                else if (this.lookahead() == "") { // if lookahead is nothing (error case)
+                    this.outputError("Quantifier not closed.");
+                    break;  
+                }
+                else
+                {
+                    this.next();
+                    quantifier_value = 1;
+                    this.outputError("Unexpected character at position " + (this.current_index + 1) + ", character '" + this.pattern.charAt(this.current_index) + "'.");
+                    break;          
+                }
+            } while (this.lookahead() != '}')           
+        }
+        
         if (quantRangeState == true) {
 
             if (quantifier_first_value == undefined || quantifier_first_value == "") {
