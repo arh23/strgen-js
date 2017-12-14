@@ -127,7 +127,21 @@ You can also use a range of quantifiers, for example:
 
 *[a-z]{4:8} or [a-z]{4-8} or [a-z]{4,8}*
 
-This will generate a string containing characters a to z with a length of between 4 and 8 characters (inclusive). A colon, dash or comma can be used as shown above. 
+This will generate a string containing characters a to z with a length of between 4 and 8 characters (inclusive). A colon, dash or comma can be used as shown above.
+
+##### Symbol quantifiers
+
+The typical symbol regular expression quantifiers (?, \* and +) can be used to generate strings. For example:
+
+*a+* will generate a string made up of between 1 and 10 'a' characters.
+
+*abc\** can generate strings such as *abccc* or *ab*, etc.
+
+*[abc]\** can generate *babcbcccbb* or *ccba*, etc.
+
+The other symbol quantifiers act in the same way as their regular expression counterparts.
+
+By default, the max number of characters that can be generated is 10, when using \* and +. This can be changed by assigning the desired value to *symbol_quantifier_max*.
 
 #### Sequences
 

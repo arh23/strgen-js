@@ -13,7 +13,7 @@ class Strgen {
         this.symbol_quantifier_max = 10; // parameter, the highest value possible when using symbol quantifiers
 
         this.current_index; // the current pointer/index in the pattern
-        this.operators = "[]{}()-\\|"; // special operator characters responsible for different behaviours TODO: fix error when this is an array
+        this.operators = "[]{}()-\\|/"; // special operator characters responsible for different behaviours TODO: fix error when this is an array
         this.quantifier_operators = [":", ",", "-"]; // operators used within a quantifier, each does the same thing (create range of quantifier values)
         this.symbol_quantifiers = ["+", "*", "?"] // symbol quantifiers based on the quantifiers of regular expression
         this.quantifier_value; // stores the value specified in the pattern within the { }
@@ -98,7 +98,12 @@ class Strgen {
         }
         else
         {
-            this.getLiteral();
+            if (!this.symbol_quantifiers.includes(this.lookahead())) { // catch and process literal and call operatorComparison() again
+                this.getLiteral();
+            } else {
+                this.addCharToList(this.current());
+            }
+
             this.operatorComparison();
         }
     };
@@ -146,7 +151,11 @@ class Strgen {
                     this.quantifier_value = 1;
                     break;
                 default:
-                    this.getLiteral();
+                    if (!this.symbol_quantifiers.includes(this.lookahead())) {
+                        this.getLiteral();
+                    } else {
+                        this.addCharToList(this.current());
+                    }
                     break;
             }
             this.operatorComparison();
@@ -216,6 +225,11 @@ class Strgen {
     getLiteral() { // output a literal character, skipping any generation
         this.createLogEntry("Literal", this.pattern.charAt(this.current_index));
         this.buildGeneratedString(this.pattern.charAt(this.current_index));
+    }
+
+    addCharToList(char) {
+        this.createLogEntry("Adding literal '" + char + "' to values list");
+        this.generated_value_list.push(char);
     }
 
     getQuantifier() { // get the value within quantifier operators, if present
