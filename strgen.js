@@ -125,9 +125,14 @@ class Strgen {
                     this.quantifier_value = this.getQuantifier();
                     break;
                 case "}":
-                    this.createLogEntry("End of quantifier reached", this.quantifier_value);
-                    this.createLogEntry("Final contents of value list", this.generated_value_list.toString());
-                    this.selectValueFromList(this.quantifier_value, undefined, this.allow_duplicate_characters);
+                    if (this.quantifier_value == 0) {
+                        this.createLogEntry("End of quantifier reached", "0");
+                        this.createLogEntry("No generation as quantifier is 0");  
+                    } else {
+                        this.createLogEntry("End of quantifier reached", this.quantifier_value);
+                        this.createLogEntry("Contents of value list", this.generated_value_list.toString());
+                        this.selectValueFromList(this.quantifier_value, undefined, this.allow_duplicate_characters);
+                    }
                     this.quantifier_value = 1;
                     break;
                 case '(':
@@ -145,9 +150,15 @@ class Strgen {
                 case '*':
                 case '?':
                     this.quantifier_value = this.getQuantifier();
-                    this.createLogEntry("Symbol quantifier reached", this.quantifier_value);
-                    this.createLogEntry("Final contents of value list", this.generated_value_list.toString());
-                    this.selectValueFromList(this.quantifier_value, undefined, this.allow_duplicate_characters);
+
+                    if (this.quantifier_value == 0) {
+                        this.createLogEntry("Symbol quantifier reached", "0");
+                        this.createLogEntry("No generation as quantifier is 0");  
+                    } else {
+                        this.createLogEntry("Symbol quantifier reached", this.quantifier_value);
+                        this.createLogEntry("Final contents of value list", this.generated_value_list.toString());
+                        this.selectValueFromList(this.quantifier_value, undefined, this.allow_duplicate_characters);
+                    }
                     this.quantifier_value = 1;
                     break;
                 default:
@@ -340,13 +351,13 @@ class Strgen {
         }
 
         this.createLogEntry("Quantifier value is " + quantifier_value);
-
+/*
         if (quantifier_value == 0 && quantRangeState == false) {
             this.outputWarning("No value was returned. Character quantifier at position " + start_value + " is 0.");
         } else if (quantifier_value == 0 && quantRangeState == true) {
             this.outputWarning("No value was returned. Character quantifier range at position " + start_value + " generated the value 0!");
         }
-
+*/
         if (isNaN(quantifier_value)) {
             this.outputError("Quantifier at position " + start_value + " contains invalid characters.");
         }
@@ -419,6 +430,11 @@ class Strgen {
                 preset_characters = "01234567";
                 break;
             }
+            case "s":
+            {
+                preset_characters = " ";
+                break;
+            }
             default:
             {
                 preset_characters = undefined;
@@ -478,19 +494,8 @@ class Strgen {
 
                         this.createLogEntry("Combined string character range", temp_string_array.toString());
 
-                        for (var index = 0; index < temp_string_length; index++) {
-                            var randvalue = Math.floor(Math.random() * temp_string_array.length);
-                            
-                            this.createLogEntry("Sequence processing action " + (index + 1) + " - Selected sequence character", temp_string_array[randvalue]);
-
-                            output_string += temp_string_array[randvalue];
-                            temp_string_array.splice(randvalue, 1);
-
-                            this.createLogEntry("Sequence processing action " + (index + 1) + " - Range after selection", temp_string_array.toString());
-                        }
-
+                        this.generated_value_list.push(this.generateAndString(temp_string_array));
                         temp_string = "";
-                        this.generated_value_list.push(output_string);
 
                         if (this.lookahead() == ')') { // if next character is end of sequence, break loop
                             break;  
@@ -527,6 +532,27 @@ class Strgen {
         }
     }
 
+    generateAndString(values_array, index = 0, output_string = "", array_original_length) {
+        if(array_original_length == undefined) {
+            array_original_length = values_array.length;
+        }
+
+        if (array_original_length > index) {
+            var randvalue = Math.floor(Math.random() * values_array.length);
+
+            this.createLogEntry("Sequence processing action " + (index + 1) + " - Selected sequence character", values_array[randvalue]);
+
+            output_string += values_array[randvalue];
+            values_array.splice(randvalue, 1);
+
+            this.createLogEntry("Sequence processing action " + (index + 1) + " - Range after selection", values_array.toString());
+            return this.generateAndString(values_array, index += 1, output_string, array_original_length);
+        } else {
+            this.createLogEntry("AND string generated", output_string);
+            return output_string;
+        }
+    }
+
     selectValueFromList(defined_no_of_chars, character_index = 0, allow_duplicates = false) { // pick a random value from the generated_value_list and do this quantifier_value number of times
         if (character_index < this.quantifier_value) {
             var randvalue = Math.floor(Math.random() * this.generated_value_list.length);
@@ -549,8 +575,7 @@ class Strgen {
             if (allow_duplicates == false)
             {
                 var value = this.generated_value_list[randvalue];
-                //this.generated_value_list.splice(randvalue, 1);
-                //this.createLogEntry("Removed selected value from array", this.generated_value_list.toString());
+
                 this.removeValueFromList(value, randvalue, true);
                 if (this.allow_multiple_instances == false) {
                     this.removeValueFromList(value);
@@ -673,16 +698,23 @@ class Strgen {
         if(enabled == true) {
             var timestamp = new Date();
             var timestamp_text = timestamp.toTimeString().split(" ")[0] + ":" + timestamp.getMilliseconds();
+            var log_entry;
 
             if(content != undefined) {
                 if(content != "") {
-                    this.generator_log.push(timestamp_text + " - " + caption + ": " + content);
+                    if(content != " ") {
+                        log_entry = timestamp_text + " - " + caption + ": " + content;
+                    } else {
+                        log_entry = timestamp_text + " - " + caption + ": white space";
+                    }
                 } else {
-                    this.generator_log.push(timestamp_text + " - " + caption + ": empty");
+                    log_entry = timestamp_text + " - " + caption + ": empty";
                 }
             } else {
-                this.generator_log.push(timestamp_text + " - " + caption);
+                log_entry = timestamp_text + " - " + caption;
             }
+
+            this.generator_log.push(log_entry);
         }
     }
 

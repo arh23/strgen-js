@@ -92,6 +92,7 @@ The following will pick a character from a predefined set of characters:
 - \h - hex digits</li>
 - \H - hex digits (lower and upper case)</li>
 - \p - octal digits</li>
+- \s - white space
 
 For example:
 
