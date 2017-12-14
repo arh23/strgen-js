@@ -521,8 +521,49 @@ class Strgen {
             }
             else if (this.lookahead() != '') 
             {
-                string_value += this.lookahead();
-                this.next();    
+                this.next();
+                console.log(this.current());
+                if (this.operators.includes(this.current()) == true || this.symbol_quantifiers.includes(this.current()) == true) {
+                    if (this.current() == "[") {
+                        this.getCharacterSet();
+                    } else if (this.current() == "]") {
+                        this.createLogEntry("End of range reached", this.generated_value_list.toString());
+                        if (this.lookahead() != '{' && !this.symbol_quantifiers.includes(this.lookahead())){
+                            var randvalue = Math.floor(Math.random() * this.generated_value_list.length);
+                            string_value += this.generated_value_list[randvalue];
+                            this.createLogEntry("Selected character", this.generated_value_list[randvalue]);
+                            this.generated_value_list = [];
+                        } 
+                    } else if (this.current() == "{") {
+                        this.quantifier_value = this.getQuantifier();
+                    } else if (this.current() == "}") {
+                        if (this.quantifier_value == 0) {
+                            this.createLogEntry("End of quantifier reached", "0");
+                            this.createLogEntry("No generation as quantifier is 0");  
+                        } else {
+                            this.createLogEntry("End of quantifier reached", this.quantifier_value);
+                            this.createLogEntry("Contents of value list", this.generated_value_list.toString());
+
+                            var count = 0;
+
+                            while (count < this.quantifier_value) {
+                                count+= 1;
+                                var randvalue = Math.floor(Math.random() * this.generated_value_list.length);
+                                string_value += this.generated_value_list[randvalue]
+                                if (!this.allow_duplicate_characters) {
+                                    this.removeValueFromList(this.generated_value_list[randvalue], randvalue, true);
+                                }
+                            }
+                        }
+                        this.quantifier_value = 1;
+                        this.generated_value_list = [];
+                    } else if (this.symbol_quantifiers.includes(this.current())){
+                        this.quantifier_value = this.getQuantifier(this.current());
+                    }
+                } else {
+                    string_value += this.current();                   
+                }
+   
             }
             else 
             {
