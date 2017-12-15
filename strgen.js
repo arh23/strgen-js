@@ -18,6 +18,7 @@ class Strgen {
         this.symbol_quantifiers = ["+", "*", "?"] // symbol quantifiers based on the quantifiers of regular expression
         this.quantifier_value; // stores the value specified in the pattern within the { }
         this.generated_value_list; // where output is stored, to be used in generation at the end of the generation process
+        this.temporary_value_list;
         this.generated_output; // the full output string
         this.generator_log; // if allow_logging is true, events during the generation process will be stored in this list
         this.error_list; // if store_errors is true, errors and warnings are stored in this list
@@ -29,6 +30,7 @@ class Strgen {
         this.generated_output = ""
         this.quantifier_value = 1;
         this.generated_value_list = [];
+        this.temporary_value_list = [];
         this.generator_log = [];
         this.error_list = [];
         // assign default values before generation/
@@ -140,6 +142,10 @@ class Strgen {
                     break;
                 case ')':
                     this.createLogEntry("End of sequence reached");
+                    if (this.temporary_value_list.length >= 1) {
+                        this.generated_value_list = this.generated_value_list.concat(this.temporary_value_list);
+                        this.temporary_value_list = [];
+                    }
                     this.selectValueFromList(1, undefined, false);  
                     break;
                 case '/':
@@ -466,7 +472,7 @@ class Strgen {
                     this.createLogEntry("OR operator - last operator", last_operator);
                     last_operator = '|';
 
-                    this.generated_value_list.push(string_value);
+                    this.temporary_value_list.push(string_value);
                     this.createLogEntry("OR word parsed", string_value);
                     string_value = "";
 
@@ -501,6 +507,11 @@ class Strgen {
                             break;  
                         }
                         else if (this.lookahead() == '|') { // if next character is OR operator, set last_operator to OR and move to next character
+                            if (last_operator = '&') {
+                                this.createLogEntry("Storing " + this.generated_value_list.toString() + " in a different list temporarily");
+                                this.temporary_value_list = this.temporary_value_list.concat(this.generated_value_list);
+                                this.generated_value_list = [];
+                            }
                             last_operator = '|'
                             this.createLogEntry("last_operator set to '|'");
                             this.next();
@@ -528,12 +539,12 @@ class Strgen {
                         this.getCharacterSet();
                     } else if (this.current() == "]") {
                         this.createLogEntry("End of range reached", this.generated_value_list.toString());
-                        if (this.lookahead() != '{' && !this.symbol_quantifiers.includes(this.lookahead())){
+                        if (this.lookahead() != '{' && !this.symbol_quantifiers.includes(this.lookahead())){ // TODO: refactor
                             var randvalue = Math.floor(Math.random() * this.generated_value_list.length);
                             string_value += this.generated_value_list[randvalue];
                             this.createLogEntry("Selected character", this.generated_value_list[randvalue]);
                             this.generated_value_list = [];
-                        } 
+                        }  // TODO: refactor end
                     } else if (this.current() == "{") {
                         this.quantifier_value = this.getQuantifier();
                     } else if (this.current() == "}") {
@@ -544,26 +555,75 @@ class Strgen {
                             this.createLogEntry("End of quantifier reached", this.quantifier_value);
                             this.createLogEntry("Contents of value list", this.generated_value_list.toString());
 
-                            var count = 0;
+                            var count = 0; // TODO: refactor
 
                             while (count < this.quantifier_value) {
                                 count+= 1;
                                 var randvalue = Math.floor(Math.random() * this.generated_value_list.length);
-                                string_value += this.generated_value_list[randvalue]
+                                string_value += this.generated_value_list[randvalue];
+                                this.createLogEntry("Selected character", this.generated_value_list[randvalue]);
                                 if (!this.allow_duplicate_characters) {
-                                    this.removeValueFromList(this.generated_value_list[randvalue], randvalue, true);
+                                    var value = this.generated_value_list[randvalue];
+
+                                    this.removeValueFromList(value, randvalue, true);
+                                    if (this.allow_multiple_instances == false) {
+                                        this.removeValueFromList(value);
+                                        if (this.ignore_duplicate_case == true && value.match(/[a-zA-Z]/)) {
+                                            var value_upper = value.toUpperCase();
+                                            var value_lower = value.toLowerCase();
+
+                                            if (value != value_lower) {
+                                                value = value_lower;
+                                            } else {
+                                                value = value_upper;
+                                            }
+
+                                            this.removeValueFromList(value);
+                                        }
+                                    }
                                 }
-                            }
+                            } // TODO: refactor end
                         }
                         this.quantifier_value = 1;
                         this.generated_value_list = [];
                     } else if (this.symbol_quantifiers.includes(this.current())){
                         this.quantifier_value = this.getQuantifier(this.current());
+
+                        var count = 0; // TODO: refactor
+
+                        while (count < this.quantifier_value) {
+                            count+= 1;
+                            var randvalue = Math.floor(Math.random() * this.generated_value_list.length);
+                            string_value += this.generated_value_list[randvalue];
+                            this.createLogEntry("Selected character", this.generated_value_list[randvalue]);
+                            if (!this.allow_duplicate_characters) {
+                                var value = this.generated_value_list[randvalue];
+
+                                this.removeValueFromList(value, randvalue, true);
+                                if (this.allow_multiple_instances == false) {
+                                    this.removeValueFromList(value);
+                                    if (this.ignore_duplicate_case == true && value.match(/[a-zA-Z]/)) {
+                                        var value_upper = value.toUpperCase();
+                                        var value_lower = value.toLowerCase();
+
+                                        if (value != value_lower) {
+                                            value = value_lower;
+                                        } else {
+                                            value = value_upper;
+                                        }
+
+                                        this.removeValueFromList(value);
+                                    }
+                                }
+                            }
+                        } // TODO: refactor end
+
+                        this.quantifier_value = 1;
+                        this.generated_value_list = [];
                     }
                 } else {
                     string_value += this.current();                   
                 }
-   
             }
             else 
             {
