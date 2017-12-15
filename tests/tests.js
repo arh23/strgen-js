@@ -99,6 +99,10 @@ QUnit.module("String generation tests", function( hooks ) {
         testRun(assert, /(test1&test2)/, /\b[tes12]{10}\b/);
     });
 
+    QUnit.test( "Generate string using character ranges and quantifiers in a sequence", function(assert) {
+        testRun(assert, /([a-zA-Z]+&[0-9]+|[A-Z]|[0-9]{4})/, /([a-zA-Z0-9]+|[A-Z]|[0-9]{4})/);
+    });
+
     QUnit.test( "Generate string using a quantifier range - comma test", function(assert) {
         testRun(assert, /[a-z]{5,10}/);
     });
@@ -111,39 +115,3 @@ QUnit.module("String generation tests", function( hooks ) {
         testRun(assert, /[a-z]{5-10}/, /[a-z]{5,10}/);
     });
 });
-/*
-QUnit.module("Warnings", function( hooks ) {
-
-    hooks.before(function() {
-        stringGenerator.allow_duplicate_characters = false;        
-        stringGenerator.pattern = "[a-z]{100}";
-    });
-
-    QUnit.test("Display a warning on the ID provided", function(assert) {
-        generatedString = stringGenerator.createString();
-
-        assert.notEqual(document.getElementById("warning").innerHTML, "", "check if the 'warning' div is not empty");
-        assert.equal(stringGenerator.error_list.length, 0, "check if the warning/error list is empty");
-        document.getElementById("warning").innerHTML = "";
-    });
-
-    QUnit.test("Store a warning in the errors/warnings list", function(assert) {
-        stringGenerator.store_errors = true;
-        stringGenerator.error_output_id = "none";
-
-        generatedString = stringGenerator.createString();
-
-        assert.equal(stringGenerator.error_list.length, 1, "check if the warning/error list contains one entry");
-        assert.equal(document.getElementById("warning").innerHTML, "", "check if the 'warning' div is empty");
-    });
-
-    QUnit.test("Do not store or display warnings, when store_errors is false and the ID does not exist (warning will be printed to console)", function(assert) {
-        stringGenerator.store_errors = false;
-        stringGenerator.error_output_id = "none";
-
-        generatedString = stringGenerator.createString();
-
-        assert.equal(stringGenerator.error_list.length, 0, "check if the warning/error list is empty");
-        assert.equal(document.getElementById("warning").innerHTML, "", "check if the 'warning' div is empty");
-    });
-});*/

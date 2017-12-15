@@ -157,3 +157,7 @@ The operators for sequences are different:
   For example: *(value1&value2&value3)* can result in values such as *3llevveuaa2v1luuae* etc.
 
 Sequences do not use quantifiers to generate values.
+
+You can also use character ranges and quantifiers in sequences, for example:
+
+*([a-zA-Z]+&[0-9]+|[A-Z]|[0-9]{4})* - this can result in either *6OIsv0x66434Lf0OJ33*, *Q* or *2215*.
