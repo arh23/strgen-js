@@ -11,7 +11,7 @@ try {
     console.log(e);
 }
 
-function testRun(assert, regex, regexMatch) {
+function testRun(assert, regex, regexMatch, canBeEmpty = false) {
     if (regexMatch == undefined) 
     {
         var regexString = regex.toString().slice(1, -1);
@@ -20,7 +20,9 @@ function testRun(assert, regex, regexMatch) {
         var generatedString = stringGenerator.createString();
 
         assert.equal(stringGenerator.pattern, regexString, "'" + regexString + "' assigned to stringGenerator.pattern");
-        assert.notEqual(generatedString, "", "generatedString should not be empty");
+        if (!canBeEmpty) {
+            assert.notEqual(generatedString, "", "generatedString should not be empty");
+        }
         assert.equal(regex.test(generatedString), true, "checking string '" + generatedString + "' matches pattern '" + regexString + "'");
     }
     else if (regexMatch != undefined) 
@@ -32,7 +34,9 @@ function testRun(assert, regex, regexMatch) {
         generatedString = stringGenerator.createString();
 
         assert.equal(stringGenerator.pattern, regexString, "'" + regexString + "' assigned to stringGenerator.pattern");
-        assert.notEqual(generatedString, "", "generatedString should not be empty");
+        if (!canBeEmpty) {
+            assert.notEqual(generatedString, "", "generatedString should not be empty");
+        }
         assert.equal(regexMatch.test(generatedString), true, "checking string '" + generatedString + "' matches pattern '" + regexMatchString + "'");
     }
 }
@@ -40,9 +44,13 @@ function testRun(assert, regex, regexMatch) {
 QUnit.test("Parameter default values", function(assert) {
     assert.equal(stringGenerator.pattern, "", "generator uses empty string for pattern by default");
     assert.equal(stringGenerator.allow_duplicate_characters, true, "allow_duplicate_characters is set to true by default");
+    assert.equal(stringGenerator.allow_multiple_instances, true, "allow_multiple_instances is set to true by default");
+    assert.equal(stringGenerator.ignore_duplicate_case, false, "ignore_duplicate_case is set to false by default");
     assert.equal(stringGenerator.allow_logging, false, "allow_logging is set to false by default");
-    assert.equal(stringGenerator.reporting_type, "full", "reporting_type set to full by default");
+    assert.equal(stringGenerator.reporting_type, "full", "reporting_type is set to full by default");
     assert.equal(stringGenerator.error_output_id, "warning", "error_output_id set to ID 'warning' by default");
+    assert.equal(stringGenerator.store_errors, false, "store_errors is set to false by default");
+    assert.equal(stringGenerator.symbol_quantifier_max, 10, "symbol_quantifier_max set to 10 by default");
 });
 
 QUnit.module("String generation tests", function( hooks ) {
@@ -68,27 +76,31 @@ QUnit.module("String generation tests", function( hooks ) {
     });
 
     QUnit.test( "Generate string using a range preset - \\c test", function(assert) {
-        testRun(assert, /[\c]{10}/, /[abcdefghijklmnopqrstuvwxyz]{10}/);
+        testRun(assert, /[\c]{10}/, /[a-z]{10}/);
     });
 
     QUnit.test( "Generate string using a range preset - \\u test", function(assert) {
-        testRun(assert, /[\u]{10}/, /[ABCDEFGHIJKLMNOPQRSTUVWXYZ]{10}/);
+        testRun(assert, /[\u]{10}/, /[A-Z]{10}/);
     });
 
     QUnit.test( "Generate string using a range preset - \\l test", function(assert) {
-        testRun(assert, /[\l]{10}/, /[ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz]{10}/);
+        testRun(assert, /[\l]{10}/, /[A-Za-z]{10}/);
     });
 
     QUnit.test( "Generate string using a range preset - \\h test", function(assert) {
-        testRun(assert, /[\h]{10}/, /[0123456789abcdfabcdf]{10}/);
+        testRun(assert, /[\h]{10}/, /[0-9a-fa-f]{10}/);
     });
 
     QUnit.test( "Generate string using a range preset - \\H test", function(assert) {
-        testRun(assert, /[\H]{10}/, /[0123456789ABCDFabcdf]{10}/);
+        testRun(assert, /[\H]{10}/, /[0-9A-Fa-f]{10}/);
     });
 
     QUnit.test( "Generate string using a range preset - \\o test", function(assert) {
-        testRun(assert, /[\o]{10}/, /[01234567]{10}/);
+        testRun(assert, /[\o]{10}/, /[0-7]{10}/);
+    });
+
+    QUnit.test( "Generate string using a range preset - \\s test", function(assert) {
+        testRun(assert, /[\s]/);
     });
 
     QUnit.test( "Generate string using an OR sequence", function(assert) {
@@ -113,5 +125,21 @@ QUnit.module("String generation tests", function( hooks ) {
 
     QUnit.test( "Generate string using a quantifier range - dash test", function(assert) {
         testRun(assert, /[a-z]{5-10}/, /[a-z]{5,10}/);
+    });
+
+    QUnit.test( "Generate string using a quantifier range - no first value test", function(assert) {
+        testRun(assert, /[a-z]{:10}/, /[a-z]{0,10}/, true);
+    });
+
+    QUnit.test( "Generate string using a symbol quantifier - ? test", function(assert) {
+        testRun(assert, /[a-z]?/, /[a-z]?/, true);
+    });
+
+    QUnit.test( "Generate string using a symbol quantifier - * test", function(assert) {
+        testRun(assert, /[a-z]*/, /[a-z]*/, true);
+    });
+
+    QUnit.test( "Generate string using a symbol quantifier - + test", function(assert) {
+        testRun(assert, /[a-z]+/, /[a-z]+/);
     });
 });
