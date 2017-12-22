@@ -41,6 +41,18 @@ function testRun(assert, regex, regexMatch, canBeEmpty = false) {
     }
 }
 
+function testErrors(assert, regex, errorType) {
+    var regexString = regex.toString().slice(1, -1);
+
+    stringGenerator.pattern = regexString;
+    var generatedString = stringGenerator.createString();
+
+    assert.equal(stringGenerator.error_list.length, 1, "an error/warning is in the list");
+    console.log(stringGenerator.store_errors)
+    console.log(stringGenerator.error_list)
+    assert.equal(stringGenerator.error_list[0].state, errorType, "checking if the error/warning has the state '" + errorType +"'");
+}
+
 QUnit.test("Parameter default values", function(assert) {
     assert.equal(stringGenerator.pattern, "", "generator uses empty string for pattern by default");
     assert.equal(stringGenerator.allow_duplicate_characters, true, "allow_duplicate_characters is set to true by default");
@@ -141,5 +153,27 @@ QUnit.module("String generation tests", function( hooks ) {
 
     QUnit.test( "Generate string using a symbol quantifier - + test", function(assert) {
         testRun(assert, /[a-z]+/, /[a-z]+/);
+    });
+});
+
+QUnit.module("Error and warning tests", function( hooks ) {
+
+    hooks.before(function() {
+        stringGenerator.reporting_type = "none";
+        stringGenerator.store_errors = true;
+        stringGenerator.allow_duplicate_characters = false;
+    });
+
+    hooks.after(function() {
+        stringGenerator.store_errors = false; 
+        stringGenerator.allow_duplicate_characters = true;
+    });
+
+    QUnit.test( "Create an error and check the list", function(assert) {
+        testErrors(assert, /[a-z]{10/, "error");
+    });
+
+    QUnit.test( "Create a warning and check the list", function(assert) {
+        testErrors(assert, /[a-z]{27}/, "warning");
     });
 });
