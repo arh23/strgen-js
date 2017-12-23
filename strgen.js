@@ -1,4 +1,5 @@
 "use strict";
+var isBrowser; // true if strgen is being used on a webpage, false if strgen is used via command line
 
 class Strgen {
     constructor() {
@@ -704,7 +705,7 @@ class Strgen {
     }
 
     outputWarning(message) { // output a warning to the UI element, to the console, or store it in error_list
-        if (document.getElementById(this.error_output_id)) {
+        if (isBrowser == true && document.getElementById(this.error_output_id)) {
             document.getElementById(this.error_output_id).innerHTML += message;
         }
         else if (this.store_errors == true) {
@@ -722,7 +723,7 @@ class Strgen {
     }
 
     outputError(message) { // output an error to the console and set error_state to true, and either display the error message on the UI element, or store it in error_list
-        if (document.getElementById(this.error_output_id)) {
+        if (isBrowser == true && document.getElementById(this.error_output_id)) {
             document.getElementById(this.error_output_id).innerHTML += message;
         }
         else if (this.store_errors == true) {
@@ -772,7 +773,9 @@ class Strgen {
 
 if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
     module.exports = Strgen;
+    isBrowser = false;
 }
 else {
     window.Strgen = Strgen;
+    isBrowser = true;
 }; // source: http://www.matteoagosti.com/blog/2013/02/24/writing-javascript-modules-for-both-browser-and-node/

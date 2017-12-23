@@ -31,7 +31,7 @@ function testRun(assert, regex, regexMatch, canBeEmpty = false) {
         var regexMatchString = regexMatch.toString().slice(1, -1);
 
         stringGenerator.pattern = regexString;
-        generatedString = stringGenerator.createString();
+        var generatedString = stringGenerator.createString();
 
         assert.equal(stringGenerator.pattern, regexString, "'" + regexString + "' assigned to stringGenerator.pattern");
         if (!canBeEmpty) {
@@ -48,8 +48,6 @@ function testErrors(assert, regex, errorType) {
     var generatedString = stringGenerator.createString();
 
     assert.equal(stringGenerator.error_list.length, 1, "an error/warning is in the list");
-    console.log(stringGenerator.store_errors)
-    console.log(stringGenerator.error_list)
     assert.equal(stringGenerator.error_list[0].state, errorType, "checking if the error/warning has the state '" + errorType +"'");
 }
 
