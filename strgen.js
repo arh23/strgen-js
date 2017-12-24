@@ -46,10 +46,12 @@ class Strgen {
             if (!this.error_state) {
                 return this.outputString();
             } else {
-                return ""
+                this.error_state = false;
+                return "";
             }
         } else {
             this.outputError("Pattern is not defined.");
+            return "";
         }
     };
 
@@ -343,17 +345,16 @@ class Strgen {
             //end of temp code 
 
             quantifier_value = selected_quantifier;
+        }
 
-            if (this.allow_duplicate_characters == false)
-            {
-                var valueListLength = this.getValueListLength();
-                if (quantifier_value > valueListLength) {
-                    this.outputWarning("Character quantifier at position " + start_value + " reduced from " + 
-                        quantifier_value + " to " + valueListLength + 
-                        ". Toggle 'Allow Duplicate Characters' to generate the full amount.")
+        if (this.allow_duplicate_characters == false) {
+            var valueListLength = this.getValueListLength();
+            if (quantifier_value > valueListLength) {
+                this.outputWarning("Character quantifier at position " + start_value + " reduced from " + 
+                    quantifier_value + " to " + valueListLength + 
+                    ". Toggle 'Allow Duplicate Characters' to generate the full amount.")
 
-                        quantifier_value = valueListLength;
-                }
+                    quantifier_value = valueListLength;
             }
         }
 
@@ -608,7 +609,7 @@ class Strgen {
             }
             else
             {
-                if (this.generated_output == "") {
+                if (output == "") {
                     this.outputWarning("No value was returned. Please check the template.");
                     if (this.generated_value_list.length == 0) {
                         this.createLogEntry("<b>Ending value selection and continuing generation...</b>");
