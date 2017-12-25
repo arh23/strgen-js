@@ -446,6 +446,7 @@ class Strgen {
             default:
             {
                 preset_characters = undefined;
+                this.getLiteral(character);
                 this.outputWarning("Invalid preset range. \'\\" + character + "\' is not a valid preset.");
                 break;
             }

@@ -35,13 +35,13 @@ function testRun(assert, regex, regexMatch, canBeEmpty = false) {
 
         assert.equal(stringGenerator.pattern, regexString, "'" + regexString + "' assigned to stringGenerator.pattern");
         if (!canBeEmpty) {
-            assert.notEqual(generatedString, "", "generatedString should not be empty");
+            assert.ok(generatedString, "generatedString should not be empty");
         }
         assert.equal(regexMatch.test(generatedString), true, "checking string '" + generatedString + "' matches pattern '" + regexMatchString + "'");
     }
 }
 
-function testErrors(assert, regex, errorType) {
+function testErrorType(assert, regex, errorType) {
     var regexString = regex.toString().slice(1, -1);
 
     stringGenerator.pattern = regexString;
@@ -49,6 +49,24 @@ function testErrors(assert, regex, errorType) {
 
     assert.equal(stringGenerator.error_list.length, 1, "an error/warning is in the list");
     assert.equal(stringGenerator.error_list[0].state, errorType, "checking if the error/warning has the state '" + errorType +"'");
+}
+
+function testErrors(assert, regex, errorType) {
+    if (regex != undefined) {
+        var regexString = regex.toString().slice(1, -1);
+        stringGenerator.pattern = regexString; 
+    }
+
+    var generatedString = stringGenerator.createString();
+
+    assert.notEqual(stringGenerator.error_list[0].msg, "", "checking if a message was returned");
+    assert.equal(stringGenerator.error_list[0].state, errorType, "checking if error case has returned as state '" + errorType +"'");
+
+    if(errorType == "warning") {
+        assert.ok(generatedString, "check if string still generated in the case of a warning - string generated was '" + generatedString + "'");
+    } else if(errorType == "error") {
+        assert.notOk(generatedString, "check if string is not generated in the case of an error");       
+    }
 }
 
 QUnit.test("Parameter default values", function(assert) {
@@ -162,16 +180,79 @@ QUnit.module("Error and warning tests", function( hooks ) {
         stringGenerator.allow_duplicate_characters = false;
     });
 
+    hooks.beforeEach(function() {
+        stringGenerator.pattern = "";
+    });
+
     hooks.after(function() {
         stringGenerator.store_errors = false; 
         stringGenerator.allow_duplicate_characters = true;
     });
 
     QUnit.test( "Create an error and check the list", function(assert) {
-        testErrors(assert, /[a-z]{10/, "error");
+        testErrorType(assert, /[a-z]{10/, "error");
     });
 
     QUnit.test( "Create a warning and check the list", function(assert) {
-        testErrors(assert, /[a-z]{27}/, "warning");
+        testErrorType(assert, /[a-z]{27}/, "warning");
+    });
+
+    QUnit.module("Errors", function( hooks ) {
+        QUnit.test( "An error should be returned when trying to generate a string without a pattern", function(assert) {
+            testErrors(assert, undefined, "error");
+        });
+
+        QUnit.test( "An error should be returned when trying to generate a string with unclosed quantifier", function(assert) {
+            testErrors(assert, /[a-z]{10/, "error");
+        });
+
+        QUnit.test( "An error should be returned when trying to generate a string with unclosed character class", function(assert) {
+            testErrors(assert, "/[a-z/", "error");
+        });
+
+        QUnit.test( "An error should be returned when trying to generate a string with unclosed sequence", function(assert) {
+            testErrors(assert, "/(test1|test2/", "error");
+        });
+
+        QUnit.test( "An error should be returned when trying to generate a string with an unbroken operator within a character class", function(assert) {
+            testErrors(assert, /[--z]/, "error");
+        });
+
+        QUnit.test( "An error should be returned when trying to generate a string with an unbroken operator within a quantifier range", function(assert) {
+            testErrors(assert, /[a-z]{5--10}/, "error");
+        });
+
+        QUnit.test( "An error should be returned when trying to generate a string with a quantifier that contains non-number characters", function(assert) {
+            testErrors(assert, /[a-z]{a}/, "error");
+        });
+    });
+
+    QUnit.module("Warnings", function( hooks ) {
+        QUnit.test( "A warning should be returned when trying to generate a string when allow duplicates is false and the quantifier value is greater than number of characters in the class", function(assert) {
+            testErrors(assert, /[a-z]{27}/, "warning");
+        });
+
+        QUnit.test( "A warning should be returned when trying to generate a string with both allow_multiple_instance and ignore_duplicate_case set to true", function(assert) {
+            stringGenerator.allow_multiple_instances = true;
+            stringGenerator.ignore_duplicate_case = true;
+            testErrors(assert, /[a-z]{27}/, "warning");
+            assert.equal(stringGenerator.ignore_duplicate_case, false, "ignore_duplicate_case should be set to false");
+        });
+
+        QUnit.test( "A warning should be returned when trying to generate a string with a quantifier range, where the second quantifier value is not specified", function(assert) {
+            testErrors(assert, /test string [a-z]{2,}/, "warning");
+        });
+
+        QUnit.test( "A warning should be returned when trying to generate a string with an invalid preset range", function(assert) {
+            testErrors(assert, /test string [\q]/, "warning");
+        });
+
+        QUnit.test( "A warning should be returned when trying to generate a string with an empty sequence", function(assert) {
+            testErrors(assert, /test string ()/, "warning");
+        });  
+
+        QUnit.test( "A warning should be returned when trying to generate a string with a sequence that contains one value", function(assert) {
+            testErrors(assert, /test string (test)/, "warning");
+        });   
     });
 });
