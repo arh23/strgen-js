@@ -546,7 +546,7 @@ class Strgen {
                     } else if (this.current() == "]") {
                         this.createLogEntry("End of range reached", this.generated_value_list.toString());
                         if (this.lookahead() != '{' && !this.symbol_quantifiers.includes(this.lookahead())){
-                            string_value = this.selectValueFromList(this.quantifier_value, undefined, this.allow_duplicate_characters);
+                            string_value += this.selectValueFromList(this.quantifier_value, undefined, this.allow_duplicate_characters);
                         }  
                     } else if (this.current() == "{") {
                         this.quantifier_value = this.getQuantifier();
@@ -558,14 +558,14 @@ class Strgen {
                             this.createLogEntry("End of quantifier reached", this.quantifier_value);
                             this.createLogEntry("Contents of value list", this.generated_value_list.toString());
 
-                            string_value = this.selectValueFromList(this.quantifier_value, undefined, this.allow_duplicate_characters);
+                            string_value += this.selectValueFromList(this.quantifier_value, undefined, this.allow_duplicate_characters);
                         }
                         this.quantifier_value = 1;
                         this.generated_value_list = [];
                     } else if (this.symbol_quantifiers.includes(this.current())){
                         this.quantifier_value = this.getQuantifier(this.current());
 
-                        string_value = this.selectValueFromList(this.quantifier_value, undefined, this.allow_duplicate_characters);
+                        string_value += this.selectValueFromList(this.quantifier_value, undefined, this.allow_duplicate_characters);
 
                         this.quantifier_value = 1;
                         this.generated_value_list = [];
