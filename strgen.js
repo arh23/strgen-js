@@ -132,7 +132,9 @@ class Strgen {
                 case "}":
                     if (this.quantifier_value == 0) {
                         this.createLogEntry("End of quantifier reached", "0");
-                        this.createLogEntry("No generation as quantifier is 0");  
+                        this.createLogEntry("No generation as quantifier is 0");
+                        this.createLogEntry("Clearing values list...");
+                        this.generated_value_list = [];  
                     } else {
                         this.createLogEntry("End of quantifier reached", this.quantifier_value);
                         this.createLogEntry("Contents of value list", this.generated_value_list.toString());
@@ -162,7 +164,9 @@ class Strgen {
 
                     if (this.quantifier_value == 0) {
                         this.createLogEntry("Symbol quantifier reached", "0");
-                        this.createLogEntry("No generation as quantifier is 0");  
+                        this.createLogEntry("No generation as quantifier is 0");
+                        this.createLogEntry("Clearing values list...");
+                        this.generated_value_list = [];  
                     } else {
                         this.createLogEntry("Symbol quantifier reached", this.quantifier_value);
                         this.createLogEntry("Final contents of value list", this.generated_value_list.toString());
