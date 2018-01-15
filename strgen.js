@@ -151,6 +151,7 @@ class Strgen {
                         this.generated_value_list = this.generated_value_list.concat(this.temporary_value_list);
                         this.temporary_value_list = [];
                     }
+                    this.createLogEntry("Contents of value list", this.generated_value_list.toString());
                     this.buildGeneratedString(this.selectValueFromList(1, undefined, false));  
                     break;
                 case '/':
@@ -479,9 +480,11 @@ class Strgen {
                     this.createLogEntry("OR operator - last operator", last_operator);
                     last_operator = '|';
 
-                    this.temporary_value_list.push(string_value);
-                    this.createLogEntry("OR word parsed", string_value);
-                    string_value = "";
+                    if (string_value != "") {
+                        this.temporary_value_list.push(string_value);
+                        this.createLogEntry("OR word parsed", string_value);
+                        string_value = "";                       
+                    }
 
                     if (this.lookahead() == ')') { break; } else { this.next(); }
                 }
@@ -569,6 +572,8 @@ class Strgen {
 
                         this.quantifier_value = 1;
                         this.generated_value_list = [];
+                    } else if (this.current() == "/") {
+                        this.addCharToList(this.next());
                     }
                 } else {
                     string_value += this.current();                   
