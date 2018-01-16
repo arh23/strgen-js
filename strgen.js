@@ -1,5 +1,5 @@
 "use strict";
-var isBrowser; // true if strgen is being used on a webpage, false if strgen is used via command line
+var is_browser; // true if strgen is being used on a webpage, false if strgen is used via command line
 
 class Strgen {
     constructor() {
@@ -12,30 +12,26 @@ class Strgen {
         this.error_output_id = "warning"; // parameter, the default UI element where errors will be output (the reference to the element must be the ID)
         this.store_errors = false; // parameter, store errors and warnings in a list of objects when they occur, if set to true
         this.symbol_quantifier_max = 10; // parameter, the highest value possible when using symbol quantifiers
+    }
 
-        this.current_index; // the current pointer/index in the pattern
+    defineVariables() { // defines the non-parameter variables
+        this.current_index = -1; // the current pointer/index in the pattern
         this.operators = "[]{}()-\\|/"; // special operator characters responsible for different behaviours TODO: fix error when this is an array
         this.quantifier_operators = [":", ",", "-"]; // operators used within a quantifier, each does the same thing (create range of quantifier values)
         this.symbol_quantifiers = ["+", "*", "?"] // symbol quantifiers based on the quantifiers of regular expression
-        this.quantifier_value; // stores the value specified in the pattern within the { }
-        this.generated_value_list; // where output is stored, to be used in generation at the end of the generation process
-        this.temporary_value_list;
-        this.generated_output; // the full output string
-        this.generator_log; // if allow_logging is true, events during the generation process will be stored in this list
-        this.error_list; // if store_errors is true, errors and warnings are stored in this list
-        this.error_state; // boolean to store whether an error has been encountered
+        this.quantifier_value = 1; // stores the value specified in the pattern within the { }
+        this.generated_value_list = []; // where output is stored, to be used in generation at the end of the generation process
+        this.temporary_value_list = [];
+        this.generated_output = ""; // the full output string
+        this.generator_log = []; // if allow_logging is true, events during the generation process will be stored in this list
+        this.error_list = []; // if store_errors is true, errors and warnings are stored in this list
+        this.error_state = false; // boolean to store whether an error has been encountered
+        // assign default values before generation/
+        // this fixes a problem with multiple generations with the same instance of the object        
     }
 
     createString() { // initial method that is called to start generating a random string allow_duplicates = true, allow_logging = false, reporting_type = "full", error_output_id = "warning"
-        this.current_index = -1
-        this.generated_output = ""
-        this.quantifier_value = 1;
-        this.generated_value_list = [];
-        this.temporary_value_list = [];
-        this.generator_log = [];
-        this.error_list = [];
-        // assign default values before generation/
-        // this fixes a problem with multiple generations with the same instance of the object
+        this.defineVariables();
 
         if (this.pattern != "") {
             this.checkParameters();
@@ -215,10 +211,8 @@ class Strgen {
             else if (this.operators.includes(this.current()) == true && this.last() != '/') // if the current character is an unbroken operator, throw error
             {
                 if(this.pattern.charAt(this.current_index) != "") {
-                    //throw new Error("Unexpected operator at position " + (this.current_index + 1) + ", operator '" + this.pattern.charAt(this.current_index) + "'.");
                     this.outputError("Unexpected operator at position " + (this.current_index + 1) + ", operator '" + this.pattern.charAt(this.current_index) + "'.");
                 } else {
-                    //throw new Error("Character class not closed.");
                     this.outputError("Character class not closed.");
                 }
                 break;
@@ -262,13 +256,13 @@ class Strgen {
         var start_value = this.current_index + 1;
         var quantifier_value;
         var quantifier_first_value;
-        var quantRangeState = false;
-        var symbolQuantifier = false;
+        var quant_range_state = false;
+        var symbol_quantifier = false;
 
         if (this.symbol_quantifiers.includes(this.current())) {
             this.createLogEntry("Symbol quantifier specified");
-            quantRangeState = true;
-            symbolQuantifier = true;
+            quant_range_state = true;
+            symbol_quantifier = true;
             if(this.current() == "?") {
                 this.createLogEntry("Quantifier", "?");
                 quantifier_value = 1;
@@ -292,7 +286,7 @@ class Strgen {
                     }
                 }
                 else if (this.quantifier_operators.includes(this.lookahead()) == true && quantifier_first_value == undefined) { // if lookahead is quantifier operator i.e. , : -
-                    quantRangeState = true;
+                    quant_range_state = true;
                     this.createLogEntry("Quantifier range specified");
                     quantifier_first_value = quantifier_value;
                     quantifier_value = "";
@@ -312,7 +306,7 @@ class Strgen {
             } while (this.lookahead() != '}')           
         }
         
-        if (quantRangeState == true) {
+        if (quant_range_state == true) {
 
             if (quantifier_first_value == undefined || quantifier_first_value == "") {
                 quantifier_first_value = 0;
@@ -326,8 +320,7 @@ class Strgen {
             quantifier_first_value = parseInt(quantifier_first_value);
             quantifier_value = parseInt(quantifier_value);
 
-            if (quantifier_first_value > quantifier_value) // swap values if the quantifier_first_value is the largest value
-            {
+            if (quantifier_first_value > quantifier_value) { // swap values if the quantifier_first_value is the largest value
                 var store = quantifier_first_value;
                 quantifier_first_value = quantifier_value;
                 quantifier_value = store;
@@ -335,31 +328,31 @@ class Strgen {
             }
 
             // temporary solution to getting a random quantifier from a range
-            var quantifierArray = [];
+            var quantifier_array = [];
 
             for (var count = quantifier_first_value; count <= quantifier_value; count++) { // populate array with every value between quantifier_first_value and quantifier_value
-                quantifierArray.push(count);
+                quantifier_array.push(count);
             }
-            this.createLogEntry("Quantifier range values", quantifierArray.toString());
+            this.createLogEntry("Quantifier range values", quantifier_array.toString());
 
-            var randvalue = Math.floor(Math.random() * quantifierArray.length);
-            var selected_quantifier = quantifierArray[randvalue]; // select a value based math.random and array length
-            this.createLogEntry("Selected index", randvalue + ", selected quantifier value: " + selected_quantifier);
+            var random_value = Math.floor(Math.random() * quantifier_array.length);
+            var selected_quantifier = quantifier_array[random_value]; // select a value based math.random and array length
+            this.createLogEntry("Selected index", random_value + ", selected quantifier value: " + selected_quantifier);
 
-            quantifierArray = [];
+            quantifier_array = [];
             //end of temp code 
 
             quantifier_value = selected_quantifier;
         }
 
         if (this.allow_duplicate_characters == false) {
-            var valueListLength = this.getValueListLength();
-            if (quantifier_value > valueListLength) {
+            var value_list_length = this.getValueListLength();
+            if (quantifier_value > value_list_length) {
                 this.outputWarning("Character quantifier at position " + start_value + " reduced from " + 
-                    quantifier_value + " to " + valueListLength + 
+                    quantifier_value + " to " + value_list_length + 
                     ". Toggle 'Allow Duplicate Characters' to generate the full amount.")
 
-                    quantifier_value = valueListLength;
+                    quantifier_value = value_list_length;
             }
         }
 
@@ -378,19 +371,18 @@ class Strgen {
         return parseInt(quantifier_value);
     }
 
-    generateRangeValue(firstvalue, secondvalue, character_index = firstvalue) { // generate all possible values in the user defined range (defined with '-' character)
-        if (firstvalue > secondvalue) // swap values if the firstvalue is the largest value
-        {
-            var store = firstvalue;
-            firstvalue = secondvalue;
-            secondvalue = store;
-            character_index = firstvalue;
+    generateRangeValue(first_value, second_value, character_index = first_value) { // generate all possible values in the user defined range (defined with '-' character)
+        if (first_value > second_value) { // swap values if the firstvalue is the largest value
+            var store = first_value;
+            first_value = second_value;
+            second_value = store;
+            character_index = first_value;
             this.createLogEntry("Range values swapped");
         }
 
-        if (character_index <= secondvalue && character_index >= firstvalue) { // if character_index is within the range specified
+        if (character_index <= second_value && character_index >= first_value) { // if character_index is within the range specified
             this.generated_value_list.push(String.fromCharCode(character_index));
-            this.generateRangeValue(firstvalue, secondvalue, parseInt(character_index+=1));
+            this.generateRangeValue(first_value, second_value, parseInt(character_index+=1));
         }
     }
 
@@ -473,10 +465,9 @@ class Strgen {
         this.createLogEntry("Processing sequence at pattern position " + (this.current_index + 1));
 
         while(this.current() != ')') { // while the current character is not the end of the sequence
-            if (this.lookahead() == '|' || this.lookahead() == ')' || this.lookahead() == '&') // if the next character is a closing bracket or sequence operators
-            {
-                if (this.lookahead() == '|' && last_operator != "&" || last_operator == '|' && this.lookahead() == ')')
-                { // if next character is OR operator and last_operator is not AND, or, if last_operator is OR operator and next character is end of sequence - perform OR
+            if (this.lookahead() == '|' || this.lookahead() == ')' || this.lookahead() == '&') { // if the next character is a closing bracket or sequence operators
+                if (this.lookahead() == '|' && last_operator != "&" || last_operator == '|' && this.lookahead() == ')') {
+                    // if next character is OR operator and last_operator is not AND, or, if last_operator is OR operator and next character is end of sequence - perform OR
                     this.createLogEntry("OR operator - last operator", last_operator);
                     last_operator = '|';
 
@@ -488,8 +479,8 @@ class Strgen {
 
                     if (this.lookahead() == ')') { break; } else { this.next(); }
                 }
-                else if (this.lookahead() == '&' || last_operator == '&' && this.lookahead() == ')' || last_operator == '&' && this.lookahead() == '|')
-                { // if next character is AND operator, or, if last_operator is AND operator and next character is end of sequence or OR operator - perform AND
+                else if (this.lookahead() == '&' || last_operator == '&' && this.lookahead() == ')' || last_operator == '&' && this.lookahead() == '|') {
+                    // if next character is AND operator, or, if last_operator is AND operator and next character is end of sequence or OR operator - perform AND
                     this.createLogEntry("AND operator - last operator", last_operator);
                     last_operator = "&";
 
@@ -540,15 +531,14 @@ class Strgen {
                     break;
                 }
             }
-            else if (this.lookahead() != '') 
-            {
+            else if (this.lookahead() != '') {
                 this.next();
                 if (this.operators.includes(this.current()) == true || this.symbol_quantifiers.includes(this.current()) == true) {
                     if (this.current() == "[") {
                         this.getCharacterSet();
                     } else if (this.current() == "]") {
                         this.createLogEntry("End of range reached", this.generated_value_list.toString());
-                        if (this.lookahead() != '{' && !this.symbol_quantifiers.includes(this.lookahead())){
+                        if (this.lookahead() != '{' && !this.symbol_quantifiers.includes(this.lookahead())) {
                             string_value += this.selectValueFromList(this.quantifier_value, undefined, this.allow_duplicate_characters);
                         }  
                     } else if (this.current() == "{") {
@@ -565,7 +555,7 @@ class Strgen {
                         }
                         this.quantifier_value = 1;
                         this.generated_value_list = [];
-                    } else if (this.symbol_quantifiers.includes(this.current())){
+                    } else if (this.symbol_quantifiers.includes(this.current())) {
                         this.quantifier_value = this.getQuantifier(this.current());
 
                         string_value += this.selectValueFromList(this.quantifier_value, undefined, this.allow_duplicate_characters);
@@ -588,17 +578,17 @@ class Strgen {
     }
 
     generateAndString(values_array, index = 0, output_string = "", array_original_length) {
-        if(array_original_length == undefined) {
+        if (array_original_length == undefined) {
             array_original_length = values_array.length;
         }
 
         if (array_original_length > index) {
-            var randvalue = Math.floor(Math.random() * values_array.length);
+            var random_value = Math.floor(Math.random() * values_array.length);
 
-            this.createLogEntry("Sequence processing action " + (index + 1) + " - Selected sequence character", values_array[randvalue]);
+            this.createLogEntry("Sequence processing action " + (index + 1) + " - Selected sequence character", values_array[random_value]);
 
-            output_string += values_array[randvalue];
-            values_array.splice(randvalue, 1);
+            output_string += values_array[random_value];
+            values_array.splice(random_value, 1);
 
             this.createLogEntry("Sequence processing action " + (index + 1) + " - Range after selection", values_array.toString());
             return this.generateAndString(values_array, index += 1, output_string, array_original_length);
@@ -610,12 +600,11 @@ class Strgen {
 
     selectValueFromList(defined_no_of_chars, character_index = 0, allow_duplicates = false, output = "") { // pick a random value from the generated_value_list and do this quantifier_value number of times
         if (character_index < this.quantifier_value) {
-            var randvalue = Math.floor(Math.random() * this.generated_value_list.length);
+            var random_value = Math.floor(Math.random() * this.generated_value_list.length);
 
-            if (this.generated_value_list[randvalue] != undefined) {
-                //this.buildGeneratedString(this.generated_value_list[randvalue]); // store value in generated_output
-                output += this.generated_value_list[randvalue]
-                this.createLogEntry("Selected value", this.generated_value_list[randvalue]);
+            if (this.generated_value_list[random_value] != undefined) {
+                output += this.generated_value_list[random_value]
+                this.createLogEntry("Selected value", this.generated_value_list[random_value]);
             }
             else
             {
@@ -630,9 +619,9 @@ class Strgen {
 
             if (allow_duplicates == false)
             {
-                var value = this.generated_value_list[randvalue];
+                var value = this.generated_value_list[random_value];
 
-                this.removeValueFromList(value, randvalue, true);
+                this.removeValueFromList(value, random_value, true);
                 if (this.allow_multiple_instances == false) {
                     this.removeValueFromList(value);
                     if (this.ignore_duplicate_case == true && value.match(/[a-zA-Z]/)) {
@@ -659,19 +648,19 @@ class Strgen {
         }
     }
 
-    removeValueFromList(value, index = 0, oneValueOnly = false, previouslySearched = false, count = 0) {
+    removeValueFromList(value, index = 0, one_value_only = false, previously_searched = false, count = 0) {
         if (this.generated_value_list.indexOf(value) != -1) {
-            var valueIndex = this.generated_value_list.indexOf(value, index);
+            var value_index = this.generated_value_list.indexOf(value, index);
 
-            this.generated_value_list.splice(valueIndex, 1);
+            this.generated_value_list.splice(value_index, 1);
             count += 1;
 
-            if (oneValueOnly == false) {
+            if (one_value_only == false) {
                 this.removeValueFromList(value, 0, false, true, count);
             } else {
                 this.createLogEntry("Removed value '" + value + "' from array", this.generated_value_list.toString());
             }
-        } else if (this.generated_value_list.indexOf(value) == -1 && previouslySearched == true) {
+        } else if (this.generated_value_list.indexOf(value) == -1 && previously_searched == true) {
             if (count > 1) {
                 this.createLogEntry("Removed value '" + value + "' from " + count + " indexes in the array", this.generated_value_list.toString());
             } else {
@@ -682,11 +671,11 @@ class Strgen {
         }
     }
 
-    getValueListLength(index = 0, countList = [], currentCount = 0, allowMultiple = this.allow_multiple_instances, ignoreCase = this.ignore_duplicate_case) {
-        if (allowMultiple == true && ignoreCase == false) {
+    getValueListLength(index = 0, count_list = [], current_count = 0, allow_multiple = this.allow_multiple_instances, ignore_case = this.ignore_duplicate_case) {
+        if (allow_multiple == true && ignore_case == false) {
             this.createLogEntry("Values array length is", this.generated_value_list.length);
             return this.generated_value_list.length;
-        } else if (index != this.generated_value_list.length && ignoreCase == true) {
+        } else if (index != this.generated_value_list.length && ignore_case == true) {
             if (countList.indexOf(this.generated_value_list[index].toLowerCase()) == -1) {
                 if (countList.indexOf(this.generated_value_list[index].toUpperCase()) == -1) {
                     countList.push(this.generated_value_list[index]);
@@ -701,9 +690,9 @@ class Strgen {
             index += 1;
             return this.getValueListLength(index, countList, countList.length);
         } else if (index == this.generated_value_list.length) {
-            this.createLogEntry("List counted, " + currentCount  + " unique values. Unique values are: ", countList.toString());
-            console.log(countList.toString());
-            return currentCount;
+            this.createLogEntry("List counted, " + current_count  + " unique values. Unique values are: ", count_list.toString());
+            console.log(count_list.toString());
+            return current_count;
         }
     }
 
@@ -716,7 +705,7 @@ class Strgen {
     }
 
     outputWarning(message) { // output a warning to the UI element, to the console, or store it in error_list
-        if (isBrowser == true && document.getElementById(this.error_output_id)) {
+        if (is_browser == true && document.getElementById(this.error_output_id)) {
             document.getElementById(this.error_output_id).innerHTML += message;
         }
         else if (this.store_errors == true) {
@@ -726,7 +715,6 @@ class Strgen {
             });
         } 
         else {
-            //message = message.split("<br />").join("");
             console.error(message);
         }
 
@@ -734,7 +722,7 @@ class Strgen {
     }
 
     outputError(message) { // output an error to the console and set error_state to true, and either display the error message on the UI element, or store it in error_list
-        if (isBrowser == true && document.getElementById(this.error_output_id)) {
+        if (is_browser == true && document.getElementById(this.error_output_id)) {
             document.getElementById(this.error_output_id).innerHTML += message;
         }
         else if (this.store_errors == true) {
@@ -784,9 +772,9 @@ class Strgen {
 
 if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
     module.exports = Strgen;
-    isBrowser = false;
+    is_browser = false;
 }
 else {
     window.Strgen = Strgen;
-    isBrowser = true;
+    is_browser = true;
 }; // source: http://www.matteoagosti.com/blog/2013/02/24/writing-javascript-modules-for-both-browser-and-node/
