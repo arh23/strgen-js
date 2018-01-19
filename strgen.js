@@ -12,6 +12,18 @@ class Strgen {
         this.error_output_id = "warning"; // parameter, the default UI element where errors will be output (the reference to the element must be the ID)
         this.store_errors = false; // parameter, store errors and warnings in a list of objects when they occur, if set to true
         this.symbol_quantifier_max = 10; // parameter, the highest value possible when using symbol quantifiers
+        this.preset = [ // parameter, the character presets and the values of the presets, which can be modified
+            {preset_code:"w", value:"_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"},
+            {preset_code:"p", value:"{}[](),./\\:;?!*&@~`'\""},
+            {preset_code:"d", value:"0123456789"},
+            {preset_code:"c", value:"abcdefghijklmnopqrstuvwxyz"},
+            {preset_code:"u", value:"ABCDEFGHIJKLMNOPQRSTUVWXYZ"},
+            {preset_code:"l", value:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"},
+            {preset_code:"h", value:"0123456789abcdfabcdf"},
+            {preset_code:"H", value:"0123456789ABCDFabcdf"},
+            {preset_code:"o", value:"01234567"},
+            {preset_code:"s", value:" "}
+        ];
     }
 
     defineVariables() { // defines the non-parameter variables
@@ -204,7 +216,7 @@ class Strgen {
             var current_character = this.next();
             if (this.current() == '\\') 
             {
-                this.createLogEntry("Preset character at position " + (this.current_index + 1));
+                this.createLogEntry("Preset character at position " + (this.current_index + 1) + ", getting values for preset", this.lookahead());
                 this.getPresetValues(this.next());
                 this.generateRangeValue();
             } 
@@ -225,7 +237,7 @@ class Strgen {
                 this.next(); // skip hyphen
                 if (this.lookahead() == '/') { // if character after hyphen is / break character
                     this.next() // skip \
-                    current_character = this.next() // character after the /
+                    current_character = this.next(); // character after the /
                 }
                 else
                 {
@@ -357,13 +369,13 @@ class Strgen {
         }
 
         this.createLogEntry("Quantifier value is " + quantifier_value);
-/*
-        if (quantifier_value == 0 && quantRangeState == false) {
-            this.outputWarning("No value was returned. Character quantifier at position " + start_value + " is 0.");
-        } else if (quantifier_value == 0 && quantRangeState == true) {
-            this.outputWarning("No value was returned. Character quantifier range at position " + start_value + " generated the value 0!");
+
+        if (quantifier_value == 0 && quant_range_state == false) {
+            this.createLogEntry("No value was returned. Character quantifier at position " + start_value + " is 0.", undefined, true);
+        } else if (quantifier_value == 0 && quant_range_state == true) {
+            this.createLogEntry("No value was returned. Character quantifier range at position " + start_value + " generated the value 0!", undefined, true);
         }
-*/
+
         if (isNaN(quantifier_value)) {
             this.outputError("Quantifier at position " + start_value + " contains invalid characters.");
         }
@@ -386,69 +398,17 @@ class Strgen {
         }
     }
 
-    getPresetValues(character) { // determine what set of pre-defined values will be used when generating with the '\' symbol, then call generatePresetValues
-        this.createLogEntry("Getting preset values for preset character", character);
-        var preset_characters;
-        switch(character) { // may be a good idea to look this hardcode over...
-            case "w": //word characters
-            {
-                preset_characters = "_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-                break;
-            }
-            case "p": //punctuation characters
-            {
-                preset_characters = "{}[](),./\\:;?!*&@~`'\"";
-                break;
-            }
-            case "d": //digits
-            {
-                preset_characters = "0123456789";
-                break;
-            }
-            case "c": //lower case characters
-            {
-                preset_characters = "abcdefghijklmnopqrstuvwxyz";
-                break;
-            }
-            case "u": //upper case characters
-            {
-                preset_characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-                break;
-            }
-            case "l": //letter characters
-            {
-                preset_characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-                break;
-            }
-            case "h": //hex digits (lower case only)
-            {
-                preset_characters = "0123456789abcdfabcdf";
-                break;
-            }
-            case "H": //hex digits
-            {
-                preset_characters = "0123456789ABCDFabcdf";
-                break;
-            }
-            case "o": //octal digits
-            {
-                preset_characters = "01234567";
-                break;
-            }
-            case "s":
-            {
-                preset_characters = " ";
-                break;
-            }
-            default:
-            {
-                preset_characters = undefined;
-                this.getLiteral(character);
-                this.outputWarning("Invalid preset range. \'\\" + character + "\' is not a valid preset.");
-                break;
-            }
+    getPresetValues(character, count = 0) { // determine what set of pre-defined values will be used when generating with the '\' symbol, then call generatePresetValues
+        if (count == this.preset.length) {
+            this.getLiteral(character);
+            this.outputWarning("Invalid preset range. \'\\" + character + "\' is not a valid preset.");
+        } else if (this.preset[count].preset_code == character) {
+            this.createLogEntry("Found preset", JSON.stringify(this.preset[count]));
+            this.generatePresetValues(this.preset[count].value);
+        } else {
+            count = count + 1;
+            this.getPresetValues(character, count);
         }
-        this.generatePresetValues(preset_characters);
     }
 
     generatePresetValues(preset_values, character_index = 0) { // split the preset_characters string and push each individual character into the values array
@@ -740,7 +700,7 @@ class Strgen {
     }
 
     createLogEntry(caption, content = undefined, enabled = this.allow_logging) { // create a new log entry
-        if(enabled == true) {
+        if(enabled == true && this.reporting_type != "none") {
             var timestamp = new Date();
             var timestamp_text = timestamp.toTimeString().split(" ")[0] + ":" + timestamp.getMilliseconds();
             var log_entry;

@@ -63,6 +63,8 @@ There are multiple parameters/variables which affect the way in which Strgen han
 
 - *symbol_quantifier_max* - optional - number to specify the maximum value a symbol quantifier can generate. *10* by default.
 
+- *preset* - optional - list of objects containing the presets used with pre-defined ranges. See the pre-defined ranges section for default values, object structure and changing the preset values of a preset.
+
 See below for more information regarding patterns and other features:
 
 ### Pattern format
@@ -99,6 +101,33 @@ For example:
 *[\w]*
 
 This will return any letter (upper and lower case), digit character, or underscore. You can use multiple pre-defined ranges at once, to increase the probability of a character being returned.
+
+The predefined set of characters for each of the presets above can be modified via the *preset* list of objects. For example:
+
+~~~~
+    {preset_code:"c", value:"abcdefghijklmnopqrstuvwxyz"}
+~~~~
+
+To modify one of the presets (in this example, we are modifying *\c*):
+
+~~~~
+    stringGenerator.preset[3].value = "abcd";
+~~~~
+
+The indexes and corresponding *preset_code* values are as follows:
+
+| preset_code | List index |
+|-------------|------------|
+| w           | 0          |
+| p           | 1          |
+| d           | 2          |
+| c           | 3          |
+| u           | 4          |
+| l           | 5          |
+| h           | 6          |
+| H           | 7          |
+| p           | 8          |
+| s           | 9          |
 
 #### Fixed text
 
