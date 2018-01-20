@@ -131,6 +131,13 @@ QUnit.module("String generation tests", function( hooks ) {
         testRun(assert, /[\s]/);
     });
 
+    QUnit.test( "Generate string using a modified range preset", function(assert) {
+        stringGenerator.preset[9].value = "abcd";
+        assert.equal(stringGenerator.preset[9].value, "abcd", "'abcd' should be assigned to the '\\s' preset");
+        testRun(assert, /[\s]{3}/, /[abcd]{3}/);
+        stringGenerator.preset[9].value = " ";
+    });
+
     QUnit.test( "Generate string using an OR sequence", function(assert) {
         testRun(assert, /(test1|test2)/);
     });

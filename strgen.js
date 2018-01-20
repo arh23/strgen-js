@@ -24,7 +24,7 @@ class Strgen {
             {preset_code:"o", value:"01234567"},
             {preset_code:"s", value:" "}
         ];
-    }
+    };
 
     defineVariables() { // defines the non-parameter variables
         this.current_index = -1; // the current pointer/index in the pattern
@@ -40,7 +40,7 @@ class Strgen {
         this.error_state = false; // boolean to store whether an error has been encountered
         // assign default values before generation/
         // this fixes a problem with multiple generations with the same instance of the object        
-    }
+    };
 
     createString() { // initial method that is called to start generating a random string allow_duplicates = true, allow_logging = false, reporting_type = "full", error_output_id = "warning"
         this.defineVariables();
@@ -74,14 +74,14 @@ class Strgen {
         } else if (this.reporting_type == "less") { // report start of generation, if reporting is set to less
             this.createLogEntry("Strgen-JS - start", undefined, true);
         }
-    }
+    };
 
     checkParameters() {
         if (this.allow_multiple_instances == true && this.ignore_duplicate_case == true) {
             this.outputWarning("Cannot ignore character case of duplicates, if multiple instances of characters are allowed!");
             this.ignore_duplicate_case = false;
         }
-    }
+    };
 
     lookahead() { // return the next character in the string
         return this.pattern.charAt(this.current_index + 1);
@@ -105,12 +105,9 @@ class Strgen {
         this.next();
         this.createLogEntry("Parsing character at position " + (this.current_index + 1));
 
-        if (this.operators.includes(this.current()) == true || this.symbol_quantifiers.includes(this.current()) == true) 
-        {
+        if (this.operators.includes(this.current()) == true || this.symbol_quantifiers.includes(this.current()) == true) {
             this.determineOperator(this.pattern.charAt(this.current_index));
-        }
-        else
-        {
+        } else {
             if (!this.symbol_quantifiers.includes(this.lookahead())) { // catch and process literal and call operatorComparison() again
                 this.getLiteral();
             } else {
@@ -192,9 +189,7 @@ class Strgen {
                     break;
             }
             this.operatorComparison();
-        }
-        else
-        {
+        } else {
             if (this.reporting_type == 'full') { // report the full information at the end, if reporting is set to full
                 if (this.error_state) {
                     this.createLogEntry("End of pattern reached - string failed to generate due to error", undefined, true);
@@ -203,8 +198,7 @@ class Strgen {
                 } else {
                     this.createLogEntry("End of pattern reached - final generated string", this.outputString(), true);  
                 } 
-            }
-            else if (this.reporting_type == "less") { // report complete generation at the end, if reporting is set to less
+            } else if (this.reporting_type == "less") { // report complete generation at the end, if reporting is set to less
                 this.createLogEntry("Strgen-JS - finish", undefined, true);
             }
         }
@@ -213,55 +207,52 @@ class Strgen {
     getCharacterSet() { // if the operator was the start of a character class definition, begin reading the pattern, and react according to a set of comparisons
         do { // starts at the [ which was successfully read in the stage before this function
             this.createLogEntry("Processing range at pattern position " + (this.current_index + 1));
+
             var current_character = this.next();
-            if (this.current() == '\\') 
-            {
+
+            if (this.current() == '\\') {
                 this.createLogEntry("Preset character at position " + (this.current_index + 1) + ", getting values for preset", this.lookahead());
                 this.getPresetValues(this.next());
                 this.generateRangeValue();
-            } 
-            else if (this.operators.includes(this.current()) == true && this.last() != '/') // if the current character is an unbroken operator, throw error
-            {
+            } else if (this.operators.includes(this.current()) == true && this.last() != '/') {// if the current character is an unbroken operator, throw error
                 if(this.pattern.charAt(this.current_index) != "") {
                     this.outputError("Unexpected operator at position " + (this.current_index + 1) + ", operator '" + this.pattern.charAt(this.current_index) + "'.");
                 } else {
                     this.outputError("Character class not closed.");
                 }
                 break;
-            }
-            else if (this.lookahead() == '-' && current_character != '/') // if the next character is an unbroken '-' operator
-            {
+            } else if (this.lookahead() == '-' && current_character != '/') { // if the next character is an unbroken '-' operator
                 this.createLogEntry("Unbroken operator", "-");
+
                 var character_store;
                 character_store = current_character; // take current character (left side of hyphen) and store it temp
                 this.next(); // skip hyphen
+
                 if (this.lookahead() == '/') { // if character after hyphen is / break character
                     this.next() // skip \
                     current_character = this.next(); // character after the /
-                }
-                else
-                {
+                } else {
                     current_character = this.next(); // assign the next character (right side of hyphen) and store it as the current character
                 }
                 this.createLogEntry("Range found", character_store + " , " + current_character);
+
                 this.generateRangeValue(character_store.charCodeAt(0), current_character.charCodeAt(0)); // generate_range_value(ascii value of left side , ascii value of right side)
-            }
-            else if (this.lookahead() != '-' && current_character != '/') { // if the next character is not the "-" operator, and the current isn't a character break, then push current()
+            } else if (this.lookahead() != '-' && current_character != '/') { // if the next character is not the "-" operator, and the current isn't a character break, then push current()
                 this.createLogEntry("Literal added to range", current_character);
                 this.generated_value_list.push(this.current());
             } 
         } while (this.lookahead() != ']')
-    }
+    };
 
     getLiteral() { // output a literal character, skipping any generation
         this.createLogEntry("Literal", this.pattern.charAt(this.current_index));
         this.buildGeneratedString(this.pattern.charAt(this.current_index));
-    }
+    };
 
     addCharToList(char) {
         this.createLogEntry("Adding literal '" + char + "' to values list");
         this.generated_value_list.push(char);
-    }
+    };
 
     getQuantifier() { // get the value within quantifier operators, if present
         this.createLogEntry("Processing quantifier at pattern position " + (this.current_index + 1));
@@ -296,20 +287,16 @@ class Strgen {
                     } else {
                         quantifier_value+= this.next();  
                     }
-                }
-                else if (this.quantifier_operators.includes(this.lookahead()) == true && quantifier_first_value == undefined) { // if lookahead is quantifier operator i.e. , : -
+                } else if (this.quantifier_operators.includes(this.lookahead()) == true && quantifier_first_value == undefined) { // if lookahead is quantifier operator i.e. , : -
                     quant_range_state = true;
                     this.createLogEntry("Quantifier range specified");
                     quantifier_first_value = quantifier_value;
                     quantifier_value = "";
                     this.next();
-                }
-                else if (this.lookahead() == "") { // if lookahead is nothing (error case)
+                } else if (this.lookahead() == "") { // if lookahead is nothing (error case)
                     this.outputError("Quantifier not closed.");
                     break;  
-                }
-                else
-                {
+                } else {
                     this.next();
                     quantifier_value = 1;
                     this.outputError("Unexpected character at position " + (this.current_index + 1) + ", character '" + this.pattern.charAt(this.current_index) + "'.");
@@ -381,7 +368,7 @@ class Strgen {
         }
 
         return parseInt(quantifier_value);
-    }
+    };
 
     generateRangeValue(first_value, second_value, character_index = first_value) { // generate all possible values in the user defined range (defined with '-' character)
         if (first_value > second_value) { // swap values if the firstvalue is the largest value
@@ -396,7 +383,7 @@ class Strgen {
             this.generated_value_list.push(String.fromCharCode(character_index));
             this.generateRangeValue(first_value, second_value, parseInt(character_index+=1));
         }
-    }
+    };
 
     getPresetValues(character, count = 0) { // determine what set of pre-defined values will be used when generating with the '\' symbol, then call generatePresetValues
         if (count == this.preset.length) {
@@ -409,14 +396,14 @@ class Strgen {
             count = count + 1;
             this.getPresetValues(character, count);
         }
-    }
+    };
 
     generatePresetValues(preset_values, character_index = 0) { // split the preset_characters string and push each individual character into the values array
         if (preset_values != undefined && character_index < preset_values.length) {
             this.generated_value_list.push(preset_values.charAt(character_index));
             this.generatePresetValues(preset_values, character_index+=1);
         }
-    }
+    };
 
     generateSequence() { // split each value in the sequence and push it to the generated_value_list array
         var string_value = "";
@@ -438,8 +425,7 @@ class Strgen {
                     }
 
                     if (this.lookahead() == ')') { break; } else { this.next(); }
-                }
-                else if (this.lookahead() == '&' || last_operator == '&' && this.lookahead() == ')' || last_operator == '&' && this.lookahead() == '|') {
+                } else if (this.lookahead() == '&' || last_operator == '&' && this.lookahead() == ')' || last_operator == '&' && this.lookahead() == '|') {
                     // if next character is AND operator, or, if last_operator is AND operator and next character is end of sequence or OR operator - perform AND
                     this.createLogEntry("AND operator - last operator", last_operator);
                     last_operator = "&";
@@ -466,8 +452,7 @@ class Strgen {
 
                         if (this.lookahead() == ')') { // if next character is end of sequence, break loop
                             break;  
-                        }
-                        else if (this.lookahead() == '|') { // if next character is OR operator, set last_operator to OR and move to next character
+                        } else if (this.lookahead() == '|') { // if next character is OR operator, set last_operator to OR and move to next character
                             if (last_operator = '&') {
                                 this.createLogEntry("Storing " + this.generated_value_list.toString() + " in a different list temporarily");
                                 this.temporary_value_list = this.temporary_value_list.concat(this.generated_value_list);
@@ -528,14 +513,12 @@ class Strgen {
                 } else {
                     string_value += this.current();                   
                 }
-            }
-            else 
-            {
+            } else {
                 this.outputError("End of sequence expected at position " + (this.current_index + 1) + ".");
                 break;
             }
         }
-    }
+    };
 
     generateAndString(values_array, index = 0, output_string = "", array_original_length) {
         if (array_original_length == undefined) {
@@ -556,7 +539,7 @@ class Strgen {
             this.createLogEntry("AND string generated", output_string);
             return output_string;
         }
-    }
+    };
 
     selectValueFromList(defined_no_of_chars, character_index = 0, allow_duplicates = false, output = "") { // pick a random value from the generated_value_list and do this quantifier_value number of times
         if (character_index < this.quantifier_value) {
@@ -565,9 +548,7 @@ class Strgen {
             if (this.generated_value_list[random_value] != undefined) {
                 output += this.generated_value_list[random_value]
                 this.createLogEntry("Selected value", this.generated_value_list[random_value]);
-            }
-            else
-            {
+            } else {
                 if (output == "") {
                     this.outputWarning("No value was returned. Please check the template.");
                     if (this.generated_value_list.length == 0) {
@@ -577,8 +558,7 @@ class Strgen {
                 }
             }
 
-            if (allow_duplicates == false)
-            {
+            if (allow_duplicates == false) {
                 var value = this.generated_value_list[random_value];
 
                 this.removeValueFromList(value, random_value, true);
@@ -600,13 +580,11 @@ class Strgen {
             }
 
             return this.selectValueFromList(this.quantifier_value, character_index+=1, allow_duplicates, output);
-        }
-        else
-        {
+        } else {
             this.generated_value_list = [];
             return output;
         }
-    }
+    };
 
     removeValueFromList(value, index = 0, one_value_only = false, previously_searched = false, count = 0) {
         if (this.generated_value_list.indexOf(value) != -1) {
@@ -629,7 +607,7 @@ class Strgen {
         } else {
             this.createLogEntry("Value '" + value + "' was not found in the values list", this.generated_value_list.toString());
         }
-    }
+    };
 
     getValueListLength(index = 0, count_list = [], current_count = 0, allow_multiple = this.allow_multiple_instances, ignore_case = this.ignore_duplicate_case) {
         if (allow_multiple == true && ignore_case == false) {
@@ -654,38 +632,35 @@ class Strgen {
             console.log(count_list.toString());
             return current_count;
         }
-    }
+    };
 
     buildGeneratedString(output) { // construct the generated string as every value is selected, and store it in generated_output
         this.generated_output += output;
-    }
+    };
 
     outputString() { // output the completed string at the end of execution
         return this.generated_output;
-    }
+    };
 
     outputWarning(message) { // output a warning to the UI element, to the console, or store it in error_list
         if (is_browser == true && document.getElementById(this.error_output_id)) {
             document.getElementById(this.error_output_id).innerHTML += message;
-        }
-        else if (this.store_errors == true) {
+        } else if (this.store_errors == true) {
             this.error_list.push({
                 msg: message,
                 state: "warning"
             });
-        } 
-        else {
+        } else {
             console.error(message);
         }
 
         this.createLogEntry("<b>WARNING</b>", message, true);
-    }
+    };
 
     outputError(message) { // output an error to the console and set error_state to true, and either display the error message on the UI element, or store it in error_list
         if (is_browser == true && document.getElementById(this.error_output_id)) {
             document.getElementById(this.error_output_id).innerHTML += message;
-        }
-        else if (this.store_errors == true) {
+        } else if (this.store_errors == true) {
             this.error_list.push({
                 msg: message, 
                 state: "error"
@@ -693,11 +668,10 @@ class Strgen {
         } 
 
         console.error(message);
-
         this.createLogEntry("<b>ERROR</b>", message, true);
 
         this.error_state = true;    
-    }
+    };
 
     createLogEntry(caption, content = undefined, enabled = this.allow_logging) { // create a new log entry
         if(enabled == true && this.reporting_type != "none") {
@@ -721,20 +695,19 @@ class Strgen {
 
             this.generator_log.push(log_entry);
         }
-    }
+    };
 
     outputLog() { // output the log to the console
         for (var count = 0; count <= this.generator_log.length - 1; count++) {
             console.log((count + 1) + " - " + this.generator_log[count]);
         }
     }
-}
+};
 
 if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
     module.exports = Strgen;
     is_browser = false;
-}
-else {
+} else {
     window.Strgen = Strgen;
     is_browser = true;
 }; // source: http://www.matteoagosti.com/blog/2013/02/24/writing-javascript-modules-for-both-browser-and-node/
