@@ -177,6 +177,24 @@ QUnit.module("String generation tests", function( hooks ) {
     QUnit.test( "Generate string using a symbol quantifier - + test", function(assert) {
         testRun(assert, /[a-z]+/, /[a-z]+/);
     });
+
+    QUnit.test( "Generate string with allow_duplicate_characters set to false", function(assert) {
+        stringGenerator.allow_duplicate_characters = false;
+        testRun(assert, /[A-Za-z]{10}/);
+    });
+
+    QUnit.test( "Generate string with allow_duplicate_characters and allow_multiple_instances set to false", function(assert) {
+        stringGenerator.allow_multiple_instances = false;
+        testRun(assert, /[A-Za-z]{10}/);
+    });
+    QUnit.test( "Generate string with allow_duplicate_characters and allow_multiple_instances set to false, and ignore_duplicate_case set to true", function(assert) {
+        stringGenerator.ignore_duplicate_case = true;
+        testRun(assert, /[A-Za-z]{10}/);
+
+        stringGenerator.ignore_duplicate_case = false;
+        stringGenerator.allow_multiple_instances = true;
+        stringGenerator.allow_duplicate_characters = true;
+    });
 });
 
 QUnit.module("Error and warning tests", function( hooks ) {
@@ -239,7 +257,7 @@ QUnit.module("Error and warning tests", function( hooks ) {
             testErrors(assert, /[a-z]{27}/, "warning");
         });
 
-        QUnit.test( "A warning should be returned when trying to generate a string with both allow_multiple_instance and ignore_duplicate_case set to true", function(assert) {
+        QUnit.test( "A warning should be returned when trying to generate a string with both allow_multiple_instances and ignore_duplicate_case set to true", function(assert) {
             stringGenerator.allow_multiple_instances = true;
             stringGenerator.ignore_duplicate_case = true;
             testErrors(assert, /[a-z]{27}/, "warning");

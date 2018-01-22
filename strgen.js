@@ -614,21 +614,21 @@ class Strgen {
             this.createLogEntry("Values array length is", this.generated_value_list.length);
             return this.generated_value_list.length;
         } else if (index != this.generated_value_list.length && ignore_case == true) {
-            if (countList.indexOf(this.generated_value_list[index].toLowerCase()) == -1) {
-                if (countList.indexOf(this.generated_value_list[index].toUpperCase()) == -1) {
-                    countList.push(this.generated_value_list[index]);
+            if (count_list.indexOf(this.generated_value_list[index].toLowerCase()) == -1) {
+                if (count_list.indexOf(this.generated_value_list[index].toUpperCase()) == -1) {
+                    count_list.push(this.generated_value_list[index]);
                 }
             }
             index += 1;
-            return this.getValueListLength(index, countList, countList.length);
+            return this.getValueListLength(index, count_list, count_list.length);
         } else if (index != this.generated_value_list.length) {
-            if (countList.indexOf(this.generated_value_list[index]) == -1) {
-                countList.push(this.generated_value_list[index]);
+            if (count_list.indexOf(this.generated_value_list[index]) == -1) {
+                count_list.push(this.generated_value_list[index]);
             }
             index += 1;
-            return this.getValueListLength(index, countList, countList.length);
+            return this.getValueListLength(index, count_list, count_list.length);
         } else if (index == this.generated_value_list.length) {
-            this.createLogEntry("List counted, " + current_count  + " unique values. Unique values are: ", count_list.toString());
+            this.createLogEntry("List counted, " + current_count  + " unique values. Unique values are", count_list.toString());
             console.log(count_list.toString());
             return current_count;
         }
