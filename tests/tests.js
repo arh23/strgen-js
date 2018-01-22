@@ -76,6 +76,7 @@ QUnit.test("Parameter default values", function(assert) {
     assert.equal(stringGenerator.ignore_duplicate_case, false, "ignore_duplicate_case is set to false by default");
     assert.equal(stringGenerator.allow_logging, false, "allow_logging is set to false by default");
     assert.equal(stringGenerator.reporting_type, "full", "reporting_type is set to full by default");
+    assert.equal(stringGenerator.print_to_console, true, "print_to_console is set to true by default");
     assert.equal(stringGenerator.error_output_id, "warning", "error_output_id set to ID 'warning' by default");
     assert.equal(stringGenerator.store_errors, false, "store_errors is set to false by default");
     assert.equal(stringGenerator.symbol_quantifier_max, 10, "symbol_quantifier_max set to 10 by default");
@@ -85,6 +86,7 @@ QUnit.module("String generation tests", function( hooks ) {
 
     hooks.before(function() {
         stringGenerator.reporting_type = "none";
+        stringGenerator.print_to_console = false;
     });
 
     QUnit.test( "Generate string using a range", function(assert) {   

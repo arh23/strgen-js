@@ -34,6 +34,7 @@ stringGenerator.allow_multiple_instances = true;
 stringGenerator.ignore_duplicate_case = false;
 stringGenerator.allow_logging = false;
 stringGenerator.reporting_type = "less";
+stringGenerator.print_to_console = false;
 stringGenerator.error_output_id = "error";
 stringGenerator.store_errors = true;
 stringGenerator.symbol_quantifier_max = 25;
@@ -47,15 +48,17 @@ There are multiple parameters/variables which affect the way in which Strgen han
 
 - *pattern* - required - the regex-styled pattern string required to generate the random string.
 
-- *allow_duplicate_characters* - optional - boolean to specify whether or not Strgen should use the same character twice (or more) in a range/set of characters. *True* by default.
+- *allow_duplicate_characters* - optional - boolean to specify if Strgen should use the same character twice (or more) in a range/set of characters. *True* by default.
 
-- *allow_multiple_instances* - optional - boolean to specify whether or not Strgen should generate a string with multiple instances of a character, IF the character has been specified multiple times in the pattern. For example, if character "A" has been selected, all instances of "A" will be removed from the values list, if this parameter has been set to *false*. *True* by default. Requires *allow_duplicate_characters* to be false.
+- *allow_multiple_instances* - optional - boolean to specify if Strgen should generate a string with multiple instances of a character, IF the character has been specified multiple times in the pattern. For example, if character "A" has been selected, all instances of "A" will be removed from the values list, if this parameter has been set to *false*. *True* by default. Requires *allow_duplicate_characters* to be false.
 
-- *ignore_duplicate_case* - optional - boolean to specify whether or not Strgen should ignore case, when multiple instances are not allowed. For example, if character "A" has been selected, all instances of "A" and "a" will be removed from the values list, if this parameter has been set to *true*. *False* by default. Requires *allow_multiple_characters* to be false.
+- *ignore_duplicate_case* - optional - boolean to specify if Strgen should ignore case, when multiple instances are not allowed. For example, if character "A" has been selected, all instances of "A" and "a" will be removed from the values list, if this parameter has been set to *true*. *False* by default. Requires *allow_multiple_characters* to be false.
 
 - *allow_logging* - optional - boolean to specify whether every significant action during the generation process should be logged or not. *False* by default. Has the potential to cause performance issues. The log is accessible via the browser console, or can be accessed directly from the Strgen object. For example, using the example object defined above, you will be able to access the logs using: *stringGenerator.generator_log*.
 
-- *reporting_type* -  optional - string to specify the level of detail the messages posted before and after string generation. To show the pattern at the start, and the final string generated at the end of generation, use "full". To show a message stating when generation has started and finished, use "less". To show nothing, use "none". Any invalid values assigned to this parameter will be set to the "none" state. If *allow_logging* has been set to *true*, this will be set to full. Set to *full* by default.
+- *reporting_type* - optional - string to specify the level of detail the messages posted before and after string generation. To show the pattern at the start, and the final string generated at the end of generation, use "full". To show a message stating when generation has started and finished, use "less". To show nothing, use "none". Any invalid values assigned to this parameter will be set to the "none" state. If *allow_logging* has been set to *true*, this will be set to full. Set to *full* by default.
+
+- *print_to_console* - optional - boolean to specify if the log and other output should be printed to the console after generation. Setting this to *false* will prevent printing to the console (except for situations where an error has occurred, or if no valid warning element has been specified for *error_output_id* AND *store_errors* is *false*). *True* by default.
 
 - *error_output_id* - optional - string to reference the ID of the element where warning and error messages should be printed on a UI. Uses element ID *warning* by default.
 

@@ -9,6 +9,7 @@ class Strgen {
         this.ignore_duplicate_case = false; // parameter, ignore the case of duplicates - i.e. 'A' and 'a' are treated the same, if this is set to true (requires allow_multiple_instances)
         this.allow_logging = false; // parameter, allow the storing of events during the generation process in a list, if set to true
         this.reporting_type = "full"; // parameter, controls level of basic reporting at the start and end of string generation
+        this.print_to_console = true; // parameter, allows the log and other output to be printed to the console
         this.error_output_id = "warning"; // parameter, the default UI element where errors will be output (the reference to the element must be the ID)
         this.store_errors = false; // parameter, store errors and warnings in a list of objects when they occur, if set to true
         this.symbol_quantifier_max = 10; // parameter, the highest value possible when using symbol quantifiers
@@ -49,8 +50,10 @@ class Strgen {
             this.checkParameters();
             this.setLogger();
             this.operatorComparison();
-            this.outputLog();
-
+            if (this.print_to_console) {
+                this.outputLog();
+            }
+            
             if (!this.error_state) {
                 return this.outputString();
             } else {
@@ -629,7 +632,6 @@ class Strgen {
             return this.getValueListLength(index, count_list, count_list.length);
         } else if (index == this.generated_value_list.length) {
             this.createLogEntry("List counted, " + current_count  + " unique values. Unique values are", count_list.toString());
-            console.log(count_list.toString());
             return current_count;
         }
     };
