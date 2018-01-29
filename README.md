@@ -2,8 +2,10 @@
 
 Generate random strings using a pattern system based on regular expressions.
 
+Developed alongside the UI project, [strgen-ui](https://github.com/arh23/strgen-ui).
+
 Credits go to:
-- **Paul Wolf** for help with this project, and provision of the original Python implementation (https://github.com/paul-wolf/strgen).
+- **Paul Wolf** for help with this project, and provision of the [original Python implementation](https://github.com/paul-wolf/strgen).
 
 ## Tests
 
