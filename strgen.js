@@ -155,12 +155,16 @@ class Strgen {
                     break;
                 case ')':
                     this.createLogEntry("End of sequence reached");
+
                     if (this.temporary_value_list.length >= 1) {
-                        this.generated_value_list = this.generated_value_list.concat(this.temporary_value_list);
-                        this.temporary_value_list = [];
+                            this.generated_value_list = this.generated_value_list.concat(this.temporary_value_list);
+                            this.temporary_value_list = [];
                     }
-                    this.createLogEntry("Contents of value list", this.generated_value_list.toString());
-                    this.buildGeneratedString(this.selectValueFromList(1, undefined, false));  
+
+                    if (this.lookahead() != '{' && !this.symbol_quantifiers.includes(this.lookahead())){
+                        this.createLogEntry("Contents of value list", this.generated_value_list.toString());
+                        this.buildGeneratedString(this.selectValueFromList(1, undefined, false));  
+                    }
                     break;
                 case '/':
                     this.next();
