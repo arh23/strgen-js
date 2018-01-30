@@ -511,7 +511,7 @@ class Strgen {
                         this.quantifier_value = 1;
                         this.generated_value_list = [];
                     } else if (this.current() == "/") {
-                        this.addCharToList(this.next());
+                        string_value += this.next();
                     }
                 } else {
                     string_value += this.current();                   
