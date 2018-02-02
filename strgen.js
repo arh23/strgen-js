@@ -478,7 +478,7 @@ class Strgen {
                         this.outputWarning("Unbroken Sequence starting at position " + (this.current_index + 1) + " does not contain any values.");
                     } else {
                         this.generated_value_list.push(string_value);
-                        this.outputWarning("Sequence starting at position " + ((this.current_index + 1) - string_value.length) + " only contains one value.")         
+                        //this.outputWarning("Sequence starting at position " + ((this.current_index + 1) - string_value.length) + " only contains one value.")         
                     }
                     break;
                 }

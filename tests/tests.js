@@ -278,8 +278,8 @@ QUnit.module("Error and warning tests", function( hooks ) {
             testErrors(assert, /test string ()/, "warning");
         });  
 
-        QUnit.test( "A warning should be returned when trying to generate a string with a sequence that contains one value", function(assert) {
+        /*QUnit.test( "A warning should be returned when trying to generate a string with a sequence that contains one value", function(assert) {
             testErrors(assert, /test string (test)/, "warning");
-        });   
+        });*/   
     });
 });
