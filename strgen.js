@@ -20,8 +20,8 @@ class Strgen {
             {preset_code:"c", value:"abcdefghijklmnopqrstuvwxyz"},
             {preset_code:"u", value:"ABCDEFGHIJKLMNOPQRSTUVWXYZ"},
             {preset_code:"l", value:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"},
-            {preset_code:"h", value:"0123456789abcdfabcdf"},
-            {preset_code:"H", value:"0123456789ABCDFabcdf"},
+            {preset_code:"h", value:"0123456789abcdefabcdef"},
+            {preset_code:"H", value:"0123456789ABCDEFABCDEF"},
             {preset_code:"o", value:"01234567"},
             {preset_code:"s", value:" "}
         ];
