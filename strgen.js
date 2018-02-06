@@ -221,7 +221,7 @@ class Strgen {
                 this.createLogEntry("Preset character at position " + (this.current_index + 1) + ", getting values for preset", this.lookahead());
                 this.getPresetValues(this.next());
                 this.generateRangeValue();
-            } else if (this.operators.includes(this.current()) == true && this.last() != '/') {// if the current character is an unbroken operator, throw error
+            } else if (this.operators.includes(this.current()) == true && this.last() != '/' && this.current() != '/') {// if the current character is an unbroken operator, throw error
                 if(this.pattern.charAt(this.current_index) != "") {
                     this.outputError("Unexpected operator at position " + (this.current_index + 1) + ", operator '" + this.pattern.charAt(this.current_index) + "'.");
                 } else {
