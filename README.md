@@ -4,6 +4,8 @@ Generate random strings using a pattern system based on regular expressions.
 
 Developed alongside the UI project, [strgen-ui](https://github.com/arh23/strgen-ui).
 
+You can view Strgen [here](https://arh23.github.io/strgen-ui/strgen.html), which uses the UI linked above.
+
 Credits go to:
 - **Paul Wolf** for help with this project, and provision of the [original Python implementation](https://github.com/paul-wolf/strgen).
 
