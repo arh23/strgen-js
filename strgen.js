@@ -1,6 +1,5 @@
 "use strict";
 var is_browser; // true if strgen is being used on a webpage, false if strgen is used via command line
-
 class Strgen {
     constructor() {
         this.pattern = ""; // parameter, the pattern
@@ -25,6 +24,7 @@ class Strgen {
             {preset_code:"o", value:"01234567"},
             {preset_code:"s", value:" "}
         ];
+        this.version = "v1.0.0";
     };
 
     defineVariables() { // defines the non-parameter variables
@@ -40,7 +40,7 @@ class Strgen {
         this.error_list = []; // if store_errors is true, errors and warnings are stored in this list
         this.error_state = false; // boolean to store whether an error has been encountered
         // assign default values before generation/
-        // this fixes a problem with multiple generations with the same instance of the object        
+        // this fixes a problem with multiple generations with the same instance of the object      
     };
 
     createString() { // initial method that is called to start generating a random string allow_duplicates = true, allow_logging = false, reporting_type = "full", error_output_id = "warning"
@@ -707,7 +707,11 @@ class Strgen {
         for (var count = 0; count <= this.generator_log.length - 1; count++) {
             console.log((count + 1) + " - " + this.generator_log[count]);
         }
-    }
+    };
+
+    printVersion() { // print strgen version
+        console.log("strgen-js " + this.version);
+    };
 };
 
 if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
